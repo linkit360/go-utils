@@ -1,0 +1,76 @@
+package metrics
+
+import (
+	log "github.com/Sirupsen/logrus"
+	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus"
+	"time"
+)
+
+// name of the service / app to record them in prometheus
+var appName string
+
+func Init(name string) {
+	appName = name
+}
+
+func AddHandler(r *gin.Engine) {
+	rg := r.Group("/metrics")
+	rg.GET("", gin.WrapH(prometheus.Handler()))
+}
+
+type Gauge struct {
+	gauge   prometheus.Gauge
+	counter int64
+}
+
+func (g *Gauge) Inc() {
+	g.counter++
+}
+func (g *Gauge) update() {
+	g.gauge.Set(float64(g.counter))
+	g.counter = 0
+}
+
+// for any gauges
+func NewGauge(namespace, subsystem, name, help string) Gauge {
+	g := Gauge{}
+	g.gauge = PrometheusGauge(namespace, subsystem, name, help)
+	go func() {
+		for range time.Tick(time.Minute) {
+			g.update()
+		}
+	}()
+	return g
+}
+
+func PrometheusGauge(namespace, subsystem, name, help string) prometheus.Gauge {
+	if namespace == "" {
+		namespace = appName
+	} else {
+		namespace = appName + "_" + namespace
+	}
+	gauge := prometheus.NewGauge(prometheus.GaugeOpts{
+		Namespace: namespace,
+		Subsystem: subsystem,
+		Name:      name,
+		Help:      help,
+	})
+	prometheus.MustRegister(gauge)
+	return gauge
+}
+
+// for duration
+func NewSummary(name, help string) prometheus.Summary {
+	if appName == "" {
+		log.Fatal("app name is empty")
+	}
+	summary := prometheus.NewSummary(
+		prometheus.SummaryOpts{
+			Name: name,
+			Help: help,
+		},
+	)
+	prometheus.MustRegister(summary)
+	return summary
+}
