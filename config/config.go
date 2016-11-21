@@ -7,8 +7,8 @@ const (
 	MO_TARIFFICATE          = "_mo_tarifficate"
 	REQUESTS_SUFFIX         = "_requests"
 	RESPONSES_SUFFIX        = "_responses"
-	SMS_REQUEST_SUFFIX      = "_sms_request"
-	SMS_RESPONSE_SUFFIX     = "_sms_response"
+	SMS_REQUEST_SUFFIX      = "_sms_requests"
+	SMS_RESPONSE_SUFFIX     = "_sms_responses"
 )
 
 type OperatorQueueConfig struct {

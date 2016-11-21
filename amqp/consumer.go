@@ -1,8 +1,10 @@
-package rabbit
+package amqp
 
 import (
 	"errors"
 	"fmt"
+	"reflect"
+	"runtime"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -11,6 +13,32 @@ import (
 
 	"github.com/vostrok/utils/metrics"
 )
+
+func init() {
+	log.SetLevel(log.DebugLevel)
+}
+
+func InitQueue(
+	consumer *Consumer,
+	deliveryChan <-chan amqp_driver.Delivery,
+	fn func(<-chan amqp_driver.Delivery),
+	threads int,
+	queue string,
+	routingKey string,
+) {
+	deliveryChan, err := consumer.AnnounceQueue(queue, routingKey)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"queue": queue,
+			"error": err.Error(),
+		}).Fatal("rbmq consumer: AnnounceQueue")
+	}
+	go consumer.Handle(deliveryChan, fn, threads, queue, routingKey)
+	log.WithFields(log.Fields{
+		"queue": queue,
+		"fn":    runtime.FuncForPC(reflect.ValueOf(fn).Pointer()).Name(),
+	}).Info("consume init done")
+}
 
 type ConsumerMetrics struct {
 	Connected          prometheus.Gauge

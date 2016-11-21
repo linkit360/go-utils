@@ -2,11 +2,11 @@ package cqr
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
 
-	"fmt"
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 )

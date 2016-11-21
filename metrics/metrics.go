@@ -1,10 +1,11 @@
 package metrics
 
 import (
+	"time"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
-	"time"
 )
 
 // name of the service / app to record them in prometheus

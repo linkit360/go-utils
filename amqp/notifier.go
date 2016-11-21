@@ -1,4 +1,4 @@
-package rabbit
+package amqp
 
 // this package for holding connection to rabbit.
 // it has 2 channels, reading and pending
