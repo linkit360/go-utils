@@ -20,28 +20,39 @@ func AddCQRHandler(allReload func(c *gin.Context), r *gin.Engine) {
 	rg.GET("", allReload)
 }
 
+type InMemIf interface {
+	Reload() error
+}
+
 type CQRConfig struct {
-	Table      string
-	ReloadFunc func() error
+	Tables []string
+	Data   InMemIf
 }
 
 func InitCQR(cqrConfigs []CQRConfig) error {
+	var tableNames []string
+	for _, v := range cqrConfigs {
+		tableNames = append(tableNames, v.Tables...)
+	}
+	log.WithFields(log.Fields{
+		"tables": strings.Join(tableNames, ", "),
+	}).Debug("init request")
+
 	for _, cqrConfig := range cqrConfigs {
 		begin := time.Now()
-		err := cqrConfig.ReloadFunc()
-		if err != nil {
+		if err := cqrConfig.Data.Reload(); err != nil {
+			err = fmt.Errorf("%s: %s", cqrConfig.Tables, err.Error())
 			log.WithFields(log.Fields{
-				"table": cqrConfig.Table,
+				"table": cqrConfig.Tables,
 				"error": err.Error(),
 				"took":  time.Since(begin),
 			}).Error("reload failed")
-		} else {
-			err = fmt.Errorf("%s: %s", cqrConfig.Table, err.Error())
-			log.WithFields(log.Fields{
-				"table": cqrConfig.Table,
-				"took":  time.Since(begin),
-			}).Error("reload done")
 			return err
+		} else {
+			log.WithFields(log.Fields{
+				"table": cqrConfig.Tables,
+				"took":  time.Since(begin),
+			}).Info("reload done")
 		}
 	}
 	return nil
@@ -49,7 +60,7 @@ func InitCQR(cqrConfigs []CQRConfig) error {
 func CQRReloadFunc(cqrConfigs []CQRConfig, c *gin.Context) func(*gin.Context) {
 	var tableNames []string
 	for _, v := range cqrConfigs {
-		tableNames = append(tableNames, v.Table)
+		tableNames = append(tableNames, v.Tables...)
 	}
 	log.WithFields(log.Fields{
 		"tables": strings.Join(tableNames, ", "),
@@ -73,24 +84,27 @@ func CQRReloadFunc(cqrConfigs []CQRConfig, c *gin.Context) func(*gin.Context) {
 		}
 		found := false
 		for _, cqrConfig := range cqrConfigs {
-			if strings.Contains(table, cqrConfig.Table) {
-				found = true
-				begin := time.Now()
-				err := cqrConfig.ReloadFunc()
-				if err != nil {
-					r.Success = false
-					r.Status = http.StatusInternalServerError
-					log.WithFields(log.Fields{
-						"table": table,
-						"error": err.Error(),
-						"took":  time.Since(begin),
-					}).Error("reload failed")
-				} else {
-					r.Success = true
-					log.WithFields(log.Fields{
-						"table": table,
-						"took":  time.Since(begin),
-					}).Info("reload done")
+			for _, configTableName := range cqrConfig.Tables {
+
+				if strings.Contains(configTableName, table) {
+					found = true
+					begin := time.Now()
+					err := cqrConfig.Data.Reload()
+					if err != nil {
+						r.Success = false
+						r.Status = http.StatusInternalServerError
+						log.WithFields(log.Fields{
+							"table": table,
+							"error": err.Error(),
+							"took":  time.Since(begin),
+						}).Error("reload failed")
+					} else {
+						r.Success = true
+						log.WithFields(log.Fields{
+							"table": table,
+							"took":  time.Since(begin),
+						}).Info("reload done")
+					}
 				}
 			}
 		}
@@ -99,7 +113,6 @@ func CQRReloadFunc(cqrConfigs []CQRConfig, c *gin.Context) func(*gin.Context) {
 			r.Status = http.StatusInternalServerError
 			log.WithFields(log.Fields{
 				"table": table,
-				"error": err.Error(),
 			}).Error("table not fouund")
 		}
 		render(r, c)

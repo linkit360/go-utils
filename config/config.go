@@ -22,7 +22,7 @@ type OperatorQueueConfig struct {
 type OperatorConfig struct {
 	RetriesEnabled           bool `default:"false" yaml:"retries_enabled,omitempty"`
 	OperatorRequestQueueSize int  `default:"10" yaml:"operator_request_queue_size,omitempty"`
-	GetFromDBRetryCount      int  `yaml:"get_from_db_retry_count,omitempty"`
+	GetFromDBRetryCount      int  `default:"500" yaml:"get_from_db_retry_count,omitempty"`
 }
 
 func GetOperatorsQueue(enabledOperators map[string]OperatorConfig) map[string]OperatorQueueConfig {

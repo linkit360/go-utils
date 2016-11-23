@@ -158,12 +158,12 @@ func (n *Notifier) publisher() {
 			var msg AMQPMessage
 			msg, running = <-reading
 			if !running {
-				log.WithField("rbmq", "!running").Info("rbmq: publisher")
+				log.WithField("rbmq", "!running").Info("rbmq: notifier")
 				return
 			}
 
 			if pending <- msg; len(pending) > 0 {
-				log.WithField("rbmq_pending", len(pending)).Info("rbmq: publisher")
+				log.WithField("rbmq_pending", len(pending)).Info("rbmq: notifier")
 			}
 		}
 	}()
@@ -213,7 +213,7 @@ func (n *Notifier) publisher() {
 
 			if err != nil {
 				pending <- msg
-				log.WithField("error", err.Error()).Error("rbmq: publish")
+				log.WithField("error", err.Error()).Error("rbmq: notify")
 				n.m.PublishErrs.Inc()
 				n.conn.Close()
 				break
@@ -226,25 +226,23 @@ func (n *Notifier) publisher() {
 type NotifierMetrics struct {
 	SessionRequests m.Gauge
 	PublishErrs     m.Gauge
-
-	ReconnectCount prometheus.Gauge
-	Connected      prometheus.Gauge
-	PendingBuffer  prometheus.Gauge
-	ReadingBuffer  prometheus.Gauge
+	ReconnectCount  prometheus.Gauge
+	Connected       prometheus.Gauge
+	PendingBuffer   prometheus.Gauge
+	ReadingBuffer   prometheus.Gauge
 }
 
-func newGaugePublisher(name, help string) m.Gauge {
+func newGaugeNotifier(name, help string) m.Gauge {
 	return m.NewGauge("rbmq", "notifier", name, "rbmq "+help)
 }
 func initNotifierMetrics() NotifierMetrics {
 	metrics := NotifierMetrics{
-		SessionRequests: newGaugePublisher("reconnects_count", "publisher reconnect count"),
-		PublishErrs:     newGaugePublisher("publish_errors", "publish errors"),
-
-		Connected:      m.PrometheusGauge("rbmq", "notifier", "connected", "publisher connection status"),
-		ReconnectCount: m.PrometheusGauge("rbmq", "notifier", "reconnect_count", "publisher connection attempts count"),
-		PendingBuffer:  m.PrometheusGauge("rbmq", "notifier", "buffer_pending_gauge_size", "publisher pending buffer size"),
-		ReadingBuffer:  m.PrometheusGauge("rbmq", "notifier", "buffer_reading_gauge_size", "publisher reading buffer size"),
+		SessionRequests: newGaugeNotifier("reconnects_count", "publisher reconnect count"),
+		PublishErrs:     newGaugeNotifier("errors", "publish errors"),
+		Connected:       m.PrometheusGauge("rbmq", "notifier", "connected", "publisher connection status"),
+		ReconnectCount:  m.PrometheusGauge("rbmq", "notifier", "reconnect_count", "publisher connection attempts count"),
+		PendingBuffer:   m.PrometheusGauge("rbmq", "notifier", "buffer_pending_gauge_size", "publisher pending buffer size"),
+		ReadingBuffer:   m.PrometheusGauge("rbmq", "notifier", "buffer_reading_gauge_size", "publisher reading buffer size"),
 	}
 	return metrics
 }
