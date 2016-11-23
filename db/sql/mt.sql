@@ -11,6 +11,9 @@ ALTER TABLE xmp_operator_ip ADD COLUMN country_code INT NOT NULL DEFAULT 0;
 UPDATE  xmp_operator_ip SET country_code = (
     SELECT country_code FROM xmp_operators WHERE xmp_operator_ip.operator_code = xmp_operators.code);
 
+alter table xmp_campaigns add COLUMN autoclick_enabled BOOLEAN not NULL default false;
+alter table xmp_campaigns add COLUMN autoclick_ratio INT NOT NULL DEFAULT 1;
+
 -- service new functionality
 ALTER TABLE xmp_services ADD COLUMN paid_hours INT NOT NULL DEFAULT 1.0;
 UPDATE xmp_services SET paid_hours = 24 WHERE id = 777;

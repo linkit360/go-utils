@@ -54,8 +54,11 @@ CREATE TABLE xmp_campaigns
   cpa INTEGER,
   hash VARCHAR(32),
   type INTEGER DEFAULT 1 NOT NULL,
-  created_by INTEGER
+  created_by INTEGER,
+  autoclick_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+  autoclick_ratio INT NOT NULL DEFAULT 1
 );
+
 CREATE TABLE xmp_campaigns_access
 (
   id SERIAL PRIMARY KEY NOT NULL,
