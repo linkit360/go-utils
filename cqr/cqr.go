@@ -57,13 +57,18 @@ func InitCQR(cqrConfigs []CQRConfig) error {
 				}).Debug("found webhook")
 				resp, err := http.Get(cqrConfig.WebHook)
 				if err != nil || resp.StatusCode != 200 {
-
-					err = fmt.Errorf("http.Get: %s", err.Error())
-					log.WithFields(log.Fields{
+					fields := log.Fields{
 						"table": cqrConfig.Tables,
-						"error": err.Error(),
 						"hook":  cqrConfig.WebHook,
-					}).Error("hook failed")
+					}
+					if resp != nil {
+						fields["code"] = resp.Status
+					}
+					if err != nil {
+						err = fmt.Errorf("http.Get: %s", err.Error())
+						fields["error"] = err.Error()
+					}
+					log.WithFields(fields).Error("hook failed")
 				}
 			}
 
@@ -132,7 +137,7 @@ func CQRReloadFunc(cqrConfigs []CQRConfig, c *gin.Context) func(*gin.Context) {
 			r.Status = http.StatusInternalServerError
 			log.WithFields(log.Fields{
 				"table": table,
-			}).Error("table not fouund")
+			}).Error("table not found")
 		}
 		render(r, c)
 	}

@@ -1,7 +1,8 @@
 CREATE TABLE xmp_content_sent (
   id                serial PRIMARY KEY,
-  tid               varchar(127) NOT NULL DEFAULT '',
+  created_at           TIMESTAMP NOT NULL DEFAULT NOW(),
   sent_at           TIMESTAMP NOT NULL DEFAULT NOW(),
+  tid               varchar(127) NOT NULL DEFAULT '',
   msisdn            varchar(32) NOT NULL DEFAULT '',
   id_campaign       INT NOT NULL DEFAULT 0,
   id_service        INT NOT NULL DEFAULT 0,
@@ -23,6 +24,7 @@ CREATE TABLE xmp_user_actions (
 CREATE TABLE xmp_campaigns_access (
   id                          serial PRIMARY KEY,
   tid                         varchar(127) NOT NULL DEFAULT '',
+  created_at           TIMESTAMP NOT NULL DEFAULT NOW(),
   access_at                   TIMESTAMP NOT NULL DEFAULT NOW(),
   msisdn                      varchar(32) NOT NULL DEFAULT '',
   ip                          varchar(32) NOT NULL DEFAULT '',

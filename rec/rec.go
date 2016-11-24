@@ -197,8 +197,6 @@ func (t Record) GetPreviousSubscription(paidHours int) (PreviuosSubscription, er
 		}).Debug("get previous subscription")
 	}()
 
-	// todo: check: previous subscription for the day,
-	// todo: not for continuously getting the content
 	// get the very old first, but not elder than paidHours ago
 	query := fmt.Sprintf("SELECT "+
 		"id, "+

@@ -123,7 +123,7 @@ type EventNotify struct {
 }
 type AMQPMessage struct {
 	QueueName string
-	Priority  int
+	Priority  uint8
 	Body      []byte
 }
 

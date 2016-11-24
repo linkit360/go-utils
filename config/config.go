@@ -3,7 +3,7 @@ package config
 import "strings"
 
 const (
-	NEW_SUBSCRIPTION_SUFFIX = "_new_subscritpions"
+	NEW_SUBSCRIPTION_SUFFIX = "_new_subscriptions"
 	MO_TARIFFICATE          = "_mo_tarifficate"
 	REQUESTS_SUFFIX         = "_requests"
 	RESPONSES_SUFFIX        = "_responses"
