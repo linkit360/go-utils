@@ -92,12 +92,12 @@ func (n *Notifier) connect() error {
 		n.done <- errors.New("Channel Closed")
 	}()
 
-	log.Info("rbmq notifier: got connection, getting channel...")
+	log.WithField("url", n.url).Info("rbmq notifier: got connection")
 	n.channel, err = n.conn.Channel()
 	if err != nil {
 		return fmt.Errorf("Channel: %s", err)
 	}
-	log.Info("rbmq notifier: got channel")
+	log.Debug("rbmq notifier: got channel")
 	return nil
 }
 
@@ -123,6 +123,7 @@ type EventNotify struct {
 }
 type AMQPMessage struct {
 	QueueName string
+	Priority  int
 	Body      []byte
 }
 
@@ -183,7 +184,6 @@ func (n *Notifier) publisher() {
 			}
 
 		case msg = <-pending:
-
 			q, err := n.channel.QueueDeclare(
 				msg.QueueName, // name
 				false,         // durable
@@ -209,6 +209,7 @@ func (n *Notifier) publisher() {
 				amqp_driver.Publishing{
 					ContentType: "text/plain",
 					Body:        msg.Body,
+					Priority:    msg.Priority,
 				})
 
 			if err != nil {

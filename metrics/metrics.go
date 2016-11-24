@@ -46,11 +46,6 @@ func NewGauge(namespace, subsystem, name, help string) Gauge {
 }
 
 func PrometheusGauge(namespace, subsystem, name, help string) prometheus.Gauge {
-	if namespace == "" {
-		namespace = appName
-	} else {
-		namespace = appName + "_" + namespace
-	}
 	gauge := prometheus.NewGauge(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Subsystem: subsystem,

@@ -25,8 +25,9 @@ type InMemIf interface {
 }
 
 type CQRConfig struct {
-	Tables []string
-	Data   InMemIf
+	Tables  []string
+	Data    InMemIf
+	WebHook string
 }
 
 func InitCQR(cqrConfigs []CQRConfig) error {
@@ -49,6 +50,23 @@ func InitCQR(cqrConfigs []CQRConfig) error {
 			}).Error("reload failed")
 			return err
 		} else {
+			if cqrConfig.WebHook != "" {
+				log.WithFields(log.Fields{
+					"table": cqrConfig.Tables,
+					"hook":  cqrConfig.WebHook,
+				}).Debug("found webhook")
+				resp, err := http.Get(cqrConfig.WebHook)
+				if err != nil || resp.StatusCode != 200 {
+
+					err = fmt.Errorf("http.Get: %s", err.Error())
+					log.WithFields(log.Fields{
+						"table": cqrConfig.Tables,
+						"error": err.Error(),
+						"hook":  cqrConfig.WebHook,
+					}).Error("hook failed")
+				}
+			}
+
 			log.WithFields(log.Fields{
 				"table": cqrConfig.Tables,
 				"took":  time.Since(begin),
@@ -57,6 +75,7 @@ func InitCQR(cqrConfigs []CQRConfig) error {
 	}
 	return nil
 }
+
 func CQRReloadFunc(cqrConfigs []CQRConfig, c *gin.Context) func(*gin.Context) {
 	var tableNames []string
 	for _, v := range cqrConfigs {
