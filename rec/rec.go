@@ -11,6 +11,7 @@ import (
 
 	"github.com/vostrok/utils/db"
 	m "github.com/vostrok/utils/metrics"
+	"strings"
 )
 
 var mutSubscriptions sync.RWMutex
@@ -121,6 +122,7 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) 
 			"took": time.Since(begin),
 		}).Debug("get retry transactions")
 	}()
+
 	var retries []Record
 	query := fmt.Sprintf("SELECT "+
 		"id, "+
@@ -139,7 +141,8 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) 
 		"id_campaign "+
 		"FROM %sretries "+
 		"WHERE (CURRENT_TIMESTAMP - delay_hours * INTERVAL '1 hour' ) > last_pay_attempt_at AND "+
-		" operator_code = $1"+
+		"operator_code = $1 AND "+
+		"status = '' "+
 		"ORDER BY last_pay_attempt_at ASC LIMIT %s", // get the last touched
 		conf.TablePrefix,
 		strconv.Itoa(batchLimit),
@@ -147,10 +150,11 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) 
 	rows, err := dbConn.Query(query, operatorCode)
 	if err != nil {
 		DBErrors.Inc()
-		return retries, fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		return []Record{}, fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
 	}
 	defer rows.Close()
 
+	retryIds := []interface{}{}
 	for rows.Next() {
 		record := Record{}
 		if err := rows.Scan(
@@ -170,16 +174,55 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) 
 			&record.CampaignId,
 		); err != nil {
 			DBErrors.Inc()
-			return retries, fmt.Errorf("Rows.Next: %s", err.Error())
+			return []Record{}, fmt.Errorf("Rows.Next: %s", err.Error())
 		}
 
 		retries = append(retries, record)
+		retryIds = append(retryIds, record.RetryId)
 	}
 	if rows.Err() != nil {
 		DBErrors.Inc()
-		return retries, fmt.Errorf("GetRetries RowsError: %s", err.Error())
+		return []Record{}, fmt.Errorf("GetRetries RowsError: %s", err.Error())
+	}
+
+	if err := setPendingStatus(retryIds); err != nil {
+		return []Record{}, err
 	}
 	return retries, nil
+}
+func setPendingStatus(ids []interface{}) error {
+	if len(ids) == 0 {
+		return nil
+	}
+	begin := time.Now()
+	defer func() {
+		log.WithFields(log.Fields{
+			"took":  time.Since(begin),
+			"count": len(ids),
+		}).Debug("update pending retries")
+	}()
+
+	paramStr := []string{}
+	for i, _ := range ids {
+		j := i + 1
+		paramStr = append(paramStr, "$"+strconv.Itoa(j))
+	}
+	query := fmt.Sprintf("UPDATE %sretries SET "+
+		"status = 'pending' "+
+		"WHERE id IN ("+strings.Join(paramStr, ", ")+")", conf.TablePrefix)
+
+	_, err := dbConn.Exec(query, ids...)
+	if err != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("dbConn.Exec: %s", err.Error())
+		log.WithFields(log.Fields{
+			"error ": err.Error(),
+			"query":  query,
+		}).Error("update retry failed")
+		return err
+	}
+	return nil
 }
 
 type PreviuosSubscription struct {
@@ -346,6 +389,7 @@ func (r Record) TouchRetry() error {
 		}).Debug("touch retry")
 	}()
 	query := fmt.Sprintf("UPDATE %sretries SET "+
+		"status = '', "+
 		"last_pay_attempt_at = $1, "+
 		"attempts_count = attempts_count + 1 "+
 		"WHERE id = $2", conf.TablePrefix)

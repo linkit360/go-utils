@@ -102,8 +102,11 @@ CREATE TABLE public.xmp_transactions (
     result TRANSACTION_RESULT NOT NULL,
     id_campaign INTEGER NOT NULL DEFAULT 0
 );
+
+CREATE TYPE retry_status AS ENUM ('', 'pending');
 CREATE TABLE xmp_retries (
     id serial,
+    status retry_status NOT NULL DEFAULT  '',
     tid CHARACTER VARYING(127) NOT NULL DEFAULT '',
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     last_pay_attempt_at TIMESTAMP NOT NULL DEFAULT NOW(),
