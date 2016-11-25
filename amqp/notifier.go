@@ -29,7 +29,7 @@ type Notifier struct {
 type ConnectionConfig struct {
 	User string `yaml:"user" default:"linkit"`
 	Pass string `yaml:"pass" default:"dg-U_oHhy7-"`
-	Host string `yaml:"host" default:"35.154.8.158"`
+	Host string `yaml:"host" default:"localhost"`
 	Port string `yaml:"port" default:"5672"`
 }
 type NotifierConfig struct {

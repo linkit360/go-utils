@@ -28,21 +28,24 @@ type Gauge struct {
 func (g *Gauge) Inc() {
 	g.counter++
 }
-func (g *Gauge) update() {
+func (g *Gauge) Update() {
 	g.gauge.Set(float64(g.counter))
 	g.counter = 0
 }
 
 // for any gauges
-func NewGauge(namespace, subsystem, name, help string) Gauge {
+func NewGaugeAlert(namespace, subsystem, name, help string) Gauge {
 	g := Gauge{}
 	g.gauge = PrometheusGauge(namespace, subsystem, name, help)
 	go func() {
 		for range time.Tick(time.Minute) {
-			g.update()
+			g.Update()
 		}
 	}()
 	return g
+}
+func NewGauge(namespace, subsystem, name, help string) Gauge {
+	return NewGaugeAlert(namespace, subsystem, name, help)
 }
 
 func PrometheusGauge(namespace, subsystem, name, help string) prometheus.Gauge {
