@@ -87,6 +87,7 @@ func NewConsumer(conf ConsumerConfig) *Consumer {
 		conf.Conn.Pass,
 		conf.Conn.Host,
 		conf.Conn.Port)
+
 	c := &Consumer{
 		m:                  initConsumerMetrics(),
 		queuePrefetchCount: conf.QueuePrefetchCount,
@@ -105,16 +106,23 @@ func NewConsumer(conf ConsumerConfig) *Consumer {
 }
 
 func (c *Consumer) ReConnect(queueName, bindingKey string) (<-chan amqp_driver.Delivery, error) {
-	log.WithField("reconnectDelay", c.reconnectDelay).Info("consumer reconnects...")
-	time.Sleep(time.Duration(c.reconnectDelay) * time.Second)
 
-	if err := c.Connect(); err != nil {
-		c.m.Connected.Set(0)
-		c.m.ReconnectCount.Inc()
+	for true {
+		time.Sleep(time.Duration(c.reconnectDelay) * time.Second)
+		if err := c.Connect(); err != nil {
+			c.m.Connected.Set(0)
+			c.m.ReconnectCount.Inc()
 
-		d := make(<-chan amqp_driver.Delivery)
-		log.WithField("error", err.Error()).Error("could not reconnect")
-		return d, fmt.Errorf("Connect: %s", err.Error())
+			log.WithFields(log.Fields{
+				"error":          err.Error(),
+				"reconnectDelay": c.reconnectDelay,
+			}).Error("consumer reconnect error")
+		} else {
+			log.WithFields(log.Fields{
+				"url": c.url,
+			}).Info("consumer connected")
+			break
+		}
 	}
 
 	c.m.Connected.Set(1)
@@ -176,12 +184,12 @@ func (c *Consumer) Connect() error {
 	log.WithField("url", c.url).Debug("dialing")
 	c.conn, err = amqp_driver.Dial(c.url)
 	if err != nil {
-		return fmt.Errorf("Dial: %s", err)
+		return fmt.Errorf("amqp_driver.Dial: %s", err)
 	}
 
 	go func() {
 		// Waits here for the channel to be closed
-		log.Info("closing: %s", <-c.conn.NotifyClose(make(chan *amqp_driver.Error)))
+		log.Info("rbmq consumer closing: ", <-c.conn.NotifyClose(make(chan *amqp_driver.Error)))
 		// Let Handle know it's not time to reconnect
 		c.done <- errors.New("Channel Closed")
 	}()

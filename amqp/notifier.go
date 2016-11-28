@@ -50,7 +50,7 @@ func NewNotifier(c NotifierConfig) *Notifier {
 		publishCh:      make(chan AMQPMessage, c.ChanCapacity),
 	}
 	if err := notifier.connect(); err != nil {
-		log.Fatal("Connect error", err.Error())
+		log.Fatal("Connect error ", err.Error())
 	}
 	go func() {
 		notifier.publisher()
@@ -64,13 +64,24 @@ func (n *Notifier) Publish(msg AMQPMessage) {
 }
 
 func (n *Notifier) GetQueueSize(queue string) (int, error) {
+getQueueSize:
 	queueInfo, err := n.channel.QueueInspect(queue)
 	if err != nil {
+		if err == amqp_driver.ErrClosed {
+			log.Info("rbmq notifier try to reconnect")
+			if err := n.reConnect(); err != nil {
+				log.WithField("error", err.Error()).Error("rbmq notifier reconnect failed")
+				return 0, err
+			} else {
+
+				goto getQueueSize
+			}
+		}
 		err = fmt.Errorf("channel.QueueInspect: %s", err.Error())
 		log.WithFields(log.Fields{
 			"queue": queue,
 			"error": err.Error(),
-		}).Error("rbmq consumer: cannot inspect queue")
+		}).Error("rbmq notifier: cannot inspect queue")
 		return 0, err
 	}
 	return queueInfo.Messages, nil
@@ -79,15 +90,15 @@ func (n *Notifier) GetQueueSize(queue string) (int, error) {
 func (n *Notifier) connect() error {
 	var err error
 
-	log.WithField("url", n.url).Debug("dialing")
+	log.WithField("url", n.url).Debug("rbmq notifier dialing...")
 	n.conn, err = amqp_driver.Dial(n.url)
 	if err != nil {
-		return fmt.Errorf("Dial: %s", err)
+		return fmt.Errorf("amqp_driver.Dial: %s", err)
 	}
 
 	go func() {
 		// Waits here for the channel to be closed
-		log.Info("closing: %s", <-n.conn.NotifyClose(make(chan *amqp_driver.Error)))
+		log.Info("rbmq notifier closing: ", <-n.conn.NotifyClose(make(chan *amqp_driver.Error)))
 		// Let Handle know it's not time to reconnect
 		n.done <- errors.New("Channel Closed")
 	}()
@@ -97,21 +108,27 @@ func (n *Notifier) connect() error {
 	if err != nil {
 		return fmt.Errorf("Channel: %s", err)
 	}
-	log.Debug("rbmq notifier: got channel")
+	log.Debug("rbmq notifier got channel")
 	return nil
 }
 
 func (n *Notifier) reConnect() error {
-	log.WithField("reconnectDelay", n.reconnectDelay).Info("consumer reconnects...")
-	time.Sleep(time.Duration(n.reconnectDelay) * time.Second)
 
-	if err := n.connect(); err != nil {
-		n.m.Connected.Set(0)
-		n.m.ReconnectCount.Inc()
+	for {
+		log.WithField("reconnectDelay", n.reconnectDelay).Info("rbmq notifier reconnects...")
+		time.Sleep(time.Duration(n.reconnectDelay) * time.Second)
 
-		log.WithField("error", err.Error()).Error("could not reconnect")
-		return fmt.Errorf("Connect: %s", err.Error())
+		if err := n.connect(); err != nil {
+			n.m.Connected.Set(0)
+			n.m.ReconnectCount.Inc()
+			log.WithField("error", err.Error()).Error("rbmq notifier could not reconnect")
+
+		} else {
+			log.WithField("url", n.url).Info("rbmq notifier connected")
+			break
+		}
 	}
+
 	n.m.Connected.Set(1)
 	n.m.ReconnectCount.Set(0)
 	return nil
@@ -125,18 +142,6 @@ type AMQPMessage struct {
 	QueueName string
 	Priority  uint8
 	Body      []byte
-}
-
-type session struct {
-	*amqp_driver.Connection
-	*amqp_driver.Channel
-}
-
-func (s session) Close() error {
-	if s.Connection == nil {
-		return nil
-	}
-	return s.Connection.Close()
 }
 
 func (n *Notifier) publisher() {
@@ -159,12 +164,12 @@ func (n *Notifier) publisher() {
 			var msg AMQPMessage
 			msg, running = <-reading
 			if !running {
-				log.WithField("rbmq", "!running").Info("rbmq: notifier")
+				log.WithField("rbmq", "!running").Info("rbmq notifier")
 				return
 			}
 
 			if pending <- msg; len(pending) > 0 {
-				log.WithField("rbmq_pending", len(pending)).Info("rbmq: notifier")
+				log.WithField("rbmq_pending", len(pending)).Info("rbmq notifier")
 			}
 		}
 	}()
@@ -172,12 +177,10 @@ func (n *Notifier) publisher() {
 	for {
 		var msg AMQPMessage
 		select {
-
 		case <-n.done:
 			err := n.reConnect()
 			if err != nil {
-				// Very likely chance of failing
-				// should not cause worker to terminate
+				// Very likely chance of failing should not cause worker to terminate
 				log.WithField("error", err.Error()).Error("rbmq notifier reconnect failed")
 			} else {
 				log.Info("rbmq notifier: reconnected")
@@ -194,10 +197,12 @@ func (n *Notifier) publisher() {
 			)
 
 			if err != nil {
-				pending <- msg
-				log.WithField("error", err.Error()).Error("rbmq: Channel.QueueDeclare")
 				n.m.PublishErrs.Inc()
 				n.conn.Close()
+
+				pending <- msg
+				err = fmt.Errorf("Channel.QueueDeclare: %s", err.Error())
+				log.WithField("error", err.Error()).Error("rbmq notifier queue declare failed")
 				break
 			}
 
@@ -213,10 +218,12 @@ func (n *Notifier) publisher() {
 				})
 
 			if err != nil {
-				pending <- msg
-				log.WithField("error", err.Error()).Error("rbmq: notify")
 				n.m.PublishErrs.Inc()
 				n.conn.Close()
+
+				pending <- msg
+				err = fmt.Errorf("Channel.Publish: %s", err.Error())
+				log.WithField("error", err.Error()).Error("rbmq notifier publish failed")
 				break
 			}
 			log.WithFields(log.Fields{"queue": msg.QueueName, "body": string(msg.Body)}).Info("rbmq: publish")
