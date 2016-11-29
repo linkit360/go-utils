@@ -50,11 +50,14 @@ func newGaugeConsumer(name, help string) prometheus.Gauge {
 	return metrics.PrometheusGauge("rbmq", "consumer", name, "rbmq consumer "+help)
 }
 
-func initConsumerMetrics() ConsumerMetrics {
+func initConsumerMetrics(prefix string) ConsumerMetrics {
+	if prefix == "" {
+		log.Fatal("metrics prefix required")
+	}
 	return ConsumerMetrics{
-		Connected:          newGaugeConsumer("connected", "connected"),
-		ReconnectCount:     newGaugeConsumer("reconnect_count", "reconnect count"),
-		AnnounceQueueError: newGaugeConsumer("announce_errors", "announce errors"),
+		Connected:          newGaugeConsumer(prefix+"_connected", "connected"),
+		ReconnectCount:     newGaugeConsumer(prefix+"_reconnect_count", "reconnect count"),
+		AnnounceQueueError: newGaugeConsumer(prefix+"_announce_errors", "announce errors"),
 	}
 }
 
@@ -80,7 +83,7 @@ type Consumer struct {
 	reconnectDelay     int
 }
 
-func NewConsumer(conf ConsumerConfig) *Consumer {
+func NewConsumer(conf ConsumerConfig, metrcsPrefix string) *Consumer {
 	log.SetLevel(log.DebugLevel)
 	url := fmt.Sprintf("amqp://%s:%s@%s:%s",
 		conf.Conn.User,
@@ -89,7 +92,7 @@ func NewConsumer(conf ConsumerConfig) *Consumer {
 		conf.Conn.Port)
 
 	c := &Consumer{
-		m:                  initConsumerMetrics(),
+		m:                  initConsumerMetrics(metrcsPrefix),
 		queuePrefetchCount: conf.QueuePrefetchCount,
 		conn:               nil,
 		channel:            nil,
