@@ -132,8 +132,6 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) 
 		"attempts_count, "+
 		"keep_days, "+
 		"msisdn, "+
-		"pixel, "+
-		"publisher, "+
 		"operator_code, "+
 		"country_code, "+
 		"id_service, "+
@@ -165,8 +163,6 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) 
 			&record.AttemptsCount,
 			&record.KeepDays,
 			&record.Msisdn,
-			&record.Pixel,
-			&record.Publisher,
 			&record.OperatorCode,
 			&record.CountryCode,
 			&record.ServiceId,
