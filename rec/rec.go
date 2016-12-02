@@ -14,9 +14,6 @@ import (
 	"strings"
 )
 
-var mutSubscriptions sync.RWMutex
-var mutTransactions sync.RWMutex
-
 type Record struct {
 	Msisdn             string    `json:",omitempty"`
 	Tid                string    `json:",omitempty"`
@@ -226,6 +223,7 @@ type PreviuosSubscription struct {
 	CreatedAt time.Time
 }
 
+// CREATE INDEX xmp_subscriptions_prev_idx ON xmp_subscriptions (id, msisdn, id_service, created_at);
 func (t Record) GetPreviousSubscription(paidHours int) (PreviuosSubscription, error) {
 	begin := time.Now()
 	defer func() {
@@ -246,9 +244,6 @@ func (t Record) GetPreviousSubscription(paidHours int) (PreviuosSubscription, er
 		"(CURRENT_TIMESTAMP - "+strconv.Itoa(paidHours)+" * INTERVAL '1 hour' ) < created_at "+
 		"ORDER BY created_at ASC LIMIT 1",
 		conf.TablePrefix)
-
-	mutSubscriptions.Lock()
-	defer mutSubscriptions.Unlock()
 
 	var p PreviuosSubscription
 	if err := dbConn.QueryRow(query,
@@ -290,8 +285,6 @@ func (t Record) WriteTransaction() error {
 		") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
 		conf.TablePrefix)
 
-	mutTransactions.Lock()
-	defer mutTransactions.Unlock()
 	_, err := dbConn.Exec(
 		query,
 		t.Tid,
@@ -331,9 +324,6 @@ func (s Record) WriteSubscriptionStatus() error {
 		"attempts_count = attempts_count + 1, "+
 		"last_pay_attempt_at = $2 "+
 		"where id = $3", conf.TablePrefix)
-
-	mutSubscriptions.Lock()
-	defer mutSubscriptions.Unlock()
 
 	lastPayAttemptAt := time.Now()
 	_, err := dbConn.Exec(query,
