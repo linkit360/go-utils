@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strconv"
-	"sync"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -30,6 +29,7 @@ type Record struct {
 	AttemptsCount      int       `json:",omitempty"`
 	KeepDays           int       `json:",omitempty"`
 	DelayHours         int       `json:",omitempty"`
+	PaidHours          int       `json:",omitempty"`
 	OperatorName       string    `json:",omitempty"`
 	OperatorToken      string    `json:",omitempty"`
 	OperatorErr        string    `json:",omitempty"`
@@ -38,6 +38,7 @@ type Record struct {
 	Pixel              string    `json:",omitempty"`
 	Publisher          string    `json:",omitempty"`
 	SMSText            string    `json:",omitempty"`
+	Type               string    `json:"type,omitempty"`
 }
 
 var dbConn *sql.DB
@@ -51,67 +52,6 @@ func Init(dbC db.DataBaseConfig) {
 
 	DBErrors = m.NewGauge("", "", "db_errors", "DB errors pverall mt_manager")
 }
-
-func GetNotPaidSubscriptions(batchLimit int) ([]Record, error) {
-	begin := time.Now()
-	defer func() {
-		log.WithFields(log.Fields{
-			"took": time.Since(begin),
-		}).Debug("get notpaid subscriptions")
-	}()
-	var subscr []Record
-	query := fmt.Sprintf("SELECT "+
-		"id, "+
-		"tid, "+
-		"msisdn, "+
-		"pixel, "+
-		"publisher, "+
-		"id_service, "+
-		"id_campaign, "+
-		"operator_code, "+
-		"country_code, "+
-		"attempts_count "+
-		" FROM %ssubscriptions "+
-		" WHERE result = '' "+
-		" ORDER BY id DESC LIMIT %s",
-		conf.TablePrefix,
-		strconv.Itoa(batchLimit),
-	)
-	rows, err := dbConn.Query(query)
-	if err != nil {
-		DBErrors.Inc()
-		return subscr, fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		record := Record{}
-
-		if err := rows.Scan(
-			&record.SubscriptionId,
-			&record.Tid,
-			&record.Msisdn,
-			&record.Pixel,
-			&record.Publisher,
-			&record.ServiceId,
-			&record.CampaignId,
-			&record.OperatorCode,
-			&record.CountryCode,
-			&record.AttemptsCount,
-		); err != nil {
-			DBErrors.Inc()
-			return subscr, err
-		}
-		subscr = append(subscr, record)
-	}
-	if rows.Err() != nil {
-		DBErrors.Inc()
-		return subscr, fmt.Errorf("row.Err: %s", err.Error())
-	}
-
-	return subscr, nil
-}
-
 func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) {
 	begin := time.Now()
 	defer func() {
@@ -183,6 +123,7 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) 
 	}
 	return retries, nil
 }
+
 func setPendingStatus(ids []interface{}) error {
 	if len(ids) == 0 {
 		return nil
@@ -221,47 +162,51 @@ func setPendingStatus(ids []interface{}) error {
 type PreviuosSubscription struct {
 	Id        int64
 	CreatedAt time.Time
+	Msisdn    string
+	ServiceId int64
 }
 
-// CREATE INDEX xmp_subscriptions_prev_idx ON xmp_subscriptions (id, msisdn, id_service, created_at);
-func (t Record) GetPreviousSubscription(paidHours int) (PreviuosSubscription, error) {
-	begin := time.Now()
-	defer func() {
-		log.WithFields(log.Fields{
-			"tid":       t.Tid,
-			"paidHours": paidHours,
-			"took":      time.Since(begin),
-		}).Debug("get previous subscription")
-	}()
-
-	// get the very old first, but not elder than paidHours ago
+func LoadPreviousSubscriptions() ([]PreviuosSubscription, error) {
 	query := fmt.Sprintf("SELECT "+
 		"id, "+
+		"msisdn, "+
+		"id_service, "+
 		"created_at "+
 		"FROM %ssubscriptions "+
-		"WHERE id < $1 AND "+
-		"msisdn = $2 AND id_service = $3 AND "+
-		"(CURRENT_TIMESTAMP - "+strconv.Itoa(paidHours)+" * INTERVAL '1 hour' ) < created_at "+
-		"ORDER BY created_at ASC LIMIT 1",
+		"WHERE "+
+		"(CURRENT_TIMESTAMP - 24 * INTERVAL '1 hour' ) < created_at AND "+
+		"result IN ('paid', 'failed')",
 		conf.TablePrefix)
 
-	var p PreviuosSubscription
-	if err := dbConn.QueryRow(query,
-		t.SubscriptionId,
-		t.Msisdn,
-		t.ServiceId,
-	).Scan(
-		&p.Id,
-		&p.CreatedAt,
-	); err != nil {
-		if err == sql.ErrNoRows {
-			return p, err
-		}
+	prev := []PreviuosSubscription{}
+	rows, err := dbConn.Query(query)
+	if err != nil {
 		DBErrors.Inc()
-		return p, fmt.Errorf("db.QueryRow: %s, query: %s", err.Error(), query)
+		return prev, fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
 	}
-	return p, nil
+	defer rows.Close()
+
+	for rows.Next() {
+		var p PreviuosSubscription
+		if err := rows.Scan(
+			&p.Id,
+			&p.Msisdn,
+			&p.ServiceId,
+			&p.CreatedAt,
+		); err != nil {
+			DBErrors.Inc()
+			return prev, fmt.Errorf("Rows.Next: %s", err.Error())
+		}
+		prev = append(prev, p)
+	}
+
+	if rows.Err() != nil {
+		DBErrors.Inc()
+		return prev, fmt.Errorf("Rows.Err: %s", err.Error())
+	}
+	return prev, nil
 }
+
 func (t Record) WriteTransaction() error {
 	begin := time.Now()
 	defer func() {
@@ -337,7 +282,7 @@ func (s Record) WriteSubscriptionStatus() error {
 			"error ": err.Error(),
 			"query":  query,
 			"tid":    s.Tid,
-		}).Error("notify paid subscription failed")
+		}).Error("notify subscription failed")
 		return fmt.Errorf("db.Exec: %s, Query: %s", err.Error(), query)
 	}
 	return nil
@@ -417,12 +362,10 @@ func (r Record) StartRetry() error {
 		"msisdn, "+
 		"operator_code, "+
 		"country_code, "+
-		"pixel, "+
-		"publisher, "+
 		"id_service, "+
 		"id_subscription, "+
 		"id_campaign "+
-		") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
+		") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
 		conf.TablePrefix)
 	_, err := dbConn.Exec(query,
 		&r.Tid,
@@ -431,8 +374,6 @@ func (r Record) StartRetry() error {
 		&r.Msisdn,
 		&r.OperatorCode,
 		&r.CountryCode,
-		&r.Pixel,
-		&r.Publisher,
 		&r.ServiceId,
 		&r.SubscriptionId,
 		&r.CampaignId)

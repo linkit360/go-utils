@@ -1,48 +1,5 @@
-TRUNCATE TABLE public.xmp_subscriptions
-CONTINUE IDENTITY
-RESTRICT;
+-- access campaign
+alter table xmp_campaigns_access add column sent_at                     TIMESTAMP NOT NULL DEFAULT NOW();
+update xmp_campaigns_access set sent_at = access_at ;
 
-TRUNCATE TABLE public.xmp_user_actions
-CONTINUE IDENTITY
-RESTRICT;
-
-TRUNCATE TABLE public.xmp_campaigns_access
-CONTINUE IDENTITY
-RESTRICT;
-
-TRUNCATE TABLE public.xmp_transactions
-CONTINUE IDENTITY
-RESTRICT;
-
-TRUNCATE TABLE public.xmp_content_sent
-CONTINUE IDENTITY
-RESTRICT;
-
-TRUNCATE TABLE public.xmp_retries
-CONTINUE IDENTITY
-RESTRICT;
-
-TRUNCATE TABLE public.xmp_pixel_transactions
-CONTINUE IDENTITY
-RESTRICT;
-
-TRUNCATE TABLE public.xmp_operator_transaction_log
-CONTINUE IDENTITY
-RESTRICT;
-
-
-TRUNCATE TABLE public.xmp_pixel_transactions
-CONTINUE IDENTITY
-RESTRICT;
-
-TRUNCATE TABLE public.xmp_msisdn_blacklist
-CONTINUE IDENTITY
-RESTRICT;
-
-TRUNCATE TABLE public.xmp_msisdn_postpaid
-CONTINUE IDENTITY
-RESTRICT;
-
-TRUNCATE TABLE public.xmp_operator_transaction_log
-CONTINUE IDENTITY
-RESTRICT;
+-- content sent ok
