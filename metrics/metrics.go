@@ -58,6 +58,17 @@ func PrometheusGauge(namespace, subsystem, name, help string) prometheus.Gauge {
 	prometheus.MustRegister(gauge)
 	return gauge
 }
+func PrometheusGaugeLabel(namespace, subsystem, name, help string, labels map[string]string) prometheus.Gauge {
+	gauge := prometheus.NewGauge(prometheus.GaugeOpts{
+		Namespace:   namespace,
+		Subsystem:   subsystem,
+		Name:        name,
+		Help:        help,
+		ConstLabels: labels,
+	})
+	prometheus.MustRegister(gauge)
+	return gauge
+}
 
 // for duration
 func NewSummary(name, help string) prometheus.Summary {

@@ -44,6 +44,7 @@ type ConsumerMetrics struct {
 	Connected          prometheus.Gauge
 	ReconnectCount     prometheus.Gauge
 	AnnounceQueueError prometheus.Gauge
+	QueueSize          prometheus.Gauge
 }
 
 func newGaugeConsumer(name, help string) prometheus.Gauge {
@@ -54,10 +55,14 @@ func initConsumerMetrics(prefix string) ConsumerMetrics {
 	if prefix == "" {
 		log.Fatal("metrics prefix required")
 	}
+	//label := make(map[string]string, 1)
+	//label["queue"] = prefix
 	return ConsumerMetrics{
 		Connected:          newGaugeConsumer(prefix+"_connected", "connected"),
 		ReconnectCount:     newGaugeConsumer(prefix+"_reconnect_count", "reconnect count"),
 		AnnounceQueueError: newGaugeConsumer(prefix+"_announce_errors", "announce errors"),
+		QueueSize:          newGaugeConsumer(prefix+"_queue_size", prefix+" queue size"),
+		//QueueSize:          metrics.PrometheusGaugeLabel("", "", "queue_size", prefix+" queue size", label),
 	}
 }
 
@@ -83,7 +88,7 @@ type Consumer struct {
 	reconnectDelay     int
 }
 
-func NewConsumer(conf ConsumerConfig, metrcsPrefix string) *Consumer {
+func NewConsumer(conf ConsumerConfig, queueName string) *Consumer {
 	log.SetLevel(log.DebugLevel)
 	url := fmt.Sprintf("amqp://%s:%s@%s:%s",
 		conf.Conn.User,
@@ -92,7 +97,7 @@ func NewConsumer(conf ConsumerConfig, metrcsPrefix string) *Consumer {
 		conf.Conn.Port)
 
 	c := &Consumer{
-		m:                  initConsumerMetrics(metrcsPrefix),
+		m:                  initConsumerMetrics(queueName),
 		queuePrefetchCount: conf.QueuePrefetchCount,
 		conn:               nil,
 		channel:            nil,
@@ -105,6 +110,18 @@ func NewConsumer(conf ConsumerConfig, metrcsPrefix string) *Consumer {
 	}
 	log.WithField("consumer", conf).Info("consumer init")
 
+	go func() {
+		for range time.Tick(time.Minute) {
+			queueSize, err := c.GetQueueSize(queueName)
+			if err != nil {
+				log.WithFields(log.Fields{
+					"error": err.Error(),
+				}).Error("cannot get queue size")
+			} else {
+				c.m.QueueSize.Set(float64(queueSize))
+			}
+		}
+	}()
 	return c
 }
 
