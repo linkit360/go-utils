@@ -55,14 +55,11 @@ func initConsumerMetrics(prefix string) ConsumerMetrics {
 	if prefix == "" {
 		log.Fatal("metrics prefix required")
 	}
-	//label := make(map[string]string, 1)
-	//label["queue"] = prefix
 	return ConsumerMetrics{
 		Connected:          newGaugeConsumer(prefix+"_connected", "connected"),
 		ReconnectCount:     newGaugeConsumer(prefix+"_reconnect_count", "reconnect count"),
 		AnnounceQueueError: newGaugeConsumer(prefix+"_announce_errors", "announce errors"),
 		QueueSize:          newGaugeConsumer(prefix+"_queue_size", prefix+" queue size"),
-		//QueueSize:          metrics.PrometheusGaugeLabel("", "", "queue_size", prefix+" queue size", label),
 	}
 }
 
@@ -155,7 +152,7 @@ func (c *Consumer) ReConnect(queueName, bindingKey string) (<-chan amqp_driver.D
 		log.WithField("error", err.Error()).Error("Could not Anounce Queue")
 		return deliveries, fmt.Errorf("AnnounceQueue: %s", err.Error())
 	}
-	c.m.AnnounceQueueError.Dec()
+	c.m.AnnounceQueueError.Set(0)
 	return deliveries, nil
 }
 
@@ -233,6 +230,7 @@ func (c *Consumer) Connect() error {
 	//	return fmt.Errorf("rbmq consumer: exchange declare: %s", err)
 	//}
 
+	c.m.Connected.Set(1)
 	return nil
 }
 

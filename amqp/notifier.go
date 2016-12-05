@@ -108,6 +108,7 @@ func (n *Notifier) connect() error {
 	if err != nil {
 		return fmt.Errorf("Channel: %s", err)
 	}
+	n.m.Connected.Set(1)
 	log.Debug("rbmq notifier got channel")
 	return nil
 }

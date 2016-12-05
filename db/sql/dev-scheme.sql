@@ -352,7 +352,7 @@ CREATE TABLE xmp_publishers_attributes
   cpa_ratio DOUBLE PRECISION,
   status INTEGER
 );
-CREATE TYPE retry_status AS ENUM ('', 'pending');
+CREATE TYPE retry_status AS ENUM ('', 'pending', 'script');
 CREATE TABLE xmp_retries
 (
   id SERIAL PRIMARY KEY NOT NULL,
