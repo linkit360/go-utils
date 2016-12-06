@@ -606,9 +606,11 @@ CREATE TYPE user_action AS ENUM ('access', 'pull_click', 'content_get');
 CREATE TABLE xmp_user_actions (
   id serial PRIMARY KEY,
   tid  varchar(127) NOT NULL DEFAULT '',
+  id_campaign INTEGER DEFAULT 0 NOT NULL,
+  msisdn    varchar(32) NOT NULL DEFAULT '',
   action user_action NOT NULL,
   error varchar(511) NOT NULL DEFAULT '',
-  access_at                   TIMESTAMP NOT NULL DEFAULT NOW()
+  access_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE xmp_user_activity_logs
