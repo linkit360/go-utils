@@ -10,7 +10,6 @@ import (
 
 	"github.com/vostrok/utils/db"
 	m "github.com/vostrok/utils/metrics"
-	"strings"
 )
 
 type Record struct {
@@ -53,14 +52,21 @@ func Init(dbC db.DataBaseConfig) {
 	DBErrors = m.NewGauge("", "", "db_errors", "DB errors pverall mt_manager")
 }
 
-func GetPendingRetriesCount() (int, error) {
-	count := 0
+func GetPendingRetriesCount() (count int, err error) {
 	begin := time.Now()
 	defer func() {
-		log.WithFields(log.Fields{
-			"count": count,
-			"took":  time.Since(begin),
-		}).Debug("get retry transactions")
+		defer func() {
+			fields := log.Fields{
+				"took": time.Since(begin),
+			}
+			if err != nil {
+				fields["error"] = err.Error()
+				log.WithFields(fields).Error("get pending retries count failed")
+			} else {
+				fields["count"] = count
+				log.WithFields(fields).Debug("get pending retries")
+			}
+		}()
 	}()
 
 	query := fmt.Sprintf("SELECT count(*) count "+
@@ -68,7 +74,9 @@ func GetPendingRetriesCount() (int, error) {
 	rows, err := dbConn.Query(query)
 	if err != nil {
 		DBErrors.Inc()
-		return 0, fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+
+		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		return 0, err
 	}
 	defer rows.Close()
 
@@ -77,32 +85,45 @@ func GetPendingRetriesCount() (int, error) {
 			&count,
 		); err != nil {
 			DBErrors.Inc()
-			return count, fmt.Errorf("rows.Scan: %s", err.Error())
+
+			err = fmt.Errorf("rows.Scan: %s", err.Error())
+			return count, err
 		}
 	}
 	if rows.Err() != nil {
 		DBErrors.Inc()
-		return count, fmt.Errorf("get pending retries: rows.Err: %s", err.Error())
+
+		err = fmt.Errorf("get pending retries: rows.Err: %s", err.Error())
+		return count, err
 	}
 
 	return count, nil
 }
 
-func GetPendingSubscriptionsCount() (int, error) {
-	count := 0
+func GetPendingSubscriptionsCount() (count int, err error) {
 	begin := time.Now()
 	defer func() {
-		log.WithFields(log.Fields{
-			"count": count,
-			"took":  time.Since(begin),
-		}).Debug("get mo count")
+		defer func() {
+			fields := log.Fields{
+				"took": time.Since(begin),
+			}
+			if err != nil {
+				fields["error"] = err.Error()
+				log.WithFields(fields).Error("get mo count failed")
+			} else {
+				fields["count"] = count
+				log.WithFields(fields).Debug("get mo count")
+			}
+		}()
 	}()
 
 	query := fmt.Sprintf("SELECT count(*) count FROM %ssubscriptions WHERE result = ''", conf.TablePrefix)
 	rows, err := dbConn.Query(query)
 	if err != nil {
 		DBErrors.Inc()
-		return 0, fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+
+		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		return 0, err
 	}
 	defer rows.Close()
 
@@ -111,25 +132,37 @@ func GetPendingSubscriptionsCount() (int, error) {
 			&count,
 		); err != nil {
 			DBErrors.Inc()
-			return count, fmt.Errorf("rows.Scan: %s", err.Error())
+
+			err = fmt.Errorf("rows.Scan: %s", err.Error())
+			return count, err
 		}
 	}
 	if rows.Err() != nil {
 		DBErrors.Inc()
-		return count, fmt.Errorf("get pending subscriptions: rows.Err: %s", err.Error())
+
+		err = fmt.Errorf("get pending subscriptions: rows.Err: %s", err.Error())
+		return count, err
 	}
 
 	return count, nil
 }
 
-func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) {
+func GetRetryTransactions(operatorCode int64, batchLimit int) (records []Record, err error) {
 	begin := time.Now()
 	defer func() {
-		log.WithFields(log.Fields{
-			"took": time.Since(begin),
-		}).Debug("get retry transactions")
+		defer func() {
+			fields := log.Fields{
+				"took": time.Since(begin),
+			}
+			if err != nil {
+				fields["error"] = err.Error()
+				log.WithFields(fields).Error("load retries failed")
+			} else {
+				fields["count"] = len(records)
+				log.WithFields(fields).Debug("load retries")
+			}
+		}()
 	}()
-
 	var retries []Record
 	query := fmt.Sprintf("SELECT "+
 		"id, "+
@@ -155,7 +188,9 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) 
 	rows, err := dbConn.Query(query, operatorCode)
 	if err != nil {
 		DBErrors.Inc()
-		return []Record{}, fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+
+		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		return []Record{}, err
 	}
 	defer rows.Close()
 
@@ -185,67 +220,64 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) 
 	}
 	if rows.Err() != nil {
 		DBErrors.Inc()
-		return []Record{}, fmt.Errorf("GetRetries RowsError: %s", err.Error())
-	}
 
-	if err := SetRetryStatus("pending", retryIds); err != nil {
+		err = fmt.Errorf("GetRetries RowsError: %s", err.Error())
 		return []Record{}, err
 	}
 	return retries, nil
 }
 
-func SetRetryStatus(status string, ids []interface{}) error {
-	if len(ids) == 0 {
+func SetRetryStatus(status string, id int64) (err error) {
+	if id == 0 {
 		return nil
 	}
 	begin := time.Now()
 	defer func() {
-		log.WithFields(log.Fields{
+		fields := log.Fields{
 			"status": status,
-			"count":  len(ids),
+			"id":     id,
 			"took":   time.Since(begin),
-		}).Debug("update pending retries")
+		}
+		if err != nil {
+			fields["error"] = err.Error()
+			log.WithFields(fields).Error("set status failed")
+		} else {
+			log.WithFields(fields).Debug("set status")
+		}
 	}()
-
-	queryArgs := []interface{}{}
-	updatedAt := time.Now()
-	queryArgs = append(queryArgs, status)
-	queryArgs = append(queryArgs, updatedAt)
-	paramStr := []string{}
-	for i, v := range ids {
-		j := i + 3
-		paramStr = append(paramStr, "$"+strconv.Itoa(j))
-		queryArgs = append(queryArgs, v)
-	}
 
 	query := fmt.Sprintf("UPDATE %sretries SET "+
 		"status = $1, "+
 		"updated_at = $2 "+
-		"WHERE id IN ("+strings.Join(paramStr, ", ")+")", conf.TablePrefix)
+		"WHERE id = $3", conf.TablePrefix)
 
-	_, err := dbConn.Exec(query, queryArgs...)
+	updatedAt := time.Now()
+	_, err = dbConn.Exec(query, status, updatedAt, id)
 	if err != nil {
 		DBErrors.Inc()
 
-		err = fmt.Errorf("dbConn.Exec: %s", err.Error())
-		log.WithFields(log.Fields{
-			"error ": err.Error(),
-			"query":  query,
-			"params": queryArgs,
-		}).Error("update retry failed")
+		err = fmt.Errorf("dbConn.Exec: %s, Query: %s", err.Error(), query)
 		return err
 	}
 	return nil
 }
 
-func LoadPendingRetries(hoursPassed int, operatorCode int64, batchLimit int) ([]Record, error) {
+func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (records []Record, err error) {
 	var retries []Record
 	begin := time.Now()
 	defer func() {
-		log.WithFields(log.Fields{
-			"took":  time.Since(begin),
-			"count": len(retries),
-		}).Debug("get pending retry transactions")
+		defer func() {
+			fields := log.Fields{
+				"took": time.Since(begin),
+			}
+			if err != nil {
+				fields["error"] = err.Error()
+				log.WithFields(fields).Error("load retries failed")
+			} else {
+				fields["count"] = len(records)
+				log.WithFields(fields).Debug("load retries")
+			}
+		}()
 	}()
 	query := fmt.Sprintf("SELECT "+
 		"id, "+
@@ -272,7 +304,8 @@ func LoadPendingRetries(hoursPassed int, operatorCode int64, batchLimit int) ([]
 	rows, err := dbConn.Query(query, operatorCode)
 	if err != nil {
 		DBErrors.Inc()
-		return []Record{}, fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		return []Record{}, err
 	}
 	defer rows.Close()
 
@@ -294,7 +327,9 @@ func LoadPendingRetries(hoursPassed int, operatorCode int64, batchLimit int) ([]
 			&record.CampaignId,
 		); err != nil {
 			DBErrors.Inc()
-			return []Record{}, fmt.Errorf("Rows.Next: %s", err.Error())
+
+			err = fmt.Errorf("Rows.Next: %s", err.Error())
+			return []Record{}, err
 		}
 
 		retries = append(retries, record)
@@ -302,9 +337,8 @@ func LoadPendingRetries(hoursPassed int, operatorCode int64, batchLimit int) ([]
 	}
 	if rows.Err() != nil {
 		DBErrors.Inc()
-		return []Record{}, fmt.Errorf("rows.Error: %s", err.Error())
-	}
-	if err := SetRetryStatus("script", retryIds); err != nil {
+
+		err = fmt.Errorf("rows.Error: %s", err.Error())
 		return []Record{}, err
 	}
 	return retries, nil
@@ -317,7 +351,22 @@ type PreviuosSubscription struct {
 	ServiceId int64
 }
 
-func LoadPreviousSubscriptions() ([]PreviuosSubscription, error) {
+func LoadPreviousSubscriptions() (records []PreviuosSubscription, err error) {
+	begin := time.Now()
+	defer func() {
+		defer func() {
+			fields := log.Fields{
+				"took": time.Since(begin),
+			}
+			if err != nil {
+				fields["error"] = err.Error()
+				log.WithFields(fields).Error("load previous subscriptions failed")
+			} else {
+				fields["count"] = len(records)
+				log.WithFields(fields).Debug("load previous subscriptions ")
+			}
+		}()
+	}()
 	query := fmt.Sprintf("SELECT "+
 		"id, "+
 		"msisdn, "+
@@ -333,7 +382,9 @@ func LoadPreviousSubscriptions() ([]PreviuosSubscription, error) {
 	rows, err := dbConn.Query(query)
 	if err != nil {
 		DBErrors.Inc()
-		return prev, fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+
+		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		return prev, err
 	}
 	defer rows.Close()
 
@@ -346,338 +397,18 @@ func LoadPreviousSubscriptions() ([]PreviuosSubscription, error) {
 			&p.CreatedAt,
 		); err != nil {
 			DBErrors.Inc()
-			return prev, fmt.Errorf("Rows.Next: %s", err.Error())
+
+			err = fmt.Errorf("Rows.Next: %s", err.Error())
+			return prev, err
 		}
 		prev = append(prev, p)
 	}
 
 	if rows.Err() != nil {
 		DBErrors.Inc()
-		return prev, fmt.Errorf("Rows.Err: %s", err.Error())
+
+		err = fmt.Errorf("Rows.Err: %s", err.Error())
+		return prev, err
 	}
 	return prev, nil
-}
-
-func (t Record) WriteTransaction() error {
-	begin := time.Now()
-	defer func() {
-		log.WithFields(log.Fields{
-			"tid":    t.Tid,
-			"took":   time.Since(begin),
-			"result": t.Result,
-		}).Debug("write transaction")
-	}()
-	query := fmt.Sprintf("INSERT INTO %stransactions ("+
-		"tid, "+
-		"msisdn, "+
-		"result, "+
-		"operator_code, "+
-		"country_code, "+
-		"id_service, "+
-		"id_subscription, "+
-		"id_campaign, "+
-		"operator_token, "+
-		"price "+
-		") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
-		conf.TablePrefix)
-
-	_, err := dbConn.Exec(
-		query,
-		t.Tid,
-		t.Msisdn,
-		t.Result,
-		t.OperatorCode,
-		t.CountryCode,
-		t.ServiceId,
-		t.SubscriptionId,
-		t.CampaignId,
-		t.OperatorToken,
-		int(t.Price),
-	)
-	if err != nil {
-		DBErrors.Inc()
-		log.WithFields(log.Fields{
-			"error ": err.Error(),
-			"query":  query,
-			"tid":    t.Tid,
-		}).Error("record transaction failed")
-		return fmt.Errorf("db.Exec: %s, Query: %s", err.Error(), query)
-	}
-	return nil
-}
-
-func WriteTransaction(t Record) error {
-	begin := time.Now()
-	defer func() {
-		log.WithFields(log.Fields{
-			"tid":    t.Tid,
-			"took":   time.Since(begin),
-			"result": t.Result,
-		}).Debug("write transaction")
-	}()
-	query := fmt.Sprintf("INSERT INTO %stransactions ("+
-		"tid, "+
-		"created_at, "+
-		"msisdn, "+
-		"result, "+
-		"operator_code, "+
-		"country_code, "+
-		"id_service, "+
-		"id_subscription, "+
-		"id_campaign, "+
-		"operator_token, "+
-		"price "+
-		") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
-		conf.TablePrefix)
-
-	_, err := dbConn.Exec(
-		query,
-		t.Tid,
-		t.CreatedAt,
-		t.Msisdn,
-		t.Result,
-		t.OperatorCode,
-		t.CountryCode,
-		t.ServiceId,
-		t.SubscriptionId,
-		t.CampaignId,
-		t.OperatorToken,
-		int(t.Price),
-	)
-	if err != nil {
-		DBErrors.Inc()
-		log.WithFields(log.Fields{
-			"error ": err.Error(),
-			"query":  query,
-			"tid":    t.Tid,
-		}).Error("record transaction failed")
-		return fmt.Errorf("db.Exec: %s, Query: %s", err.Error(), query)
-	}
-	return nil
-}
-func (s Record) WriteSubscriptionStatus() error {
-	begin := time.Now()
-	defer func() {
-		log.WithFields(log.Fields{
-			"tid":    s.Tid,
-			"took":   time.Since(begin),
-			"status": s.SubscriptionStatus,
-		}).Debug("write subscription status")
-	}()
-	query := fmt.Sprintf("UPDATE %ssubscriptions SET "+
-		"result = $1, "+
-		"attempts_count = attempts_count + 1, "+
-		"last_pay_attempt_at = $2 "+
-		"where id = $3", conf.TablePrefix)
-
-	now := time.Now()
-	_, err := dbConn.Exec(query,
-		s.SubscriptionStatus,
-		now,
-		s.SubscriptionId,
-	)
-	if err != nil {
-		DBErrors.Inc()
-		log.WithFields(log.Fields{
-			"error ": err.Error(),
-			"query":  query,
-			"tid":    s.Tid,
-		}).Error("notify subscription failed")
-		return fmt.Errorf("db.Exec: %s, Query: %s", err.Error(), query)
-	}
-	return nil
-}
-
-func WriteSubscriptionStatus(s Record) error {
-	begin := time.Now()
-	defer func() {
-		log.WithFields(log.Fields{
-			"tid":    s.Tid,
-			"took":   time.Since(begin),
-			"status": s.SubscriptionStatus,
-		}).Debug("write subscription status")
-	}()
-	query := fmt.Sprintf("UPDATE %ssubscriptions SET "+
-		"result = $1, "+
-		"attempts_count = attempts_count + 1, "+
-		"last_pay_attempt_at = $2 "+
-		"where id = $3", conf.TablePrefix)
-
-	_, err := dbConn.Exec(query,
-		s.SubscriptionStatus,
-		s.LastPayAttemptAt,
-		s.SubscriptionId,
-	)
-	if err != nil {
-		DBErrors.Inc()
-		log.WithFields(log.Fields{
-			"error ": err.Error(),
-			"query":  query,
-			"tid":    s.Tid,
-		}).Error("notify subscription failed")
-		return fmt.Errorf("db.Exec: %s, Query: %s", err.Error(), query)
-	}
-	return nil
-}
-
-func (r Record) RemoveRetry() error {
-	begin := time.Now()
-	defer func() {
-		log.WithFields(log.Fields{
-			"result": r.Result,
-			"tid":    r.Tid,
-			"took":   time.Since(begin),
-		}).Debug("remove retry")
-	}()
-	query := fmt.Sprintf("DELETE FROM %sretries WHERE id = $1", conf.TablePrefix)
-
-	_, err := dbConn.Exec(query, r.RetryId)
-	if err != nil {
-		DBErrors.Inc()
-		log.WithFields(log.Fields{
-			"error ": err.Error(),
-			"query":  query,
-			"tid":    r.Tid,
-		}).Error("delete retry failed")
-		return fmt.Errorf("db.Exec: %s, query: %s", err.Error(), query)
-	}
-	return nil
-}
-
-func (r Record) TouchRetry() error {
-	begin := time.Now()
-	defer func() {
-		log.WithFields(log.Fields{
-			"result": r.Result,
-			"tid":    r.Tid,
-			"took":   time.Since(begin),
-		}).Debug("touch retry")
-	}()
-	query := fmt.Sprintf("UPDATE %sretries SET "+
-		"status = '', "+
-		"last_pay_attempt_at = $1, "+
-		"attempts_count = attempts_count + 1 "+
-		"WHERE id = $2", conf.TablePrefix)
-
-	lastPayAttemptAt := time.Now()
-
-	_, err := dbConn.Exec(query, lastPayAttemptAt, r.RetryId)
-	if err != nil {
-		DBErrors.Inc()
-		log.WithFields(log.Fields{
-			"error ": err.Error(),
-			"query":  query,
-			"retry":  fmt.Sprintf("%#v", r),
-		}).Error("update retry failed")
-		return fmt.Errorf("db.Exec: %s, query: %s", err.Error(), query)
-	}
-	return nil
-}
-
-func TouchRetry(r Record) error {
-	begin := time.Now()
-	defer func() {
-		log.WithFields(log.Fields{
-			"tid":  r.Tid,
-			"took": time.Since(begin),
-		}).Debug("touch retry")
-	}()
-	query := fmt.Sprintf("UPDATE %sretries SET "+
-		"status = '', "+
-		"last_pay_attempt_at = $1, "+
-		"attempts_count = attempts_count + 1 "+
-		"WHERE id = $2", conf.TablePrefix)
-
-	_, err := dbConn.Exec(query, r.LastPayAttemptAt, r.RetryId)
-	if err != nil {
-		DBErrors.Inc()
-		log.WithFields(log.Fields{
-			"error ": err.Error(),
-			"query":  query,
-			"retry":  fmt.Sprintf("%#v", r),
-		}).Error("update retry failed")
-		return fmt.Errorf("db.Exec: %s, query: %s", err.Error(), query)
-	}
-	return nil
-}
-
-func (r Record) StartRetry() error {
-	begin := time.Now()
-	defer func() {
-		log.WithFields(log.Fields{
-			"tid":  r.Tid,
-			"took": time.Since(begin),
-		}).Debug("add retry")
-	}()
-	if r.KeepDays == 0 {
-		return fmt.Errorf("Retry Keep Days required, service id: %s", r.ServiceId)
-	}
-	if r.DelayHours == 0 {
-		return fmt.Errorf("Retry Delay Hours required, service id: %s", r.ServiceId)
-	}
-
-	query := fmt.Sprintf("INSERT INTO  %sretries ("+
-		"tid, "+
-		"keep_days, "+
-		"delay_hours, "+
-		"msisdn, "+
-		"operator_code, "+
-		"country_code, "+
-		"id_service, "+
-		"id_subscription, "+
-		"id_campaign "+
-		") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
-		conf.TablePrefix)
-	_, err := dbConn.Exec(query,
-		&r.Tid,
-		&r.KeepDays,
-		&r.DelayHours,
-		&r.Msisdn,
-		&r.OperatorCode,
-		&r.CountryCode,
-		&r.ServiceId,
-		&r.SubscriptionId,
-		&r.CampaignId)
-	if err != nil {
-		DBErrors.Inc()
-		return fmt.Errorf("db.Exec: %s, query: %s", err.Error(), query)
-	}
-	return nil
-}
-
-func (r Record) AddBlacklistedNumber() error {
-	begin := time.Now()
-	defer func() {
-		log.WithFields(log.Fields{
-			"tid":    r.Tid,
-			"msisdn": r.Msisdn,
-			"took":   time.Since(begin),
-		}).Debug("add blacklisted")
-	}()
-
-	query := fmt.Sprintf("INSERT INTO  %smsisdn_blacklist ( msisdn ) VALUES ($1)",
-		conf.TablePrefix)
-	if _, err := dbConn.Exec(query, &r.Msisdn); err != nil {
-		DBErrors.Inc()
-		return fmt.Errorf("db.Exec: %s, query: %s", err.Error(), query)
-	}
-	return nil
-}
-
-func (r Record) AddPostPaidNumber() error {
-	begin := time.Now()
-	defer func() {
-		log.WithFields(log.Fields{
-			"tid":    r.Tid,
-			"msisdn": r.Msisdn,
-			"took":   time.Since(begin),
-		}).Debug("add postpaid")
-	}()
-
-	query := fmt.Sprintf("INSERT INTO %smsisdn_postpaid ( msisdn ) VALUES ($1)", conf.TablePrefix)
-	if _, err := dbConn.Exec(query, &r.Msisdn); err != nil {
-		DBErrors.Inc()
-		return fmt.Errorf("db.Exec: %s, query: %s", err.Error(), query)
-	}
-	return nil
 }
