@@ -6,8 +6,14 @@ package amqp
 // metrics avialable, do not forget to add handler for /var/debug
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -19,12 +25,16 @@ import (
 
 type Notifier struct {
 	url            string
+	conf           NotifierConfig
 	reconnectDelay int
+	stop           bool
 	done           chan error
 	conn           *amqp_driver.Connection
 	channel        *amqp_driver.Channel
 	m              NotifierMetrics
 	publishCh      chan AMQPMessage
+	signalsCh      chan os.Signal
+	FinishCh       chan bool
 }
 type ConnectionConfig struct {
 	User string `yaml:"user" default:"linkit"`
@@ -36,31 +46,76 @@ type NotifierConfig struct {
 	Conn           ConnectionConfig `yaml:"conn"`
 	ReconnectDelay int              `default:"10" yaml:"reconnect_delay"`
 	ChanCapacity   int64            `default:"1000000" yaml:"chan_capacity"`
+	BufferPath     string           `yaml:"pending_buffer_path"`
 }
 
 func NewNotifier(c NotifierConfig) *Notifier {
 	connectionUrl := fmt.Sprintf("amqp://%s:%s@%s:%s", c.Conn.User, c.Conn.Pass, c.Conn.Host, c.Conn.Port)
 	notifier := &Notifier{
 		url:            connectionUrl,
+		conf:           c,
 		reconnectDelay: c.ReconnectDelay,
 		done:           make(chan error),
 		conn:           nil,
 		channel:        nil,
 		m:              initNotifierMetrics(),
 		publishCh:      make(chan AMQPMessage, c.ChanCapacity),
+		signalsCh:      make(chan os.Signal, 1),
+		FinishCh:       make(chan bool, 1),
+	}
+	if notifier.conf.BufferPath == "" {
+		log.Fatal("No buffer path (pending_buffer_path)")
 	}
 	if err := notifier.connect(); err != nil {
 		log.Fatal("Connect error ", err.Error())
 	}
+
+	notifier.restoreState()
+
 	go func() {
 		notifier.publisher()
 	}()
+
+	signal.Notify(notifier.signalsCh, syscall.SIGINT, syscall.SIGTERM)
 
 	return notifier
 }
 
 func (n *Notifier) Publish(msg AMQPMessage) {
 	n.publishCh <- msg
+}
+
+func (n *Notifier) restoreState() {
+
+	fh, err := os.Open(n.conf.BufferPath)
+	if err != nil {
+		log.WithField("error", err.Error()).Info("cannot open pending buffer file")
+		return
+	}
+	bufferBytes := bytes.NewBuffer(nil)
+	_, err = io.Copy(bufferBytes, fh)
+	if err != nil {
+		log.WithField("error", err.Error()).Error("rbmq notifier cannot copy from buffer file")
+		return
+	}
+	if err := fh.Close(); err != nil {
+		log.WithField("error", err.Error()).Error("rbmq notifier cannot close buffer fh")
+		return
+	}
+	var buf []AMQPMessage
+	if err := json.Unmarshal(bufferBytes.Bytes(), buf); err != nil {
+		log.WithField("error", err.Error()).Error("rbmq notifier cannot unmarshal")
+		return
+	}
+	log.WithField("count", len(buf)).Debug("rbmq notifier restore state")
+	for _, msg := range buf {
+		n.Publish(msg)
+	}
+}
+
+type Buffer struct {
+	Reading chan AMQPMessage `json:"reading"`
+	Pending chan AMQPMessage `json:"pending"`
 }
 
 func (n *Notifier) GetQueueSize(queue string) (int, error) {
@@ -162,6 +217,10 @@ func (n *Notifier) publisher() {
 
 	go func() {
 		for {
+			if n.stop {
+				return
+			}
+
 			var msg AMQPMessage
 			msg, running = <-reading
 			if !running {
@@ -176,8 +235,37 @@ func (n *Notifier) publisher() {
 	}()
 
 	for {
+		if n.stop {
+			return
+		}
 		var msg AMQPMessage
 		select {
+		case sig := <-n.signalsCh:
+			n.stop = true
+			log.WithField("signal", sig.String()).Info("rbmq notifier cought a signal")
+			buf := []AMQPMessage{}
+			for msg := range n.publishCh {
+				buf = append(buf, msg)
+			}
+			for msg := range pending {
+				buf = append(buf, msg)
+			}
+			out, err := json.Marshal(buf)
+			if err != nil {
+				log.WithField("pending", fmt.Sprintf("%#v", buf)).
+					Error("rbmq notifier cannot marshal pending buffer")
+			} else {
+				fh, err := os.OpenFile(n.conf.BufferPath, os.O_CREATE|os.O_RDWR, 0744)
+				if err != nil {
+					log.WithField("pending", fmt.Sprintf("%#v", buf)).
+						Error("rbmq notifier opern file for pending buffer")
+				} else {
+					fh.Write(out)
+					fh.Close()
+				}
+			}
+			n.FinishCh <- true
+
 		case <-n.done:
 			err := n.reConnect()
 			if err != nil {
@@ -188,6 +276,9 @@ func (n *Notifier) publisher() {
 			}
 
 		case msg = <-pending:
+			if n.stop {
+				return
+			}
 			q, err := n.channel.QueueDeclare(
 				msg.QueueName, // name
 				false,         // durable
@@ -230,6 +321,7 @@ func (n *Notifier) publisher() {
 			log.WithFields(log.Fields{"queue": msg.QueueName, "body": string(msg.Body)}).Info("rbmq: publish")
 		}
 	}
+
 }
 
 type NotifierMetrics struct {
