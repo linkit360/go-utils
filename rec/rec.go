@@ -23,6 +23,7 @@ type Record struct {
 	SubscriptionId     int64     `json:",omitempty"`
 	CampaignId         int64     `json:",omitempty"`
 	RetryId            int64     `json:",omitempty"`
+	SentAt             time.Time `json:",omitempty"`
 	CreatedAt          time.Time `json:",omitempty"`
 	LastPayAttemptAt   time.Time `json:",omitempty"`
 	AttemptsCount      int       `json:",omitempty"`
@@ -37,7 +38,7 @@ type Record struct {
 	Pixel              string    `json:",omitempty"`
 	Publisher          string    `json:",omitempty"`
 	SMSText            string    `json:",omitempty"`
-	Type               string    `json:"type,omitempty"`
+	SMSSend            bool      `json:",omitempty"`
 }
 
 var dbConn *sql.DB
@@ -146,7 +147,6 @@ func GetPendingSubscriptionsCount() (count int, err error) {
 
 	return count, nil
 }
-
 func GetRetryTransactions(operatorCode int64, batchLimit int) (records []Record, err error) {
 	begin := time.Now()
 	defer func() {
@@ -171,7 +171,9 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) (records []Record,
 		"last_pay_attempt_at, "+
 		"attempts_count, "+
 		"keep_days, "+
+		"delay_hours, "+
 		"msisdn, "+
+		"price, "+
 		"operator_code, "+
 		"country_code, "+
 		"id_service, "+
@@ -204,7 +206,9 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) (records []Record,
 			&record.LastPayAttemptAt,
 			&record.AttemptsCount,
 			&record.KeepDays,
+			&record.DelayHours,
 			&record.Msisdn,
+			&record.Price,
 			&record.OperatorCode,
 			&record.CountryCode,
 			&record.ServiceId,
@@ -375,7 +379,7 @@ func LoadPreviousSubscriptions() (records []PreviuosSubscription, err error) {
 		"FROM %ssubscriptions "+
 		"WHERE "+
 		"(CURRENT_TIMESTAMP - 24 * INTERVAL '1 hour' ) < created_at AND "+
-		"result IN ('paid', 'failed')",
+		"result IN ('', 'paid', 'failed')",
 		conf.TablePrefix)
 
 	prev := []PreviuosSubscription{}

@@ -33,7 +33,7 @@ type Notifier struct {
 	channel        *amqp_driver.Channel
 	m              NotifierMetrics
 	publishCh      chan AMQPMessage
-	signalsCh      chan os.Signal
+	pendingCh      chan AMQPMessage
 	FinishCh       chan bool
 }
 type ConnectionConfig struct {
@@ -60,57 +60,25 @@ func NewNotifier(c NotifierConfig) *Notifier {
 		channel:        nil,
 		m:              initNotifierMetrics(),
 		publishCh:      make(chan AMQPMessage, c.ChanCapacity),
-		signalsCh:      make(chan os.Signal, 1),
-		FinishCh:       make(chan bool, 1),
+		pendingCh:      make(chan AMQPMessage, c.ChanCapacity),
 	}
 	if notifier.conf.BufferPath == "" {
 		log.Fatal("No buffer path (pending_buffer_path)")
 	}
+
+	go notifier.publisher()
 	if err := notifier.connect(); err != nil {
-		log.Fatal("Connect error ", err.Error())
+		log.Error("Connect error ", err.Error())
+		notifier.reConnect()
 	}
-
-	notifier.restoreState()
-
-	go func() {
-		notifier.publisher()
-	}()
-
-	signal.Notify(notifier.signalsCh, syscall.SIGINT, syscall.SIGTERM)
-
 	return notifier
 }
 
 func (n *Notifier) Publish(msg AMQPMessage) {
+	if msg.QueueName == "" {
+		log.Error("empty queue name")
+	}
 	n.publishCh <- msg
-}
-
-func (n *Notifier) restoreState() {
-
-	fh, err := os.Open(n.conf.BufferPath)
-	if err != nil {
-		log.WithField("error", err.Error()).Info("cannot open pending buffer file")
-		return
-	}
-	bufferBytes := bytes.NewBuffer(nil)
-	_, err = io.Copy(bufferBytes, fh)
-	if err != nil {
-		log.WithField("error", err.Error()).Error("rbmq notifier cannot copy from buffer file")
-		return
-	}
-	if err := fh.Close(); err != nil {
-		log.WithField("error", err.Error()).Error("rbmq notifier cannot close buffer fh")
-		return
-	}
-	var buf []AMQPMessage
-	if err := json.Unmarshal(bufferBytes.Bytes(), buf); err != nil {
-		log.WithField("error", err.Error()).Error("rbmq notifier cannot unmarshal")
-		return
-	}
-	log.WithField("count", len(buf)).Debug("rbmq notifier restore state")
-	for _, msg := range buf {
-		n.Publish(msg)
-	}
 }
 
 type Buffer struct {
@@ -124,13 +92,8 @@ getQueueSize:
 	if err != nil {
 		if err == amqp_driver.ErrClosed {
 			log.Info("rbmq notifier try to reconnect")
-			if err := n.reConnect(); err != nil {
-				log.WithField("error", err.Error()).Error("rbmq notifier reconnect failed")
-				return 0, err
-			} else {
-
-				goto getQueueSize
-			}
+			n.reConnect()
+			goto getQueueSize
 		}
 		err = fmt.Errorf("channel.QueueInspect: %s", err.Error())
 		log.WithFields(log.Fields{
@@ -168,7 +131,7 @@ func (n *Notifier) connect() error {
 	return nil
 }
 
-func (n *Notifier) reConnect() error {
+func (n *Notifier) reConnect() {
 
 	for {
 		log.WithField("reconnectDelay", n.reconnectDelay).Info("rbmq notifier reconnects...")
@@ -187,7 +150,6 @@ func (n *Notifier) reConnect() error {
 
 	n.m.Connected.Set(1)
 	n.m.ReconnectCount.Set(0)
-	return nil
 }
 
 type EventNotify struct {
@@ -201,17 +163,11 @@ type AMQPMessage struct {
 }
 
 func (n *Notifier) publisher() {
-
-	var (
-		running bool
-		reading = n.publishCh
-		pending = make(chan AMQPMessage, cap(n.publishCh))
-	)
-
+	var running bool
 	go func() {
 		for range time.Tick(1 * time.Second) {
-			n.m.PendingBuffer.Set(float64(len(pending)))
-			n.m.ReadingBuffer.Set(float64(len(reading)))
+			n.m.PendingBuffer.Set(float64(len(n.pendingCh)))
+			n.m.ReadingBuffer.Set(float64(len(n.publishCh)))
 		}
 	}()
 
@@ -222,14 +178,14 @@ func (n *Notifier) publisher() {
 			}
 
 			var msg AMQPMessage
-			msg, running = <-reading
+			msg, running = <-n.publishCh
 			if !running {
 				log.WithField("rbmq", "!running").Info("rbmq notifier")
 				return
 			}
 
-			if pending <- msg; len(pending) > 0 {
-				log.WithField("rbmq_pending", len(pending)).Info("rbmq notifier")
+			if n.pendingCh <- msg; len(n.pendingCh) > 0 {
+				log.WithField("rbmq_pending", len(n.pendingCh)).Info("rbmq notifier")
 			}
 		}
 	}()
@@ -240,44 +196,13 @@ func (n *Notifier) publisher() {
 		}
 		var msg AMQPMessage
 		select {
-		case sig := <-n.signalsCh:
-			n.stop = true
-			log.WithField("signal", sig.String()).Info("rbmq notifier cought a signal")
-			buf := []AMQPMessage{}
-			for msg := range n.publishCh {
-				buf = append(buf, msg)
-			}
-			for msg := range pending {
-				buf = append(buf, msg)
-			}
-			out, err := json.Marshal(buf)
-			if err != nil {
-				log.WithField("pending", fmt.Sprintf("%#v", buf)).
-					Error("rbmq notifier cannot marshal pending buffer")
-			} else {
-				fh, err := os.OpenFile(n.conf.BufferPath, os.O_CREATE|os.O_RDWR, 0744)
-				if err != nil {
-					log.WithField("pending", fmt.Sprintf("%#v", buf)).
-						Error("rbmq notifier opern file for pending buffer")
-				} else {
-					fh.Write(out)
-					fh.Close()
-				}
-			}
-			n.FinishCh <- true
-
 		case <-n.done:
-			err := n.reConnect()
-			if err != nil {
-				// Very likely chance of failing should not cause worker to terminate
-				log.WithField("error", err.Error()).Error("rbmq notifier reconnect failed")
-			} else {
-				log.Info("rbmq notifier: reconnected")
-			}
+			n.reConnect()
+			log.Info("rbmq notifier: reconnected")
 
-		case msg = <-pending:
+		case msg = <-n.pendingCh:
 			if n.stop {
-				return
+				break
 			}
 			q, err := n.channel.QueueDeclare(
 				msg.QueueName, // name
@@ -292,8 +217,8 @@ func (n *Notifier) publisher() {
 				n.m.PublishErrs.Inc()
 				n.conn.Close()
 
-				pending <- msg
-				err = fmt.Errorf("Channel.QueueDeclare: %s", err.Error())
+				n.pendingCh <- msg
+				err = fmt.Errorf("%s Channel.QueueDeclare: %s", msg.QueueName, err.Error())
 				log.WithField("error", err.Error()).Error("rbmq notifier queue declare failed")
 				break
 			}
@@ -313,12 +238,17 @@ func (n *Notifier) publisher() {
 				n.m.PublishErrs.Inc()
 				n.conn.Close()
 
-				pending <- msg
-				err = fmt.Errorf("Channel.Publish: %s", err.Error())
+				n.pendingCh <- msg
+				err = fmt.Errorf("%s Channel.Publish: %s", msg.QueueName, err.Error())
 				log.WithField("error", err.Error()).Error("rbmq notifier publish failed")
 				break
 			}
-			log.WithFields(log.Fields{"queue": msg.QueueName, "body": string(msg.Body)}).Info("rbmq: publish")
+
+			log.WithFields(log.Fields{
+				"queue": msg.QueueName,
+				"q":     q.Name,
+				"body":  string(msg.Body),
+			}).Info("rbmq: publish")
 		}
 	}
 
@@ -346,4 +276,60 @@ func initNotifierMetrics() NotifierMetrics {
 		ReadingBuffer:   m.PrometheusGauge("rbmq", "notifier", "buffer_reading_gauge_size", "publisher reading buffer size"),
 	}
 	return metrics
+}
+
+func (n *Notifier) RestoreState() {
+
+	fh, err := os.Open(n.conf.BufferPath)
+	if err != nil {
+		log.WithField("error", err.Error()).Info("cannot open pending buffer file")
+		return
+	}
+	bufferBytes := bytes.NewBuffer(nil)
+	_, err = io.Copy(bufferBytes, fh)
+	if err != nil {
+		log.WithField("error", err.Error()).Error("rbmq notifier cannot copy from buffer file")
+		return
+	}
+	if err := fh.Close(); err != nil {
+		log.WithField("error", err.Error()).Error("rbmq notifier cannot close buffer fh")
+		return
+	}
+	var buf []AMQPMessage
+	if err := json.Unmarshal(bufferBytes.Bytes(), buf); err != nil {
+		log.WithField("error", err.Error()).Error("rbmq notifier cannot unmarshal")
+		return
+	}
+	log.WithField("count", len(buf)).Debug("rbmq notifier restore state")
+	for _, msg := range buf {
+		n.Publish(msg)
+
+	}
+}
+
+func (n *Notifier) SaveState() {
+	n.stop = true
+
+	buf := []AMQPMessage{}
+	for msg := range n.publishCh {
+		buf = append(buf, msg)
+	}
+	for msg := range n.pendingCh {
+		buf = append(buf, msg)
+	}
+	out, err := json.Marshal(buf)
+	if err != nil {
+		log.WithField("pending", fmt.Sprintf("%#v", buf)).
+			Error("rbmq notifier cannot marshal pending buffer")
+	} else {
+		fh, err := os.OpenFile(n.conf.BufferPath, os.O_CREATE|os.O_RDWR, 0744)
+		if err != nil {
+			log.WithField("pending", fmt.Sprintf("%#v", buf)).
+				Error("rbmq notifier opern file for pending buffer")
+		} else {
+			fh.Write(out)
+			fh.Close()
+		}
+	}
+	n.FinishCh <- true
 }

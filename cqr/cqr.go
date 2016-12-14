@@ -41,6 +41,9 @@ func InitCQR(cqrConfigs []CQRConfig) error {
 
 	for _, cqrConfig := range cqrConfigs {
 		begin := time.Now()
+		log.WithFields(log.Fields{
+			"cqr": fmt.Sprintf("%#v", cqrConfig),
+		}).Debug("cqr reload...")
 		if err := cqrConfig.Data.Reload(); err != nil {
 			err = fmt.Errorf("%s: %s", cqrConfig.Tables, err.Error())
 			log.WithFields(log.Fields{
@@ -49,34 +52,33 @@ func InitCQR(cqrConfigs []CQRConfig) error {
 				"took":  time.Since(begin),
 			}).Error("reload failed")
 			return err
-		} else {
-			if cqrConfig.WebHook != "" {
-				log.WithFields(log.Fields{
-					"table": cqrConfig.Tables,
-					"hook":  cqrConfig.WebHook,
-				}).Debug("found webhook")
-				resp, err := http.Get(cqrConfig.WebHook)
-				if err != nil || resp.StatusCode != 200 {
-					fields := log.Fields{
-						"table": cqrConfig.Tables,
-						"hook":  cqrConfig.WebHook,
-					}
-					if resp != nil {
-						fields["code"] = resp.Status
-					}
-					if err != nil {
-						err = fmt.Errorf("http.Get: %s", err.Error())
-						fields["error"] = err.Error()
-					}
-					log.WithFields(fields).Error("hook failed")
-				}
-			}
-
+		}
+		if cqrConfig.WebHook != "" {
 			log.WithFields(log.Fields{
 				"table": cqrConfig.Tables,
-				"took":  time.Since(begin),
-			}).Info("reload done")
+				"hook":  cqrConfig.WebHook,
+			}).Debug("found webhook")
+
+			resp, err := http.Get(cqrConfig.WebHook)
+			if err != nil || resp.StatusCode != 200 {
+				fields := log.Fields{
+					"table": cqrConfig.Tables,
+					"hook":  cqrConfig.WebHook,
+				}
+				if resp != nil {
+					fields["code"] = resp.Status
+				}
+				if err != nil {
+					fields["error"] = err.Error()
+				}
+				log.WithFields(fields).Error("hook failed")
+			}
 		}
+
+		log.WithFields(log.Fields{
+			"table": cqrConfig.Tables,
+			"took":  time.Since(begin),
+		}).Info("reload done")
 	}
 	return nil
 }

@@ -1,7 +1,5 @@
 package config
 
-import "strings"
-
 const (
 	NEW_SUBSCRIPTION_SUFFIX = "_new_subscriptions"
 	MO_TARIFFICATE          = "_mo_tarifficate"
@@ -11,36 +9,53 @@ const (
 	SMS_RESPONSE_SUFFIX     = "_sms_responses"
 )
 
-type OperatorQueueConfig struct {
-	NewSubscription string `yaml:"-"`
-	Requests        string `yaml:"-"`
-	Responses       string `yaml:"-"`
-	SMSRequest      string `yaml:"-"`
-	SMSResponse     string `yaml:"-"`
-	MOTarifficate   string `yaml:"-"`
+type ConsumeQueueConfig struct {
+	Name          string `yaml:"name"`
+	PrefetchCount int    `yaml:"prefetch_count" default:"600"`
+	ThreadsCount  int    `yaml:"threads_count" default:"60"`
 }
+
 type OperatorConfig struct {
-	RetriesEnabled           bool `default:"false" yaml:"retries_enabled,omitempty"`
-	OperatorRequestQueueSize int  `default:"10" yaml:"operator_request_queue_size,omitempty"`
-	GetFromDBRetryCount      int  `default:"500" yaml:"get_from_db_retry_count,omitempty"`
+	Name    string `yaml:"name"`
+	Enabled bool   `default:"false" yaml:"enabled"`
+	Retries struct {
+		Enabled     bool `default:"false" yaml:"enabled,omitempty"`
+		QueueSize   int  `default:"1200" yaml:"queue_size,omitempty"`
+		FromDBCount int  `default:"1200" yaml:"from_db_count,omitempty"`
+	} `yaml:"retries"`
 }
 
-func GetOperatorsQueue(enabledOperators map[string]OperatorConfig) map[string]OperatorQueueConfig {
-	opConfig := make(map[string]OperatorQueueConfig, len(enabledOperators))
-	for operatorName, _ := range enabledOperators {
-		name := strings.ToLower(operatorName)
-		opConfig[name] = OperatorQueueConfig{
-			NewSubscription: name + NEW_SUBSCRIPTION_SUFFIX,
-			Requests:        name + REQUESTS_SUFFIX,
-			Responses:       name + RESPONSES_SUFFIX,
-			SMSRequest:      name + SMS_REQUEST_SUFFIX,
-			SMSResponse:     name + SMS_RESPONSE_SUFFIX,
-			MOTarifficate:   name + MO_TARIFFICATE,
-		}
-	}
-	return opConfig
+func (oc OperatorConfig) NewSubscriptionQueueName() string {
+	return NewSubscriptionQueueName(oc.Name)
 }
-
-func GetNewSubscriptionQueueName(operatorName string) string {
+func NewSubscriptionQueueName(operatorName string) string {
 	return operatorName + NEW_SUBSCRIPTION_SUFFIX
+}
+func (oc OperatorConfig) GetMOQueueName() string {
+	return oc.Name + MO_TARIFFICATE
+}
+
+func (oc OperatorConfig) GetRequestsQueueName() string {
+	return RequestQueue(oc.Name)
+}
+func (oc OperatorConfig) GetResponsesQueueName() string {
+	return ResponsesQueue(oc.Name)
+}
+func ResponsesQueue(operatorName string) string {
+	return operatorName + RESPONSES_SUFFIX
+}
+func RequestQueue(operatorName string) string {
+	return operatorName + REQUESTS_SUFFIX
+}
+func (oc OperatorConfig) GetSMSRequestsQueueName() string {
+	return SMSRequestQueue(oc.Name)
+}
+func SMSRequestQueue(operatorName string) string {
+	return operatorName + SMS_REQUEST_SUFFIX
+}
+func (oc OperatorConfig) GetSMSResponsesQueueName() string {
+	return SMSResponsesQueue(oc.Name)
+}
+func SMSResponsesQueue(operatorName string) string {
+	return operatorName + SMS_RESPONSE_SUFFIX
 }

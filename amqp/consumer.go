@@ -64,12 +64,11 @@ func initConsumerMetrics(prefix string) ConsumerMetrics {
 }
 
 type ConsumerConfig struct {
-	Conn               ConnectionConfig `yaml:"conn"`
-	QueuePrefetchCount int              `default:"5" yaml:"queue_prefetch_count"`
-	BindingKey         string           `default:"" yaml:"binding_key"`
-	ExchangeType       string           `default:"" yaml:"exchange_type"`
-	Exchange           string           `default:"" yaml:"exchange"`
-	ReconnectDelay     int              `default:"30" yaml:"reconnect_delay"`
+	Conn           ConnectionConfig `yaml:"conn"`
+	BindingKey     string           `default:"" yaml:"binding_key"`
+	ExchangeType   string           `default:"" yaml:"exchange_type"`
+	Exchange       string           `default:"" yaml:"exchange"`
+	ReconnectDelay int              `default:"30" yaml:"reconnect_delay"`
 }
 
 type Consumer struct {
@@ -85,7 +84,7 @@ type Consumer struct {
 	reconnectDelay     int
 }
 
-func NewConsumer(conf ConsumerConfig, queueName string) *Consumer {
+func NewConsumer(conf ConsumerConfig, queueName string, prefetchCount int) *Consumer {
 	log.SetLevel(log.DebugLevel)
 	url := fmt.Sprintf("amqp://%s:%s@%s:%s",
 		conf.Conn.User,
@@ -95,7 +94,7 @@ func NewConsumer(conf ConsumerConfig, queueName string) *Consumer {
 
 	c := &Consumer{
 		m:                  initConsumerMetrics(queueName),
-		queuePrefetchCount: conf.QueuePrefetchCount,
+		queuePrefetchCount: prefetchCount,
 		conn:               nil,
 		channel:            nil,
 		done:               make(chan error),
