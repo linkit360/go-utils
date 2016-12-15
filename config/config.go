@@ -32,9 +32,11 @@ func NewSubscriptionQueueName(operatorName string) string {
 	return operatorName + NEW_SUBSCRIPTION_SUFFIX
 }
 func (oc OperatorConfig) GetMOQueueName() string {
-	return oc.Name + MO_TARIFFICATE
+	return GetMOQueueName(oc.Name)
 }
-
+func GetMOQueueName(operatorName string) string {
+	return operatorName + MO_TARIFFICATE
+}
 func (oc OperatorConfig) GetRequestsQueueName() string {
 	return RequestQueue(oc.Name)
 }

@@ -12,8 +12,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
 	log "github.com/Sirupsen/logrus"

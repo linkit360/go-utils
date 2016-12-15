@@ -27,9 +27,6 @@ type Gauge struct {
 
 func (g *Gauge) Inc() {
 	g.counter++
-	//log.WithFields(log.Fields{
-	//	"counter": g.counter,
-	//}).Debug("inc")
 }
 func (g *Gauge) Update() {
 	g.gauge.Set(float64(g.counter))
@@ -80,7 +77,7 @@ func NewSummary(name, help string) prometheus.Summary {
 	}
 	summary := prometheus.NewSummary(
 		prometheus.SummaryOpts{
-			Name: name,
+			Name: appName + "_" + name,
 			Help: help,
 		},
 	)

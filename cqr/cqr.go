@@ -131,6 +131,27 @@ func CQRReloadFunc(cqrConfigs []CQRConfig, c *gin.Context) func(*gin.Context) {
 							"took":  time.Since(begin),
 						}).Info("reload done")
 					}
+					if cqrConfig.WebHook != "" {
+						log.WithFields(log.Fields{
+							"table": cqrConfig.Tables,
+							"hook":  cqrConfig.WebHook,
+						}).Debug("webhook")
+
+						resp, err := http.Get(cqrConfig.WebHook)
+						if err != nil || resp.StatusCode != 200 {
+							fields := log.Fields{
+								"table": cqrConfig.Tables,
+								"hook":  cqrConfig.WebHook,
+							}
+							if resp != nil {
+								fields["code"] = resp.Status
+							}
+							if err != nil {
+								fields["error"] = err.Error()
+							}
+							log.WithFields(fields).Error("hook failed")
+						}
+					}
 				}
 			}
 		}
