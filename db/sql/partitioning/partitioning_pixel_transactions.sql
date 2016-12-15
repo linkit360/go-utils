@@ -3,6 +3,7 @@ $BODY$
 DECLARE
   partition_date TEXT;
   partition TEXT;
+  r xmp_pixel_transactions%rowtype;
 BEGIN
   partition_date := to_char(NEW.sent_at,'YYYY_MM_DD');
   partition := TG_RELNAME || '_' || partition_date;
@@ -15,13 +16,13 @@ BEGIN
 
     EXECUTE 'CREATE INDEX ' || partition || '_sent_at_idx ON ' || partition || '(sent_at);';
   END IF;
-  EXECUTE 'INSERT INTO ' || partition || ' SELECT(' || TG_RELNAME || ' ' || quote_literal(NEW) || ').* RETURNING id;';
-  RETURN NULL;
+  EXECUTE 'INSERT INTO ' || partition || ' SELECT(' || TG_RELNAME || ' ' || quote_literal(NEW) || ').* RETURNING * ' INTO r;
+  RETURN r;
 END;
 $BODY$
 LANGUAGE plpgsql VOLATILE
 COST 100;
 
 CREATE TRIGGER xmp_pixel_transactions_insert_trigger
-BEFORE INSERT ON xmp_pixel_transactions
+AFTER INSERT ON xmp_pixel_transactions
 FOR EACH ROW EXECUTE PROCEDURE xmp_pixel_transactions_create_partition_and_insert();

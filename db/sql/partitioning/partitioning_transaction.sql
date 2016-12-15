@@ -3,6 +3,7 @@ $BODY$
 DECLARE
   partition_date TEXT;
   partition TEXT;
+  r xmp_transactions%rowtype;
 BEGIN
   partition_date := to_char(NEW.sent_at,'YYYY_MM_DD');
   partition := TG_RELNAME || '_' || partition_date;
@@ -17,8 +18,8 @@ BEGIN
     EXECUTE 'CREATE INDEX ' || partition || '_sent_at_msisdn_idx ON ' || partition || '(sent_at, msisdn);';
     EXECUTE 'CREATE INDEX ' || partition || '_created_at_msisdn_idx ON ' || partition || '(created_at, msisdn);';
   END IF;
-  EXECUTE 'INSERT INTO ' || partition || ' SELECT(' || TG_RELNAME || ' ' || quote_literal(NEW) || ').* RETURNING id;';
-  RETURN NULL;
+  EXECUTE 'INSERT INTO ' || partition || ' SELECT(' || TG_RELNAME || ' ' || quote_literal(NEW) || ').* RETURNING * ' INTO r;
+  RETURN r;
 END;
 $BODY$
 LANGUAGE plpgsql VOLATILE
