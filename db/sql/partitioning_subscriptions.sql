@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION  xmp_user_actions_create_partition_and_insert() RETURNS trigger AS
+CREATE OR REPLACE FUNCTION  xmp_subscriptions_create_partition_and_insert() RETURNS trigger AS
 $BODY$
 DECLARE
   partition_date TEXT;
@@ -14,6 +14,8 @@ BEGIN
             ''' ) ) INHERITS (' || TG_RELNAME || ');';
 
     EXECUTE 'CREATE INDEX ' || partition || '_sent_at_idx ON ' || partition || '(sent_at);';
+    EXECUTE 'CREATE INDEX ' || partition || '_sent_at_result_id_campaign_idx ON ' || partition || '(sent_at, result, id_campaign);';
+    EXECUTE 'CREATE INDEX ' || partition || '_created_at_result_id_campaign_idx ON ' || partition || '(created_at, result, id_campaign);';
   END IF;
   EXECUTE 'INSERT INTO ' || partition || ' SELECT(' || TG_RELNAME || ' ' || quote_literal(NEW) || ').* RETURNING id;';
   RETURN NULL;
@@ -22,6 +24,6 @@ $BODY$
 LANGUAGE plpgsql VOLATILE
 COST 100;
 
-CREATE TRIGGER xmp_user_actions_insert_trigger
-BEFORE INSERT ON xmp_user_actions
-FOR EACH ROW EXECUTE PROCEDURE xmp_user_actions_create_partition_and_insert();
+CREATE TRIGGER xmp_subscriptions_insert_trigger
+BEFORE INSERT ON xmp_subscriptions
+FOR EACH ROW EXECUTE PROCEDURE xmp_subscriptions_create_partition_and_insert();

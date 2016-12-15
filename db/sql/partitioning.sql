@@ -1,7 +1,7 @@
 -- access_campaign
 -- user_actions
 -- operator_transaction_log
--- subscriptions
+-- subscriptions - created at result id campaigs
 -- content_sent
 -- pixel_transactions
 -- transactions - по дате создания и msisdin составной индекс
