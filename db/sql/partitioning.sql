@@ -1,4 +1,10 @@
-CREATE TABLE testing_partition(patent_id BIGINT, date DATE);
+-- access_campaign
+-- user_actions
+-- operator_transaction_log
+-- subscriptions
+-- content_sent
+-- pixel_transactions
+-- transactions - по дате создания и msisdin составной индекс
 
 CREATE OR REPLACE FUNCTION create_partition_and_insert() RETURNS trigger AS
   $BODY$
@@ -6,7 +12,7 @@ CREATE OR REPLACE FUNCTION create_partition_and_insert() RETURNS trigger AS
       partition_date TEXT;
       partition TEXT;
     BEGIN
-      partition_date := to_char(NEW.date,'YYYY-MM');
+      partition_date := to_char(NEW.date,'YYYY-MM-DD');
       partition := TG_RELNAME || '_' || partition_date;
       IF NOT EXISTS(SELECT relname FROM pg_class WHERE relname=partition) THEN
         RAISE NOTICE 'A partition has been created %',partition;
