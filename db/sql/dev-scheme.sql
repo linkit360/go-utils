@@ -121,6 +121,12 @@ CREATE TABLE xmp_content_blacklist
   id_unit INTEGER,
   id_country INTEGER
 );
+CREATE TABLE xmp_campaigns_keywords
+(
+  id SERIAL PRIMARY KEY NOT NULL,
+  id_campaign INTEGER NOT NULL,
+  keyword varchar(255) NOT NULL
+);
 CREATE TABLE xmp_content_category
 (
   id SERIAL PRIMARY KEY NOT NULL,
