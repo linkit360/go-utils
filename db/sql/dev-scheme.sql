@@ -376,6 +376,7 @@ CREATE TABLE xmp_retries
   id_subscription INTEGER NOT NULL,
   id_campaign INTEGER NOT NULL
 );
+create index xmp_retries_last_pay_attempt_at_idx on xmp_retries (last_pay_attempt_at);
 
 CREATE TABLE xmp_operator_transaction_log (
   id serial PRIMARY KEY,

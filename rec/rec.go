@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strconv"
-	"strings"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -148,7 +147,7 @@ func GetPendingSubscriptionsCount() (count int, err error) {
 
 	return count, nil
 }
-func GetRetryTransactions(operatorCode int64, batchLimit int) (records []Record, retryIds []interface{}, err error) {
+func GetRetryTransactions(operatorCode int64, batchLimit int) (records []Record, err error) {
 	begin := time.Now()
 	defer func() {
 		defer func() {
@@ -194,7 +193,7 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) (records []Record,
 		DBErrors.Inc()
 
 		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
-		return []Record{}, []interface{}{}, err
+		return []Record{}, err
 	}
 	defer rows.Close()
 
@@ -217,66 +216,18 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) (records []Record,
 			&record.CampaignId,
 		); err != nil {
 			DBErrors.Inc()
-			return []Record{}, []interface{}{}, fmt.Errorf("Rows.Next: %s", err.Error())
+			return []Record{}, fmt.Errorf("Rows.Next: %s", err.Error())
 		}
 
 		retries = append(retries, record)
-		retryIds = append(retryIds, record.RetryId)
 	}
 	if rows.Err() != nil {
 		DBErrors.Inc()
 
 		err = fmt.Errorf("GetRetries RowsError: %s", err.Error())
-		return []Record{}, []interface{}{}, err
+		return []Record{}, err
 	}
-	return retries, retryIds, nil
-}
-
-func SetRetryiesStatus(status string, ids []interface{}) (err error) {
-	if len(ids) == 0 {
-		return nil
-	}
-	begin := time.Now()
-	defer func() {
-		defer func() {
-			fields := log.Fields{
-				"status": status,
-				"took":   time.Since(begin),
-				"count":  len(ids),
-			}
-			if err != nil {
-				fields["error"] = err.Error()
-				fields["ids"] = fmt.Sprintf("%#v", ids)
-				log.WithFields(fields).Error("set retries status failed")
-			} else {
-				log.WithFields(fields).Debug("set retries status")
-			}
-		}()
-	}()
-
-	queryArgs := []interface{}{}
-	updatedAt := time.Now()
-	queryArgs = append(queryArgs, status)
-	queryArgs = append(queryArgs, updatedAt)
-	paramStr := []string{}
-	for i, v := range ids {
-		j := i + 3
-		paramStr = append(paramStr, "$"+strconv.Itoa(j))
-		queryArgs = append(queryArgs, v)
-	}
-
-	query := fmt.Sprintf("UPDATE %sretries SET "+
-		"status = $1, "+
-		"updated_at = $2 "+
-		"WHERE id IN ("+strings.Join(paramStr, ", ")+")", conf.TablePrefix)
-
-	_, err = dbConn.Exec(query, queryArgs...)
-	if err != nil {
-		DBErrors.Inc()
-		err = fmt.Errorf("dbConn.Exec: %s", err.Error())
-		return err
-	}
-	return nil
+	return retries, nil
 }
 
 func SetRetryStatus(status string, id int64) (err error) {
@@ -292,9 +243,9 @@ func SetRetryStatus(status string, id int64) (err error) {
 		}
 		if err != nil {
 			fields["error"] = err.Error()
-			log.WithFields(fields).Error("set status failed")
+			log.WithFields(fields).Error("set retry status failed")
 		} else {
-			log.WithFields(fields).Debug("set status")
+			log.WithFields(fields).Debug("set retry status")
 		}
 	}()
 
