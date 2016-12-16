@@ -543,6 +543,9 @@ CREATE TABLE public.xmp_pixel_transactions (
   publisher VARCHAR(511) NOT NULL DEFAULT '',
   response_code INT NOT NULL DEFAULT 0
 );
+create index
+  xmp_retries_delay_hours_last_pay_attempt_at_operator_code_status_idx
+on xmp_retries (delay_hours, last_pay_attempt_at, operator_code, status);
 
 CREATE INDEX index_xmp_subscriptions_active_id_service ON xmp_subscriptions_active (id_service);
 CREATE INDEX index_xmp_subscriptions_id_service ON xmp_subscriptions_active (id_service);
