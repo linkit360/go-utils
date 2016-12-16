@@ -17,7 +17,7 @@ type ConsumeQueueConfig struct {
 
 type OperatorConfig struct {
 	Name    string `yaml:"name"`
-	Enabled bool   `default:"false" yaml:"enabled"`
+	Enabled bool   `default:"true" yaml:"enabled"`
 	Retries struct {
 		Enabled     bool `default:"false" yaml:"enabled,omitempty"`
 		QueueSize   int  `default:"1200" yaml:"queue_size,omitempty"`

@@ -592,6 +592,8 @@ CREATE TABLE xmp_transactions
 );
 create index xmp_transactions_sent_at_idx
   on xmp_transactions(sent_at);
+create index xmp_transactions_msisdn_idx
+  on xmp_transactions(msisdn);
 
 CREATE TABLE xmp_transactions_dr (
   id SERIAL PRIMARY KEY NOT NULL,
