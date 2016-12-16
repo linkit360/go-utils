@@ -56,7 +56,6 @@ CREATE TABLE xmp_campaigns_access (
   id                          serial PRIMARY KEY,
   tid                         varchar(127) NOT NULL DEFAULT '',
   created_at                  TIMESTAMP NOT NULL DEFAULT NOW(),
-  access_at                   TIMESTAMP NOT NULL DEFAULT NOW(),
   sent_at                     TIMESTAMP NOT NULL DEFAULT NOW(),
   msisdn                      varchar(32) NOT NULL DEFAULT '',
   ip                          varchar(32) NOT NULL DEFAULT '',
@@ -90,6 +89,8 @@ CREATE TABLE xmp_campaigns_access (
 );
 CREATE EXTENSION btree_gist;
 CREATE INDEX xmp_campaigns_access_long_lat_gistidx ON xmp_campaigns_access USING gist(geoip_longitude, geoip_latitude);
+create index xmp_campaigns_access_sent_at_idx on xmp_campaigns_access(sent_at);
+
 
 CREATE TABLE xmp_cheese_dynamic_url_log
 (
@@ -378,6 +379,7 @@ CREATE TABLE xmp_retries
 );
 create index xmp_retries_last_pay_attempt_at_idx on xmp_retries (last_pay_attempt_at);
 
+
 CREATE TABLE xmp_operator_transaction_log (
   id serial PRIMARY KEY,
   created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
@@ -397,7 +399,8 @@ CREATE TABLE xmp_operator_transaction_log (
   response_decision varchar(511) NOT NULL DEFAULT '',
   response_code INT NOT NULL DEFAULT 0
 );
-
+create index xmp_operator_transaction_log_sent_at_idx
+  on xmp_operator_transaction_log(sent_at);
 
 CREATE TABLE xmp_revenue_report
 (
@@ -492,6 +495,7 @@ CREATE TABLE xmp_subscriptions
   id_service INTEGER DEFAULT 0 NOT NULL,
   country_code INTEGER DEFAULT 0 NOT NULL,
   created_at TIMESTAMP DEFAULT now(),
+  sent_at TIMESTAMP NOT NULL DEFAULT NOW(),
   msisdn VARCHAR(32),
   operator_code INTEGER DEFAULT 0 NOT NULL,
   id_campaign INTEGER DEFAULT 0 NOT NULL,
@@ -507,6 +511,11 @@ CREATE TABLE xmp_subscriptions
   pixel_sent boolean NOT NULL DEFAULT false,
   pixel_sent_at TIMESTAMP WITHOUT TIME ZONE
 );
+create index xmp_subscriptions_last_pay_attempt_at_idx
+  on xmp_subscriptions (last_pay_attempt_at);
+create index xmp_subscriptions_sent_at_idx
+  on xmp_subscriptions (sent_at);
+
 
 CREATE TABLE xmp_subscriptions_active
 (
@@ -581,6 +590,8 @@ CREATE TABLE xmp_transactions
   result TRANSACTION_RESULT NOT NULL,
   id_campaign INTEGER DEFAULT 0 NOT NULL
 );
+create index xmp_transactions_sent_at_idx
+  on xmp_transactions(sent_at);
 
 CREATE TABLE xmp_transactions_dr (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -621,8 +632,10 @@ CREATE TABLE xmp_user_actions (
   msisdn    varchar(32) NOT NULL DEFAULT '',
   action user_action NOT NULL,
   error varchar(511) NOT NULL DEFAULT '',
-  access_at  TIMESTAMP NOT NULL DEFAULT NOW()
+  sent_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
+create index xmp_user_actions_sent_at_idx on xmp_user_actions(sent_at);
+
 
 CREATE TABLE xmp_user_activity_logs
 (
