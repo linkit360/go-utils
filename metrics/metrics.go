@@ -1,18 +1,18 @@
 package metrics
 
 import (
-	"time"
-
-	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
 // name of the service / app to record them in prometheus
-var appName string
+var InstancePrefix string
 
-func Init(name string) {
-	appName = name
+func Init(instancePrefix string) {
+	if instancePrefix == "" {
+		panic("instance prefix is empty")
+	}
+	InstancePrefix = instancePrefix
 }
 
 func AddHandler(r *gin.Engine) {
@@ -32,23 +32,22 @@ func (g *Gauge) Update() {
 	g.gauge.Set(float64(g.counter))
 	g.counter = 0
 }
-
-// for any gauges
-func NewGaugeAlert(namespace, subsystem, name, help string) Gauge {
+func NewGauge(namespace, subsystem, name, help string) Gauge {
 	g := Gauge{}
 	g.gauge = PrometheusGauge(namespace, subsystem, name, help)
-	go func() {
-		for range time.Tick(time.Minute) {
-			g.Update()
-		}
-	}()
 	return g
-}
-func NewGauge(namespace, subsystem, name, help string) Gauge {
-	return NewGaugeAlert(namespace, subsystem, name, help)
 }
 
 func PrometheusGauge(namespace, subsystem, name, help string) prometheus.Gauge {
+	if InstancePrefix == "" {
+		//log.Fatal("instance prefix is empty")
+		panic("instance prefix is empty")
+	}
+	if namespace == "" {
+		namespace = InstancePrefix
+	} else {
+		namespace = InstancePrefix + "_" + namespace
+	}
 	gauge := prometheus.NewGauge(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Subsystem: subsystem,
@@ -59,6 +58,14 @@ func PrometheusGauge(namespace, subsystem, name, help string) prometheus.Gauge {
 	return gauge
 }
 func PrometheusGaugeLabel(namespace, subsystem, name, help string, labels map[string]string) prometheus.Gauge {
+	if InstancePrefix == "" {
+		panic("instance prefix is empty")
+	}
+	if namespace == "" {
+		namespace = InstancePrefix
+	} else {
+		namespace = InstancePrefix + "_" + namespace
+	}
 	gauge := prometheus.NewGauge(prometheus.GaugeOpts{
 		Namespace:   namespace,
 		Subsystem:   subsystem,
@@ -72,12 +79,17 @@ func PrometheusGaugeLabel(namespace, subsystem, name, help string, labels map[st
 
 // for duration
 func NewSummary(name, help string) prometheus.Summary {
-	if appName == "" {
-		log.Fatal("app name is empty")
+	if InstancePrefix == "" {
+		panic("instance prefix is empty")
+	}
+	if name == "" {
+		name = InstancePrefix
+	} else {
+		name = InstancePrefix + "_" + name
 	}
 	summary := prometheus.NewSummary(
 		prometheus.SummaryOpts{
-			Name: appName + "_" + name,
+			Name: name,
 			Help: help,
 		},
 	)
