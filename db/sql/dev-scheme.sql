@@ -475,7 +475,8 @@ CREATE TABLE xmp_services
   pull_retry_delay INTEGER,
   sms_send INTEGER,
   paid_hours INTEGER DEFAULT 0 NOT NULL,
-  delay_hours INT NOT NULL DEFAULT 10
+  delay_hours INT NOT NULL DEFAULT 10,
+  keep_days INTEGER NOT NULL
 );
 
 CREATE TABLE xmp_subscription_type

@@ -11,6 +11,7 @@ const (
 
 type ConsumeQueueConfig struct {
 	Name          string `yaml:"name"`
+	Enabled       bool   `yaml:"enabled" default:"false"`
 	PrefetchCount int    `yaml:"prefetch_count" default:"600"`
 	ThreadsCount  int    `yaml:"threads_count" default:"60"`
 }

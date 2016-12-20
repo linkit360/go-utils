@@ -7,6 +7,7 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/nu7hatch/gouuid"
 
 	"github.com/vostrok/utils/db"
 	m "github.com/vostrok/utils/metrics"
@@ -52,8 +53,16 @@ func Init(dbC db.DataBaseConfig) {
 
 	DBErrors = m.NewGauge("", "", "db_errors", "DB errors pverall mt_manager")
 }
-
-func GetPendingRetriesCount() (count int, err error) {
+func GenerateTID() string {
+	u4, err := uuid.NewV4()
+	if err != nil {
+		log.WithField("error", err.Error()).Error("generate uniq id")
+	}
+	tid := fmt.Sprintf("%d-%s", time.Now().Unix(), u4)
+	log.WithField("tid", tid).Debug("generated tid")
+	return
+}
+func GetSuspendedRetriesCount() (count int, err error) {
 	begin := time.Now()
 	defer func() {
 		defer func() {
@@ -62,16 +71,19 @@ func GetPendingRetriesCount() (count int, err error) {
 			}
 			if err != nil {
 				fields["error"] = err.Error()
-				log.WithFields(fields).Error("get pending retries count failed")
+				log.WithFields(fields).Error("get suspended retries count failed")
 			} else {
 				fields["count"] = count
-				log.WithFields(fields).Debug("get pending retries")
+				log.WithFields(fields).Debug("get suspended retries")
 			}
 		}()
 	}()
 
-	query := fmt.Sprintf("SELECT count(*) count "+
-		"FROM %sretries WHERE status IN ( 'pending', 'script' ) ", conf.TablePrefix)
+	query := fmt.Sprintf("SELECT count(*) count FROM %sretries "+
+		"WHERE status IN ( 'pending', 'script' ) "+
+		"AND updated_at < (CURRENT_TIMESTAMP - 5 * INTERVAL '1 minute' ) ",
+		conf.TablePrefix,
+	)
 	rows, err := dbConn.Query(query)
 	if err != nil {
 		DBErrors.Inc()
@@ -118,7 +130,11 @@ func GetPendingSubscriptionsCount() (count int, err error) {
 		}()
 	}()
 
-	query := fmt.Sprintf("SELECT count(*) count FROM %ssubscriptions WHERE result = ''", conf.TablePrefix)
+	query := fmt.Sprintf("SELECT count(*) count FROM %ssubscriptions "+
+		"WHERE result = ''"+
+		"AND sent_at < (CURRENT_TIMESTAMP - 5 * INTERVAL '1 minute' ) ",
+		conf.TablePrefix,
+	)
 	rows, err := dbConn.Query(query)
 	if err != nil {
 		DBErrors.Inc()
@@ -254,7 +270,7 @@ func SetRetryStatus(status string, id int64) (err error) {
 		"updated_at = $2 "+
 		"WHERE id = $3", conf.TablePrefix)
 
-	updatedAt := time.Now()
+	updatedAt := time.Now().UTC()
 	_, err = dbConn.Exec(query, status, updatedAt, id)
 	if err != nil {
 		DBErrors.Inc()
