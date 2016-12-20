@@ -454,34 +454,81 @@ CREATE TABLE xmp_service_country_settings
   operator_code INTEGER,
   id_service INTEGER
 );
+
 CREATE TABLE xmp_services
 (
   id SERIAL PRIMARY KEY NOT NULL,
+  created_at TIMESTAMP DEFAULT now() NOT NULL,
+  status INTEGER NOT NULL DEFAULT 1,,
+  id_payment_type INTEGER, -- reg pull chechelan
+  id_currency INTEGER NOT NULL,
+  price DOUBLE PRECISION NOT NULL,
+  country_code INTEGER DEFAULT 0 NOT NULL,
   name VARCHAR(32) NOT NULL,
   description VARCHAR(32),
-  keyword VARCHAR(32),
-  url VARCHAR(128),
-  price DOUBLE PRECISION,
-  id_payment_type INTEGER,
-  id_subscription_type INTEGER,
-  retry_days INTEGER,
-  wording TEXT,
-  status INTEGER,
-  id_currency INTEGER,
-  created_at TIMESTAMP DEFAULT now() NOT NULL,
-  channel_sms INTEGER,
-  channel_wap INTEGER,
-  channel_web INTEGER,
-  start_date TIMESTAMP,
-  price_option VARCHAR(32),
-  link VARCHAR(128),
-  pull_msisdn_ttr INTEGER,
-  pull_retry_delay INTEGER,
-  sms_send INTEGER,
   paid_hours INTEGER DEFAULT 0 NOT NULL,
   delay_hours INT NOT NULL DEFAULT 10,
-  keep_days INTEGER NOT NULL
+  keep_days INTEGER NOT NULL,
+  not_paid_text TEXT,
+  send_not_paid_text_enabled bool not null default false,
+  send_content_allowed_time JSONB DEFAULT '{}'::jsonb NOT NULL, -- "from": , "to":
+  send_content_text_template VARCHAR(2048) NOT NULL DEFAULT '',
+  send_content_day JSONB DEFAULT '[]'::jsonb NOT NULL -- ['','any','sun','mon','tue','wed','thu','fri','sat']
 );
+
+CREATE TYPE xmp_subscriptions_periodic_status AS ENUM ('', 'canceled', 'rejected', 'blacklisted');
+
+CREATE TABLE xmp_subscriptions_periodic
+(
+  id SERIAL PRIMARY KEY NOT NULL,
+  created_at TIMESTAMP DEFAULT now(),
+  sent_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  last_request_at TIMESTAMP DEFAULT now(),
+  tid VARCHAR(127) DEFAULT ''::character varying NOT NULL,
+  price INTEGER NOT NULL,
+  id_service INTEGER DEFAULT 0 NOT NULL,
+  id_campaign INTEGER DEFAULT 0 NOT NULL,
+  country_code INTEGER DEFAULT 0 NOT NULL,
+  operator_code INTEGER DEFAULT 0 NOT NULL,
+  msisdn VARCHAR(32),
+  rebill_count INTEGER DEFAULT 0 NOT NULL,
+  rebill_count_paid INTEGER DEFAULT 0 NOT NULL,
+  send_content_day JSONB NOT NULL,
+  send_content_allowed_from INT NOT NULL,
+  send_content_allowed_to INT NOT NULL,
+  status xmp_subscriptions_periodic_status NOT NULL DEFAULT '',
+  keep_days INTEGER NOT NULL,
+  delay_hours INTEGER NOT NULL
+);
+--  select '["mon", "tue"]'::jsonb ? 'fri' OR select '["mon", "tue"]'::jsonb ? 'any'
+create index xmp_subscriptions_periodic_last_request_at_idx
+  on xmp_subscriptions_periodic (last_request_at);
+create index xmp_subscriptions_periodic_sent_at_idx
+  on xmp_subscriptions_periodic (sent_at);
+create index xmp_subscriptions_periodic_status_idx
+  on xmp_subscriptions_periodic (status);
+create index xmp_subscriptions_periodic_send_content_day_idx
+  on xmp_subscriptions_periodic (send_content_day);
+
+CREATE TABLE xmp_subscriptions_periodic_transactions
+(
+  id SERIAL PRIMARY KEY NOT NULL,
+  created_at TIMESTAMP DEFAULT now(),
+  sent_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  periodic_tid VARCHAR(127) DEFAULT ''::character varying NOT NULL,
+  tid VARCHAR(127) DEFAULT ''::character varying NOT NULL,
+  price INTEGER NOT NULL,
+  id_service INTEGER DEFAULT 0 NOT NULL,
+  id_campaign INTEGER DEFAULT 0 NOT NULL,
+  id_subscription INTEGER DEFAULT 0 NOT NULL,
+  country_code INTEGER DEFAULT 0 NOT NULL,
+  operator_code INTEGER DEFAULT 0 NOT NULL,
+  msisdn VARCHAR(32),
+  send_content_text varchar(2048) NOT NULL
+);
+
+create index xmp_subscriptions_periodic_transactions_sent_at_idx
+  on xmp_subscriptions_periodic_transactions (sent_at);
 
 CREATE TABLE xmp_subscription_type
 (

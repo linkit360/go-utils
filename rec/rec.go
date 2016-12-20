@@ -47,6 +47,7 @@ var dbConn *sql.DB
 var conf db.DataBaseConfig
 var DBErrors m.Gauge
 var AddNewSubscriptionDuration prometheus.Summary
+var AddNewPeriodicDuration prometheus.Summary
 
 func Init(dbC db.DataBaseConfig) {
 	log.SetLevel(log.DebugLevel)
@@ -55,6 +56,7 @@ func Init(dbC db.DataBaseConfig) {
 
 	DBErrors = m.NewGauge("", "", "db_errors", "DB errors pverall mt_manager")
 	AddNewSubscriptionDuration = m.NewSummary("subscription_add_to_db_duration_seconds", "new subscription add duration")
+	AddNewPeriodicDuration = m.NewSummary("periodic_add_to_db_duration_seconds", "new periodic add duration")
 }
 func GenerateTID() string {
 	u4, err := uuid.NewV4()
@@ -432,6 +434,96 @@ func LoadPreviousSubscriptions() (records []PreviuosSubscription, err error) {
 	return prev, nil
 }
 
+type PeriodicSubscription struct {
+	Id                          int64     `json:"id"`
+	SentAt                      time.Time `json:"sent_at"`
+	Status                      string    `json:"status"`
+	LastRequestAt               time.Time `json:"last_request_at"`
+	Tid                         string    `json:"tid"`
+	Price                       int       `json:"price"`
+	ServiceId                   int64     `json:"id_service"`
+	CampaignId                  int64     `json:"id_campaign"`
+	CountryCode                 int64     `json:"country_code"`
+	OperatorCode                int64     `json:"operator_code"`
+	Msisdn                      string    `json:"msisdn"`
+	RebillCount                 int       `json:"rebill_count"`
+	RebillCountPaid             int       `json:"rebill_count_paid"`
+	SendContentDay              string    `json:"send_content_day"`
+	SendContentAllowedFromHours int       `json:"send_content_allowed_from"`
+	SendContentAllowedToHours   int       `json:"send_content_allowed_to"`
+	OperatorToken               string    `json:"operator_token"`
+	KeepDays                    int       `json:",omitempty"`
+	DelayHours                  int       `json:",omitempty"`
+	PaidHours                   int       `json:",omitempty"`
+}
+
+func AddPeriodicSubscriptionToDB(r *PeriodicSubscription) error {
+	if r.Id > 0 {
+		log.WithFields(log.Fields{
+			"tid":    r.Tid,
+			"msisdn": r.Msisdn,
+		}).Debug("already has periodic subscription id")
+		return nil
+	}
+	if len(r.Msisdn) > 32 {
+		log.WithFields(log.Fields{
+			"tid":    r.Tid,
+			"msisdn": r.Msisdn,
+			"error":  "too long msisdn",
+		}).Error("strange msisdn, truncating")
+		r.Msisdn = r.Msisdn[:31]
+	}
+
+	begin := time.Now()
+	query := fmt.Sprintf("INSERT INTO %ssubscriptions_periodic ( "+
+		"sent_at,"+
+		"status,"+
+		"tid ,"+
+		"price ,"+
+		"id_service,"+
+		"id_campaign,"+
+		"country_code,"+
+		"operator_code,"+
+		"msisdn,"+
+		"send_content_day,"+
+		"send_content_allowed_from,"+
+		"send_content_allowed_to,"+
+		") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) "+
+		"RETURNING id",
+		conf.TablePrefix)
+
+	if err := dbConn.QueryRow(query,
+		r.SentAt,
+		r.Status,
+		r.Tid,
+		r.Price,
+		r.ServiceId,
+		r.CampaignId,
+		r.CountryCode,
+		r.OperatorCode,
+		r.Msisdn,
+		r.SendContentDay,
+		r.SendContentAllowedFromHours,
+		r.SendContentAllowedToHours,
+	).Scan(&r.Id); err != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("db.Scan: %s", err.Error())
+		log.WithFields(log.Fields{
+			"tid":   r.Tid,
+			"error": err.Error(),
+			"query": query,
+		}).Error("add new periodic")
+		return err
+	}
+	AddNewPeriodicDuration.Observe(time.Since(begin).Seconds())
+	log.WithFields(log.Fields{
+		"tid":  r.Tid,
+		"took": time.Since(begin).Seconds(),
+	}).Info("added new periodic")
+	return nil
+}
+
 func AddNewSubscriptionToDB(r *Record) error {
 	if r.SubscriptionId > 0 {
 		log.WithFields(log.Fields{
@@ -568,4 +660,93 @@ func GetSuspendedSubscriptions(hours, limit int) (records []Record, err error) {
 		return
 	}
 	return
+}
+
+func GetPeriodics(operatorCode int64, batchLimit int) (records []PeriodicSubscription, err error) {
+	begin := time.Now()
+	defer func() {
+		defer func() {
+			fields := log.Fields{
+				"took": time.Since(begin),
+			}
+			if err != nil {
+				fields["error"] = err.Error()
+				log.WithFields(fields).Error("load periodic failed")
+			} else {
+				fields["count"] = len(records)
+				log.WithFields(fields).Debug("load periodic")
+			}
+		}()
+	}()
+
+	dayName := time.Now().Format("mon")
+	hourNow := time.Now().Format("15")
+	inSpecifiedHours := "( " +
+		"send_content_allowed_from >= " + hourNow + " AND  " +
+		"send_content_allowed_to <= " + hourNow + " ) "
+
+	var periodics []Record
+	query := fmt.Sprintf("SELECT "+
+		"id, "+
+		"sent_at, "+
+		"tid , "+
+		"price, "+
+		"id_service, "+
+		"id_campaign, "+
+		"country_code, "+
+		"operator_code, "+
+		"msisdn, "+
+		"keep_days, "+
+		"delay_hours, "+
+		"paid_hours "+
+		"FROM %ssubscriptions_periodic "+
+		"WHERE "+
+		"operator_code = $1 AND "+
+		"( send_content_day ? '"+dayName+"' OR send_content_day ? 'any' ) AND "+ // today
+		inSpecifiedHours+
+		"AND status = '' AND "+ // not cancelled, not rejected, not blacklisted
+		"last_request_at (CURRENT_TIMESTAMP -  INTERVAL '18 hours' )"+ // not processed today
+		"ORDER BY last_request_at ASC LIMIT %s", // get the last touched
+		conf.TablePrefix,
+		strconv.Itoa(batchLimit),
+	)
+
+	rows, err := dbConn.Query(query, operatorCode, dayName, "any")
+	if err != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		return []Record{}, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		p := PeriodicSubscription{}
+		if err := rows.Scan(
+			&p.Id,
+			&p.SentAt,
+			&p.Tid,
+			&p.Price,
+			&p.ServiceId,
+			&p.CampaignId,
+			&p.OperatorCode,
+			&p.CountryCode,
+			&p.Msisdn,
+			&p.KeepDays,
+			&p.DelayHours,
+			&p.PaidHours,
+		); err != nil {
+			DBErrors.Inc()
+			return []PeriodicSubscription{}, fmt.Errorf("Rows.Next: %s", err.Error())
+		}
+
+		periodics = append(periodics, p)
+	}
+	if rows.Err() != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("GetRetries RowsError: %s", err.Error())
+		return []PeriodicSubscription{}, err
+	}
+	return periodics, nil
 }

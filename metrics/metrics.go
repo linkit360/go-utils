@@ -37,10 +37,13 @@ func NewGauge(namespace, subsystem, name, help string) Gauge {
 	g.gauge = PrometheusGauge(namespace, subsystem, name, help)
 	return g
 }
-
+func NewGaugeLabel(namespace, subsystem, name, help string, labels map[string]string) Gauge {
+	g := Gauge{}
+	g.gauge = PrometheusGaugeLabel(namespace, subsystem, name, help, labels)
+	return g
+}
 func PrometheusGauge(namespace, subsystem, name, help string) prometheus.Gauge {
 	if InstancePrefix == "" {
-		//log.Fatal("instance prefix is empty")
 		panic("instance prefix is empty")
 	}
 	if namespace == "" {
