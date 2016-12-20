@@ -379,7 +379,7 @@ CREATE TABLE xmp_retries
 );
 create index xmp_retries_last_pay_attempt_at_idx on xmp_retries (last_pay_attempt_at);
 
-
+CREATE TYPE operator_transaction_log_type AS ENUM ('mo', 'mt', 'callback', 'sentconsent');
 CREATE TABLE xmp_operator_transaction_log (
   id serial PRIMARY KEY,
   created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
@@ -397,10 +397,14 @@ CREATE TABLE xmp_operator_transaction_log (
   request_body varchar(16391) NOT NULL DEFAULT '',
   response_body varchar(16391) NOT NULL DEFAULT '',
   response_decision varchar(511) NOT NULL DEFAULT '',
-  response_code INT NOT NULL DEFAULT 0
+  response_code INT NOT NULL DEFAULT 0,
+  type operator_transaction_log_type not null
 );
 create index xmp_operator_transaction_log_sent_at_idx
   on xmp_operator_transaction_log(sent_at);
+create index xmp_operator_transaction_log_type_idx
+  on xmp_operator_transaction_log(type);
+
 
 CREATE TABLE xmp_revenue_report
 (

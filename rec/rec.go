@@ -8,6 +8,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/nu7hatch/gouuid"
+	"github.com/prometheus/client_golang/prometheus"
 
 	"github.com/vostrok/utils/db"
 	m "github.com/vostrok/utils/metrics"
@@ -45,6 +46,7 @@ type Record struct {
 var dbConn *sql.DB
 var conf db.DataBaseConfig
 var DBErrors m.Gauge
+var AddNewSubscriptionDuration prometheus.Summary
 
 func Init(dbC db.DataBaseConfig) {
 	log.SetLevel(log.DebugLevel)
@@ -52,6 +54,7 @@ func Init(dbC db.DataBaseConfig) {
 	conf = dbC
 
 	DBErrors = m.NewGauge("", "", "db_errors", "DB errors pverall mt_manager")
+	AddNewSubscriptionDuration = m.NewSummary("subscription_add_to_db_duration_seconds", "new subscription add duration")
 }
 func GenerateTID() string {
 	u4, err := uuid.NewV4()
@@ -60,7 +63,7 @@ func GenerateTID() string {
 	}
 	tid := fmt.Sprintf("%d-%s", time.Now().Unix(), u4)
 	log.WithField("tid", tid).Debug("generated tid")
-	return
+	return tid
 }
 func GetSuspendedRetriesCount() (count int, err error) {
 	begin := time.Now()
@@ -109,7 +112,6 @@ func GetSuspendedRetriesCount() (count int, err error) {
 		err = fmt.Errorf("get pending retries: rows.Err: %s", err.Error())
 		return count, err
 	}
-
 	return count, nil
 }
 
@@ -245,7 +247,6 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) (records []Record,
 	}
 	return retries, nil
 }
-
 func SetRetryStatus(status string, id int64) (err error) {
 	if id == 0 {
 		return nil
@@ -280,7 +281,6 @@ func SetRetryStatus(status string, id int64) (err error) {
 	}
 	return nil
 }
-
 func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (records []Record, err error) {
 	var retries []Record
 	begin := time.Now()
@@ -430,4 +430,142 @@ func LoadPreviousSubscriptions() (records []PreviuosSubscription, err error) {
 		return prev, err
 	}
 	return prev, nil
+}
+
+func AddNewSubscriptionToDB(r *Record) error {
+	if r.SubscriptionId > 0 {
+		log.WithFields(log.Fields{
+			"tid":    r.Tid,
+			"msisdn": r.Msisdn,
+		}).Debug("already has subscription id")
+		return nil
+	}
+	if len(r.Msisdn) > 32 {
+		log.WithFields(log.Fields{
+			"tid":    r.Tid,
+			"msisdn": r.Msisdn,
+			"error":  "too long msisdn",
+		}).Error("strange msisdn, truncating")
+		r.Msisdn = r.Msisdn[:31]
+	}
+
+	begin := time.Now()
+	query := fmt.Sprintf("INSERT INTO %ssubscriptions ( "+
+		"sent_at, "+
+		"result, "+
+		"id_campaign, "+
+		"id_service, "+
+		"msisdn, "+
+		"publisher, "+
+		"pixel, "+
+		"tid, "+
+		"country_code, "+
+		"operator_code, "+
+		"paid_hours, "+
+		"delay_hours, "+
+		"keep_days, "+
+		"price "+
+		") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) "+
+		"RETURNING id",
+		conf.TablePrefix)
+
+	if err := dbConn.QueryRow(query,
+		r.SentAt,
+		"",
+		r.CampaignId,
+		r.ServiceId,
+		r.Msisdn,
+		r.Publisher,
+		r.Pixel,
+		r.Tid,
+		r.CountryCode,
+		r.OperatorCode,
+		r.PaidHours,
+		r.DelayHours,
+		r.KeepDays,
+		r.Price,
+	).Scan(&r.SubscriptionId); err != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("db.Scan: %s", err.Error())
+		log.WithFields(log.Fields{
+			"tid":   r.Tid,
+			"error": err.Error(),
+			"query": query,
+			"msg":   "requeue",
+		}).Error("add new subscription")
+		return err
+	}
+	AddNewSubscriptionDuration.Observe(time.Since(begin).Seconds())
+	log.WithFields(log.Fields{
+		"tid":  r.Tid,
+		"took": time.Since(begin).Seconds(),
+	}).Info("added new subscription")
+	return nil
+}
+
+func GetSuspendedSubscriptions(hours, limit int) (records []Record, err error) {
+	query := fmt.Sprintf("SELECT "+
+		"id, "+
+		"tid, "+
+		"msisdn, "+
+		"pixel, "+
+		"publisher, "+
+		"id_service, "+
+		"id_campaign, "+
+		"operator_code, "+
+		"country_code, "+
+		"attempts_count, "+
+		"delay_hours, "+
+		"paid_hours, "+
+		"keep_days, "+
+		"price "+
+		" FROM %ssubscriptions "+
+		" WHERE result = '' AND "+
+		" (CURRENT_TIMESTAMP - %d * INTERVAL '1 hour' ) > created_at "+
+		" ORDER BY id ASC LIMIT %s",
+		conf.TablePrefix,
+		hours,
+		strconv.Itoa(limit),
+	)
+	var rows *sql.Rows
+	rows, err = dbConn.Query(query)
+	if err != nil {
+		DBErrors.Inc()
+		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		record := Record{}
+
+		if err = rows.Scan(
+			&record.SubscriptionId,
+			&record.Tid,
+			&record.Msisdn,
+			&record.Pixel,
+			&record.Publisher,
+			&record.ServiceId,
+			&record.CampaignId,
+			&record.OperatorCode,
+			&record.CountryCode,
+			&record.AttemptsCount,
+			&record.DelayHours,
+			&record.PaidHours,
+			&record.KeepDays,
+			&record.Price,
+		); err != nil {
+			DBErrors.Inc()
+			err = fmt.Errorf("rows.Scan: %s", err.Error())
+			return
+		}
+		records = append(records, record)
+	}
+	if rows.Err() != nil {
+		DBErrors.Inc()
+		err = fmt.Errorf("rows.Err: %s", err.Error())
+		return
+	}
+	return
 }
