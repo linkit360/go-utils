@@ -243,9 +243,8 @@ func (n *Notifier) publisher() {
 			}
 
 			log.WithFields(log.Fields{
-				"queue": msg.QueueName,
-				"q":     q.Name,
-				"body":  string(msg.Body),
+				"q":    q.Name,
+				"body": string(msg.Body),
 			}).Info("rbmq: publish")
 		}
 	}

@@ -12,7 +12,8 @@ import (
 
 type DataBaseConfig struct {
 	ConnMaxLifetime  int    `default:"-1" yaml:"conn_ttl"`
-	MaxOpenConns     int    `default:"15" yaml:"max_conns"`
+	MaxOpenConns     int    `default:"15" yaml:"max_open_conns"`
+	MaxIdleConns     int    `default:"5" yaml:"max_idle_conns"`
 	ReconnectTimeout int    `default:"10" yaml:"timeout"`
 	User             string `default:""`
 	Pass             string `default:""`
@@ -49,6 +50,7 @@ func Init(conf DataBaseConfig) *sql.DB {
 	}
 
 	dbConn.SetMaxOpenConns(conf.MaxOpenConns)
+	dbConn.SetMaxIdleConns(conf.MaxIdleConns)
 	dbConn.SetConnMaxLifetime(time.Second * time.Duration(conf.ConnMaxLifetime))
 
 	log.WithFields(log.Fields{

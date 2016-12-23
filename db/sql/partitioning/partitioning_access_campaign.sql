@@ -26,3 +26,5 @@ COST 100;
 CREATE TRIGGER xmp_campaigns_access_insert_trigger
 BEFORE INSERT ON xmp_campaigns_access
 FOR EACH ROW EXECUTE PROCEDURE xmp_campaigns_access_create_partition_and_insert();
+
+alter table xmp_campaigns_access disable trigger xmp_campaigns_access_insert_trigger;
