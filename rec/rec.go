@@ -174,24 +174,30 @@ func GetSuspendedSubscriptionsCount() (count int, err error) {
 
 	return count, nil
 }
-func GetRetryTransactions(operatorCode int64, batchLimit int) (records []Record, err error) {
+func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) {
 	begin := time.Now()
+	var retries []Record
+	var err error
+	var query string
 	defer func() {
 		defer func() {
 			fields := log.Fields{
-				"took": time.Since(begin),
+				"took":          time.Since(begin),
+				"operator_code": operatorCode,
+				"limit":         batchLimit,
+				//"query":         query,
 			}
 			if err != nil {
 				fields["error"] = err.Error()
 				log.WithFields(fields).Error("load retries failed")
 			} else {
-				fields["count"] = len(records)
+				fields["count"] = len(retries)
 				log.WithFields(fields).Debug("load retries")
 			}
 		}()
 	}()
-	var retries []Record
-	query := fmt.Sprintf("SELECT "+
+
+	query = fmt.Sprintf("SELECT "+
 		"id, "+
 		"tid, "+
 		"created_at, "+
@@ -207,10 +213,11 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) (records []Record,
 		"id_subscription, "+
 		"id_campaign "+
 		"FROM %sretries "+
-		"WHERE (CURRENT_TIMESTAMP - delay_hours * INTERVAL '1 hour' ) > last_pay_attempt_at AND "+
-		"operator_code = $1 AND "+
-		"status = '' "+
-		"ORDER BY last_pay_attempt_at ASC LIMIT %s", // get the last touched
+		"WHERE "+
+		" operator_code = $1 AND "+
+		" status = '' "+
+		" ORDER BY last_pay_attempt_at ASC "+
+		" LIMIT %s", // get the last touched
 		conf.TablePrefix,
 		strconv.Itoa(batchLimit),
 	)
@@ -321,7 +328,8 @@ func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (rec
 		"id_subscription, "+
 		"id_campaign "+
 		"FROM %sretries "+
-		"WHERE (CURRENT_TIMESTAMP - %d * INTERVAL '1 hour' ) > last_pay_attempt_at AND "+
+		"WHERE "+
+		" (CURRENT_TIMESTAMP - %d * INTERVAL '1 hour' ) > last_pay_attempt_at AND "+
 		"operator_code = $1 AND "+
 		"status = 'script' "+
 		"ORDER BY last_pay_attempt_at ASC LIMIT %s", // get the last touched
@@ -631,7 +639,7 @@ func GetPeriodics(operatorCode int64, batchLimit int, notIn []int64) (records []
 		"msisdn, "+
 		"keep_days, "+
 		"delay_hours, "+
-		"paid_hours, "+
+		"paid_hours "+
 		"FROM %ssubscriptions "+
 		"WHERE "+
 		"operator_code = $1 AND periodic = true AND "+
@@ -748,7 +756,7 @@ func GetPeriodicSubscriptionByToken(token string) (p Record, err error) {
 		"msisdn, "+
 		"keep_days, "+
 		"delay_hours, "+
-		"paid_hours, "+
+		"paid_hours "+
 		"FROM %ssubscriptions "+
 		"WHERE operator_token = $1 LIMIT 1",
 		conf.TablePrefix,

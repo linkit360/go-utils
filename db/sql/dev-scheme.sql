@@ -510,6 +510,7 @@ CREATE TABLE xmp_subscriptions
   sent_at TIMESTAMP NOT NULL DEFAULT NOW(),
   msisdn VARCHAR(32),
   operator_code INTEGER DEFAULT 0 NOT NULL,
+  operator_token VARCHAR(511) NOT NULL default '',
   id_campaign INTEGER DEFAULT 0 NOT NULL,
   attempts_count INTEGER DEFAULT 0 NOT NULL,
   price INTEGER NOT NULL,
