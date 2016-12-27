@@ -623,9 +623,13 @@ func GetPeriodics(operatorCode int64, batchLimit int, notIn []int64) (records []
 	hourNow := time.Now().Format("15")
 	inSpecifiedHours := "( allowed_from >= " + hourNow + " AND  allowed_to <= " + hourNow + " ) "
 
-	var notInStr []string
-	for _, v := range notIn {
-		notInStr = append(notInStr, strconv.FormatInt(v, 10))
+	notInWhen := ""
+	if len(notIn) > 0 {
+		var notInStr []string
+		for _, v := range notIn {
+			notInStr = append(notInStr, strconv.FormatInt(v, 10))
+		}
+		notInWhen = "id NOT IN (" + strings.Join(notInStr, ", ") + ") AND "
 	}
 
 	var periodics []Record
@@ -647,16 +651,16 @@ func GetPeriodics(operatorCode int64, batchLimit int, notIn []int64) (records []
 		"WHERE "+
 		"operator_code = $1 AND periodic = true AND "+
 		"( days ? '"+dayName+"' OR days ? 'any' ) AND "+ // today
-		inSpecifiedHours+
-		"AND result NOT IN ('rejected', 'blacklisted', 'canceled') AND "+ // not cancelled, not rejected, not blacklisted
-		" AND id NOT IN ("+strings.Join(notInStr, ", ")+") AND "+
-		"last_request_at (CURRENT_TIMESTAMP -  INTERVAL '18 hours' )"+ // not processed today
+		inSpecifiedHours+"AND "+
+		"result NOT IN ('rejected', 'blacklisted', 'canceled') AND "+ // not cancelled, not rejected, not blacklisted
+		notInWhen+
+		"last_request_at < (CURRENT_TIMESTAMP -  INTERVAL '18 hours' ) "+ // not processed today
 		"ORDER BY last_request_at ASC LIMIT %s", // get the last touched
 		conf.TablePrefix,
 		strconv.Itoa(batchLimit),
 	)
 
-	rows, err := dbConn.Query(query, operatorCode, dayName, "any")
+	rows, err := dbConn.Query(query, operatorCode)
 	if err != nil {
 		DBErrors.Inc()
 

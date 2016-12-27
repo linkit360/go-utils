@@ -276,6 +276,7 @@ func initNotifierMetrics() NotifierMetrics {
 }
 
 func (n *Notifier) RestoreState() {
+	log.WithField("pid", os.Getpid()).Debug("rbmq notifier restore state")
 
 	fh, err := os.Open(n.conf.BufferPath)
 	if err != nil {
@@ -306,6 +307,7 @@ func (n *Notifier) RestoreState() {
 
 func (n *Notifier) SaveState() {
 	n.stop = true
+	log.Debug("rbmq notifier save state")
 
 	buf := []AMQPMessage{}
 	for msg := range n.publishCh {
