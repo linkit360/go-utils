@@ -479,6 +479,7 @@ func AddNewSubscriptionToDB(r *Record) error {
 		"publisher, "+
 		"pixel, "+
 		"tid, "+
+		"operator_token, "+
 		"country_code, "+
 		"operator_code, "+
 		"paid_hours, "+
@@ -489,7 +490,8 @@ func AddNewSubscriptionToDB(r *Record) error {
 		"days,"+
 		"allowed_from,"+
 		"allowed_to"+
-		") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18) "+
+		") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,"+
+		" $11, $12, $13, $14, $15, $16, $17, $18, $19) "+
 		"RETURNING id",
 		conf.TablePrefix)
 
@@ -502,6 +504,7 @@ func AddNewSubscriptionToDB(r *Record) error {
 		r.Publisher,
 		r.Pixel,
 		r.Tid,
+		r.OperatorToken,
 		r.CountryCode,
 		r.OperatorCode,
 		r.PaidHours,

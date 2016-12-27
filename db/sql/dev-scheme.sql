@@ -366,8 +366,10 @@ CREATE TABLE xmp_retries
   status retry_status NOT NULL DEFAULT  '',
   tid varchar(127) NOT NULL DEFAULT '',
   created_at TIMESTAMP DEFAULT now() NOT NULL,
+  updated_at TIMESTAMP DEFAULT now() NOT NULL,
   last_pay_attempt_at TIMESTAMP DEFAULT now() NOT NULL,
   attempts_count INTEGER DEFAULT 1 NOT NULL,
+  price INTEGER NOT NULL,
   keep_days INTEGER NOT NULL,
   delay_hours INTEGER NOT NULL,
   msisdn VARCHAR(32) NOT NULL,
@@ -399,7 +401,7 @@ CREATE TABLE xmp_retries_expired
 create index xmp_retries_expired_last_pay_attempt_at_idx on xmp_retries_expired (last_pay_attempt_at);
 create index xmp_retries_expired_created_at_idx on xmp_retries_expired(created_at);
 
-CREATE TYPE operator_transaction_log_type AS ENUM ('mo', 'mt', 'callback', 'sentconsent');
+CREATE TYPE operator_transaction_log_type AS ENUM ('mo', 'mt', 'callback', 'consent', 'charge');
 CREATE TABLE xmp_operator_transaction_log (
   id serial PRIMARY KEY,
   created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
@@ -578,9 +580,6 @@ CREATE TABLE public.xmp_pixel_transactions (
   publisher VARCHAR(511) NOT NULL DEFAULT '',
   response_code INT NOT NULL DEFAULT 0
 );
-create index
-  xmp_retries_delay_hours_last_pay_attempt_at_operator_code_status_idx
-on xmp_retries (delay_hours, last_pay_attempt_at, operator_code, status);
 
 CREATE INDEX index_xmp_subscriptions_active_id_service ON xmp_subscriptions_active (id_service);
 CREATE INDEX index_xmp_subscriptions_id_service ON xmp_subscriptions_active (id_service);
