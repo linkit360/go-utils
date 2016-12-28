@@ -496,7 +496,7 @@ CREATE TABLE xmp_services
   days JSONB DEFAULT '[]'::jsonb NOT NULL, -- ['','any','sun','mon','tue','wed','thu','fri','sat']
   allowed_from INT NOT NULL not null default 0,
   allowed_to INT NOT NULL not null default 0,
-  send_content_text_template VARCHAR(255) NOT NULL DEFAULT ''
+  send_content_text_template VARCHAR(255) NOT NULL DEFAULT '%v'
 );
 
 CREATE TYPE subscription_status AS ENUM ('', 'failed', 'paid', 'blacklisted', 'postpaid', 'rejected', 'past', 'canceled');
@@ -505,7 +505,6 @@ CREATE TABLE xmp_subscriptions
 (
   id SERIAL PRIMARY KEY NOT NULL,
   tid VARCHAR(127) DEFAULT ''::character varying NOT NULL,
-  last_request_at TIMESTAMP DEFAULT now(),
   id_service INTEGER DEFAULT 0 NOT NULL,
   country_code INTEGER DEFAULT 0 NOT NULL,
   created_at TIMESTAMP DEFAULT now(),
@@ -526,8 +525,6 @@ CREATE TABLE xmp_subscriptions
   pixel_sent boolean NOT NULL DEFAULT false,
   pixel_sent_at TIMESTAMP WITHOUT TIME ZONE,
   periodic bool not null default false,
-  rebill_count INTEGER DEFAULT 0 NOT NULL,
-  rebill_count_paid INTEGER DEFAULT 0 NOT NULL,
   days JSONB NOT NULL not null default '[]',
   allowed_from INT NOT NULL not null default 11,
   allowed_to INT NOT NULL not null default 13

@@ -45,8 +45,6 @@ type Record struct {
 	SMSText                  string    `json:",omitempty"`
 	SMSSend                  bool      `json:",omitempty"`
 	Periodic                 bool      `json:"periodic,omitempty"`
-	RebillCount              int       `json:"rebill_count,omitempty"`
-	RebillCountPaid          int       `json:"rebill_count_paid,omitempty"`
 	PeriodicDays             string    `json:"days,omitempty"`
 	PeriodicAllowedFromHours int       `json:"allowed_from,omitempty"`
 	PeriodicAllowedToHours   int       `json:"allowed_to,omitempty"`
@@ -604,10 +602,13 @@ func GetSuspendedSubscriptions(operatorCode int64, hours, limit int) (records []
 
 func GetPeriodics(operatorCode int64, batchLimit int, notIn []int64) (records []Record, err error) {
 	begin := time.Now()
+	query := ""
 	defer func() {
 		defer func() {
 			fields := log.Fields{
 				"took": time.Since(begin),
+				//"query":        query,
+				"operatorCode": operatorCode,
 			}
 			if err != nil {
 				fields["error"] = err.Error()
@@ -619,9 +620,9 @@ func GetPeriodics(operatorCode int64, batchLimit int, notIn []int64) (records []
 		}()
 	}()
 
-	dayName := time.Now().Format("mon")
+	dayName := strings.ToLower(time.Now().Format("Mon"))
 	hourNow := time.Now().Format("15")
-	inSpecifiedHours := "( allowed_from >= " + hourNow + " AND  allowed_to <= " + hourNow + " ) "
+	inSpecifiedHours := "( allowed_from <= " + hourNow + " AND  allowed_to >= " + hourNow + " ) "
 
 	notInWhen := ""
 	if len(notIn) > 0 {
@@ -634,10 +635,11 @@ func GetPeriodics(operatorCode int64, batchLimit int, notIn []int64) (records []
 
 	var periodics []Record
 
-	query := fmt.Sprintf("SELECT "+
+	query = fmt.Sprintf("SELECT "+
 		"id, "+
 		"sent_at, "+
 		"tid , "+
+		"operator_token, "+
 		"price, "+
 		"id_service, "+
 		"id_campaign, "+
@@ -654,8 +656,8 @@ func GetPeriodics(operatorCode int64, batchLimit int, notIn []int64) (records []
 		inSpecifiedHours+"AND "+
 		"result NOT IN ('rejected', 'blacklisted', 'canceled') AND "+ // not cancelled, not rejected, not blacklisted
 		notInWhen+
-		"last_request_at < (CURRENT_TIMESTAMP -  INTERVAL '18 hours' ) "+ // not processed today
-		"ORDER BY last_request_at ASC LIMIT %s", // get the last touched
+		"last_pay_attempt_at < (CURRENT_TIMESTAMP -  INTERVAL '18 hours' ) "+ // not processed today
+		"ORDER BY last_pay_attempt_at ASC LIMIT %s", // get the last touched
 		conf.TablePrefix,
 		strconv.Itoa(batchLimit),
 	)
@@ -675,6 +677,7 @@ func GetPeriodics(operatorCode int64, batchLimit int, notIn []int64) (records []
 			&p.SubscriptionId,
 			&p.SentAt,
 			&p.Tid,
+			&p.OperatorToken,
 			&p.Price,
 			&p.ServiceId,
 			&p.CampaignId,
@@ -700,41 +703,6 @@ func GetPeriodics(operatorCode int64, batchLimit int, notIn []int64) (records []
 	return periodics, nil
 }
 
-func SetSubscriptionStatus(status string, id int64) (err error) {
-	if id == 0 {
-		return nil
-	}
-	begin := time.Now()
-	defer func() {
-		fields := log.Fields{
-			"status": status,
-			"id":     id,
-			"took":   time.Since(begin),
-		}
-		if err != nil {
-			fields["error"] = err.Error()
-			log.WithFields(fields).Error("set subscription status failed")
-		} else {
-			log.WithFields(fields).Debug("set subscription status")
-		}
-	}()
-
-	query := fmt.Sprintf("UPDATE %ssubscriptions SET "+
-		"result = $1, "+
-		"last_request_at = $2 "+
-		"WHERE id = $3", conf.TablePrefix)
-
-	lastRequestAt := time.Now().UTC()
-	_, err = dbConn.Exec(query, status, lastRequestAt, id)
-	if err != nil {
-		DBErrors.Inc()
-
-		err = fmt.Errorf("dbConn.Exec: %s, Query: %s", err.Error(), query)
-		return err
-	}
-	return nil
-}
-
 func GetPeriodicSubscriptionByToken(token string) (p Record, err error) {
 	begin := time.Now()
 	defer func() {
@@ -755,6 +723,7 @@ func GetPeriodicSubscriptionByToken(token string) (p Record, err error) {
 		"id, "+
 		"sent_at, "+
 		"tid , "+
+		"operator_token, "+
 		"price, "+
 		"id_service, "+
 		"id_campaign, "+
@@ -783,6 +752,7 @@ func GetPeriodicSubscriptionByToken(token string) (p Record, err error) {
 			&p.SubscriptionId,
 			&p.SentAt,
 			&p.Tid,
+			&p.OperatorToken,
 			&p.Price,
 			&p.ServiceId,
 			&p.CampaignId,
