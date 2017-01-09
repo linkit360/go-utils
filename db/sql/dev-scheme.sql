@@ -145,7 +145,7 @@ CREATE TABLE xmp_content_links
   counter INTEGER,
   status INTEGER
 );
-CREATE UNIQUE INDEX xmp_content_links_id_uindex ON xmp_content_links (id);
+
 CREATE TABLE xmp_content_platforms
 (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -176,6 +176,29 @@ CREATE TABLE xmp_content_sent
   operator_code INTEGER DEFAULT 0 NOT NULL,
   country_code INTEGER DEFAULT 0 NOT NULL
 );
+create index xmp_content_sent_sent_at_idx
+  on xmp_content_sent(sent_at);
+
+CREATE TABLE xmp_content_unique_urls (
+  id SERIAL PRIMARY KEY NOT NULL,
+  tid VARCHAR(127) NOT NULL,
+  sent_at TIMESTAMP DEFAULT now() NOT NULL,
+  created_at TIMESTAMP DEFAULT now() NOT NULL,
+  msisdn VARCHAR(32) DEFAULT ''::character varying NOT NULL,
+  id_campaign INTEGER NOT NULL,
+  id_service INTEGER NOT NULL,
+  id_content INTEGER NOT NULL,
+  id_subscription INTEGER NOT NULL,
+  operator_code INTEGER DEFAULT 0 NOT NULL,
+  country_code INTEGER DEFAULT 0 NOT NULL,
+  content_path VARCHAR (255) NOT NULL,
+  content_name VARCHAR (255) NOT NULL,
+  unique_url VARCHAR (255) NOT NULL
+);
+create index xmp_content_unique_urls_sent_at_idx
+  on xmp_content_unique_urls(sent_at);
+
+
 CREATE TABLE xmp_content_sub_category
 (
   id SERIAL PRIMARY KEY NOT NULL,

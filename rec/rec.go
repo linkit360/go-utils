@@ -295,13 +295,18 @@ func SetRetryStatus(status string, id int64) (err error) {
 	}
 	return nil
 }
+
 func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (records []Record, err error) {
 	var retries []Record
+	query := ""
 	begin := time.Now()
 	defer func() {
 		defer func() {
 			fields := log.Fields{
-				"took": time.Since(begin),
+				"took":  time.Since(begin),
+				"query": query,
+				"hours": hoursPassed,
+				"limit": batchLimit,
 			}
 			if err != nil {
 				fields["error"] = err.Error()
@@ -312,14 +317,16 @@ func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (rec
 			}
 		}()
 	}()
-	query := fmt.Sprintf("SELECT "+
+	query = fmt.Sprintf("SELECT "+
 		"id, "+
 		"tid, "+
 		"created_at, "+
 		"last_pay_attempt_at, "+
 		"attempts_count, "+
 		"keep_days, "+
+		"delay_hours, "+
 		"msisdn, "+
+		"price, "+
 		"operator_code, "+
 		"country_code, "+
 		"id_service, "+
@@ -327,12 +334,11 @@ func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (rec
 		"id_campaign "+
 		"FROM %sretries "+
 		"WHERE "+
-		" (CURRENT_TIMESTAMP - %d * INTERVAL '1 hour' ) > last_pay_attempt_at AND "+
 		"operator_code = $1 AND "+
-		"status = 'script' "+
+		"status IN ( 'pending', 'script' ) AND "+
+		"updated_at < (CURRENT_TIMESTAMP - 5 * INTERVAL '1 minute' ) "+
 		"ORDER BY last_pay_attempt_at ASC LIMIT %s", // get the last touched
 		conf.TablePrefix,
-		hoursPassed,
 		strconv.Itoa(batchLimit),
 	)
 	rows, err := dbConn.Query(query, operatorCode)
@@ -343,7 +349,6 @@ func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (rec
 	}
 	defer rows.Close()
 
-	retryIds := []interface{}{}
 	for rows.Next() {
 		record := Record{}
 		if err := rows.Scan(
@@ -353,7 +358,9 @@ func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (rec
 			&record.LastPayAttemptAt,
 			&record.AttemptsCount,
 			&record.KeepDays,
+			&record.DelayHours,
 			&record.Msisdn,
+			&record.Price,
 			&record.OperatorCode,
 			&record.CountryCode,
 			&record.ServiceId,
@@ -367,7 +374,6 @@ func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (rec
 		}
 
 		retries = append(retries, record)
-		retryIds = append(retryIds, record.RetryId)
 	}
 	if rows.Err() != nil {
 		DBErrors.Inc()
@@ -379,10 +385,11 @@ func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (rec
 }
 
 type PreviuosSubscription struct {
-	Id        int64
-	CreatedAt time.Time
-	Msisdn    string
-	ServiceId int64
+	Id         int64
+	CreatedAt  time.Time
+	Msisdn     string
+	ServiceId  int64
+	CampaignId int64
 }
 
 func LoadPreviousSubscriptions(operatorCode int64) (records []PreviuosSubscription, err error) {
@@ -405,6 +412,7 @@ func LoadPreviousSubscriptions(operatorCode int64) (records []PreviuosSubscripti
 		"id, "+
 		"msisdn, "+
 		"id_service, "+
+		"id_campaign, "+
 		"created_at "+
 		"FROM %ssubscriptions "+
 		"WHERE "+
@@ -429,6 +437,7 @@ func LoadPreviousSubscriptions(operatorCode int64) (records []PreviuosSubscripti
 			&p.Id,
 			&p.Msisdn,
 			&p.ServiceId,
+			&p.CampaignId,
 			&p.CreatedAt,
 		); err != nil {
 			DBErrors.Inc()

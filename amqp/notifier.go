@@ -164,7 +164,6 @@ func (n *Notifier) publisher() {
 	var running bool
 	go func() {
 		for range time.Tick(1 * time.Second) {
-			n.m.PendingBuffer.Set(float64(len(n.pendingCh)))
 			n.m.ReadingBuffer.Set(float64(len(n.publishCh)))
 		}
 	}()
@@ -183,7 +182,11 @@ func (n *Notifier) publisher() {
 			}
 
 			if n.pendingCh <- msg; len(n.pendingCh) > 0 {
-				log.WithField("rbmq_pending", len(n.pendingCh)).Info("rbmq notifier")
+				n.m.PendingBuffer.Set(float64(len(n.pendingCh)))
+				log.WithFields(log.Fields{
+					"q":            msg.QueueName,
+					"rbmq_pending": len(n.pendingCh),
+				}).Debug("")
 			}
 		}
 	}()
@@ -241,11 +244,10 @@ func (n *Notifier) publisher() {
 				log.WithField("error", err.Error()).Error("rbmq notifier publish failed")
 				break
 			}
-
 			log.WithFields(log.Fields{
-				"q":    q.Name,
-				"body": string(msg.Body),
-			}).Info("rbmq: publish")
+				"q":   q.Name,
+				"len": len(n.pendingCh),
+			}).Debug("rbmq: publish")
 		}
 	}
 
@@ -301,13 +303,12 @@ func (n *Notifier) RestoreState() {
 	log.WithField("count", len(buf)).Debug("rbmq notifier restore state")
 	for _, msg := range buf {
 		n.Publish(msg)
-
 	}
 }
 
 func (n *Notifier) SaveState() {
 	n.stop = true
-	log.Debug("rbmq notifier save state")
+	log.WithField("pid", os.Getegid()).Info("rbmq notifier save state")
 
 	buf := []AMQPMessage{}
 	for msg := range n.publishCh {
