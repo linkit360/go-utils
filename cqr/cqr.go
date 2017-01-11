@@ -88,10 +88,6 @@ func CQRReloadFunc(cqrConfigs []CQRConfig, c *gin.Context) func(*gin.Context) {
 	for _, v := range cqrConfigs {
 		tableNames = append(tableNames, v.Tables...)
 	}
-	log.WithFields(log.Fields{
-		"tables": strings.Join(tableNames, ", "),
-	}).Debug("cqr request")
-
 	fn := func(c *gin.Context) {
 		var err error
 		r := response{Err: err, Status: http.StatusOK}
@@ -127,8 +123,10 @@ func CQRReloadFunc(cqrConfigs []CQRConfig, c *gin.Context) func(*gin.Context) {
 					} else {
 						r.Success = true
 						log.WithFields(log.Fields{
-							"table": table,
-							"took":  time.Since(begin),
+							"table":   table,
+							"took":    time.Since(begin),
+							"ua":      c.Request.UserAgent(),
+							"referer": c.Request.Referer(),
 						}).Info("reload done")
 					}
 					if cqrConfig.WebHook != "" {
@@ -159,7 +157,8 @@ func CQRReloadFunc(cqrConfigs []CQRConfig, c *gin.Context) func(*gin.Context) {
 			r.Success = false
 			r.Status = http.StatusInternalServerError
 			log.WithFields(log.Fields{
-				"table": table,
+				"table":     table,
+				"avialable": strings.Join(tableNames, ", "),
 			}).Error("table not found")
 		}
 		render(r, c)

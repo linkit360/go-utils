@@ -278,6 +278,7 @@ func initNotifierMetrics() NotifierMetrics {
 }
 
 func (n *Notifier) RestoreState() {
+	return
 	log.WithField("pid", os.Getpid()).Debug("rbmq notifier restore state")
 
 	fh, err := os.Open(n.conf.BufferPath)
@@ -307,6 +308,7 @@ func (n *Notifier) RestoreState() {
 }
 
 func (n *Notifier) SaveState() {
+	return
 	n.stop = true
 	log.WithField("pid", os.Getegid()).Info("rbmq notifier save state")
 

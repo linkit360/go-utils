@@ -304,7 +304,6 @@ func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (rec
 		defer func() {
 			fields := log.Fields{
 				"took":  time.Since(begin),
-				"query": query,
 				"hours": hoursPassed,
 				"limit": batchLimit,
 			}
