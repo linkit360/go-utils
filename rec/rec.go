@@ -391,7 +391,7 @@ type PreviuosSubscription struct {
 	CampaignId int64
 }
 
-func LoadPreviousSubscriptions(operatorCode int64) (records []PreviuosSubscription, err error) {
+func LoadActiveSubscriptions(operatorCode int64, hours int) (records []PreviuosSubscription, err error) {
 	begin := time.Now()
 	defer func() {
 		defer func() {
@@ -407,6 +407,11 @@ func LoadPreviousSubscriptions(operatorCode int64) (records []PreviuosSubscripti
 			}
 		}()
 	}()
+
+	hoursPassed := ""
+	if hours > 0 {
+		hoursPassed = fmt.Sprintf("(CURRENT_TIMESTAMP - %d * INTERVAL '1 hour' ) < created_at AND ", hours)
+	}
 	query := fmt.Sprintf("SELECT "+
 		"id, "+
 		"msisdn, "+
@@ -415,7 +420,7 @@ func LoadPreviousSubscriptions(operatorCode int64) (records []PreviuosSubscripti
 		"created_at "+
 		"FROM %ssubscriptions "+
 		"WHERE "+
-		"(CURRENT_TIMESTAMP - 24 * INTERVAL '1 hour' ) < created_at AND "+
+		hoursPassed+
 		"result IN ('', 'paid', 'failed') AND "+
 		"operator_code = $1",
 		conf.TablePrefix)
