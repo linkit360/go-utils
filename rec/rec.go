@@ -261,8 +261,45 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) 
 	}
 	return retries, nil
 }
+func SetSubscriptionStatus(status string, id int64) (err error) {
+	if id == 0 {
+		log.WithFields(log.Fields{"error": "no subscription id"}).Error("set periodic status")
+		return nil
+	}
+	begin := time.Now()
+	defer func() {
+		fields := log.Fields{
+			"status": status,
+			"id":     id,
+			"took":   time.Since(begin),
+		}
+		if err != nil {
+			fields["error"] = err.Error()
+			log.WithFields(fields).Error("set periodic status failed")
+		} else {
+			log.WithFields(fields).Debug("set periodic status")
+		}
+	}()
+
+	query := fmt.Sprintf("UPDATE %ssubscriptions SET "+
+		"status = $1, "+
+		"updated_at = $2 "+
+		"WHERE id = $3", conf.TablePrefix)
+
+	updatedAt := time.Now().UTC()
+	_, err = dbConn.Exec(query, status, updatedAt, id)
+	if err != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("dbConn.Exec: %s, Query: %s", err.Error(), query)
+		return err
+	}
+	return nil
+}
+
 func SetRetryStatus(status string, id int64) (err error) {
 	if id == 0 {
+		log.WithFields(log.Fields{"error": "no retry id"}).Error("set retry status")
 		return nil
 	}
 	begin := time.Now()
@@ -383,7 +420,7 @@ func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (rec
 	return retries, nil
 }
 
-type PreviuosSubscription struct {
+type ActiveSubscription struct {
 	Id         int64
 	CreatedAt  time.Time
 	Msisdn     string
@@ -391,7 +428,7 @@ type PreviuosSubscription struct {
 	CampaignId int64
 }
 
-func LoadActiveSubscriptions(operatorCode int64, hours int) (records []PreviuosSubscription, err error) {
+func LoadActiveSubscriptions(operatorCode int64, hours int) (records []ActiveSubscription, err error) {
 	begin := time.Now()
 	defer func() {
 		defer func() {
@@ -400,10 +437,10 @@ func LoadActiveSubscriptions(operatorCode int64, hours int) (records []PreviuosS
 			}
 			if err != nil {
 				fields["error"] = err.Error()
-				log.WithFields(fields).Error("load previous subscriptions failed")
+				log.WithFields(fields).Error("load active subscriptions failed")
 			} else {
 				fields["count"] = len(records)
-				log.WithFields(fields).Debug("load previous subscriptions ")
+				log.WithFields(fields).Debug("load active subscriptions ")
 			}
 		}()
 	}()
@@ -425,7 +462,7 @@ func LoadActiveSubscriptions(operatorCode int64, hours int) (records []PreviuosS
 		"operator_code = $1",
 		conf.TablePrefix)
 
-	prev := []PreviuosSubscription{}
+	prev := []ActiveSubscription{}
 	rows, err := dbConn.Query(query, operatorCode)
 	if err != nil {
 		DBErrors.Inc()
@@ -436,7 +473,7 @@ func LoadActiveSubscriptions(operatorCode int64, hours int) (records []PreviuosS
 	defer rows.Close()
 
 	for rows.Next() {
-		var p PreviuosSubscription
+		var p ActiveSubscription
 		if err := rows.Scan(
 			&p.Id,
 			&p.Msisdn,
@@ -613,14 +650,14 @@ func GetSuspendedSubscriptions(operatorCode int64, hours, limit int) (records []
 	return
 }
 
-func GetPeriodics(operatorCode int64, batchLimit int, notIn []int64) (records []Record, err error) {
+func GetPeriodics(operatorCode int64, batchLimit int) (records []Record, err error) {
 	begin := time.Now()
 	query := ""
 	defer func() {
 		defer func() {
 			fields := log.Fields{
-				"took": time.Since(begin),
-				//"query":        query,
+				"took":         time.Since(begin),
+				"query":        query,
 				"operatorCode": operatorCode,
 			}
 			if err != nil {
@@ -636,15 +673,6 @@ func GetPeriodics(operatorCode int64, batchLimit int, notIn []int64) (records []
 	dayName := strings.ToLower(time.Now().Format("Mon"))
 	hourNow := time.Now().Format("15")
 	inSpecifiedHours := "( allowed_from <= " + hourNow + " AND  allowed_to >= " + hourNow + " ) "
-
-	notInWhen := ""
-	if len(notIn) > 0 {
-		var notInStr []string
-		for _, v := range notIn {
-			notInStr = append(notInStr, strconv.FormatInt(v, 10))
-		}
-		notInWhen = "id NOT IN (" + strings.Join(notInStr, ", ") + ") AND "
-	}
 
 	var periodics []Record
 
@@ -667,8 +695,7 @@ func GetPeriodics(operatorCode int64, batchLimit int, notIn []int64) (records []
 		"operator_code = $1 AND periodic = true AND "+
 		"( days ? '"+dayName+"' OR days ? 'any' ) AND "+ // today
 		inSpecifiedHours+"AND "+
-		"result NOT IN ('rejected', 'blacklisted', 'canceled') AND "+ // not cancelled, not rejected, not blacklisted
-		notInWhen+
+		"result NOT IN ('rejected', 'blacklisted', 'canceled', 'pending') AND "+ // not cancelled, not rejected, not blacklisted
 		"last_pay_attempt_at < (CURRENT_TIMESTAMP -  INTERVAL '18 hours' ) "+ // not processed today
 		"ORDER BY last_pay_attempt_at ASC LIMIT %s", // get the last touched
 		conf.TablePrefix,

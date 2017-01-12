@@ -522,7 +522,8 @@ CREATE TABLE xmp_services
   send_content_text_template VARCHAR(255) NOT NULL DEFAULT '%v'
 );
 
-CREATE TYPE subscription_status AS ENUM ('', 'failed', 'paid', 'blacklisted', 'postpaid', 'rejected', 'past', 'canceled');
+CREATE TYPE subscription_status AS ENUM (
+  '', 'failed', 'paid', 'blacklisted', 'postpaid', 'rejected', 'past', 'canceled', 'pending');
 
 CREATE TABLE xmp_subscriptions
 (
@@ -532,6 +533,7 @@ CREATE TABLE xmp_subscriptions
   country_code INTEGER DEFAULT 0 NOT NULL,
   created_at TIMESTAMP DEFAULT now(),
   sent_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
   msisdn VARCHAR(32),
   operator_code INTEGER DEFAULT 0 NOT NULL,
   operator_token VARCHAR(511) NOT NULL default '',
