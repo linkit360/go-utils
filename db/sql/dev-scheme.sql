@@ -672,7 +672,7 @@ CREATE TABLE xmp_uniq_url
   expired INTEGER
 );
 
-CREATE TYPE user_action AS ENUM ('access', 'pull_click', 'content_get');
+CREATE TYPE user_action AS ENUM ('access', 'pull_click', 'content_get', 'rejected', 'redirect');
 CREATE TABLE xmp_user_actions (
   id serial PRIMARY KEY,
   tid  varchar(127) NOT NULL DEFAULT '',

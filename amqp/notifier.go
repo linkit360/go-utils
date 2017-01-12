@@ -247,7 +247,7 @@ func (n *Notifier) publisher() {
 			log.WithFields(log.Fields{
 				"q":   q.Name,
 				"len": len(n.pendingCh),
-			}).Info("rbmq: publish")
+			}).Debug("rbmq: publish")
 		}
 	}
 
