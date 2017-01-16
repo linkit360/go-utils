@@ -91,7 +91,7 @@ func GetSuspendedRetriesCount() (count int, err error) {
 
 	query := fmt.Sprintf("SELECT count(*) count FROM %sretries "+
 		"WHERE status IN ( 'pending', 'script' ) "+
-		"AND updated_at < (CURRENT_TIMESTAMP - 5 * INTERVAL '1 minute' ) ",
+		"AND updated_at < (CURRENT_TIMESTAMP - 4 * INTERVAL '1 hour' ) ",
 		conf.TablePrefix,
 	)
 	rows, err := dbConn.Query(query)
@@ -122,6 +122,55 @@ func GetSuspendedRetriesCount() (count int, err error) {
 	return count, nil
 }
 
+func GetRetriesPeriod() (seconds int64, err error) {
+	begin := time.Now()
+	defer func() {
+		defer func() {
+			fields := log.Fields{
+				"took": time.Since(begin),
+			}
+			if err != nil {
+				fields["error"] = err.Error()
+				log.WithFields(fields).Error("get retries period failed")
+			} else {
+				log.WithFields(fields).Debug("get retries period")
+			}
+		}()
+	}()
+
+	query := fmt.Sprintf("SELECT extract (epoch from (now() - "+
+		"MIN(last_pay_attempt_at))::interval) seconds from %sretries",
+		conf.TablePrefix,
+	)
+	rows, err := dbConn.Query(query)
+	if err != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		return 0, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		if err = rows.Scan(
+			&seconds,
+		); err != nil {
+			DBErrors.Inc()
+
+			err = fmt.Errorf("rows.Scan: %s", err.Error())
+			return
+		}
+	}
+	if rows.Err() != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("rows.Err: %s", err.Error())
+		return
+	}
+
+	return
+}
+
 func GetSuspendedSubscriptionsCount() (count int, err error) {
 	begin := time.Now()
 	defer func() {
@@ -141,7 +190,7 @@ func GetSuspendedSubscriptionsCount() (count int, err error) {
 
 	query := fmt.Sprintf("SELECT count(*) count FROM %ssubscriptions "+
 		"WHERE result = ''"+
-		"AND sent_at < (CURRENT_TIMESTAMP - 5 * INTERVAL '1 minute' ) ",
+		"AND sent_at < (CURRENT_TIMESTAMP - 2 * INTERVAL '1 hour' ) ",
 		conf.TablePrefix,
 	)
 	rows, err := dbConn.Query(query)
@@ -275,16 +324,18 @@ func SetSubscriptionStatus(status string, id int64) (err error) {
 		}
 		if err != nil {
 			fields["error"] = err.Error()
-			log.WithFields(fields).Error("set periodic status failed")
+			log.WithFields(fields).Error("set periodic result failed")
 		} else {
-			log.WithFields(fields).Debug("set periodic status")
+			log.WithFields(fields).Debug("set periodic result")
 		}
 	}()
 
 	query := fmt.Sprintf("UPDATE %ssubscriptions SET "+
-		"status = $1, "+
+		"result = $1, "+
 		"updated_at = $2 "+
-		"WHERE id = $3", conf.TablePrefix)
+		"WHERE id = $3",
+		conf.TablePrefix,
+	)
 
 	updatedAt := time.Now().UTC()
 	_, err = dbConn.Exec(query, status, updatedAt, id)

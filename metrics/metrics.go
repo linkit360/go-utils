@@ -5,16 +5,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-// name of the service / app to record them in prometheus
-var InstancePrefix string
-
-func Init(instancePrefix string) {
-	if instancePrefix == "" {
-		panic("instance prefix is empty")
-	}
-	InstancePrefix = instancePrefix
-}
-
 func AddHandler(r *gin.Engine) {
 	rg := r.Group("/metrics")
 	rg.GET("", gin.WrapH(prometheus.Handler()))
@@ -43,14 +33,6 @@ func NewGaugeLabel(namespace, subsystem, name, help string, labels map[string]st
 	return g
 }
 func PrometheusGauge(namespace, subsystem, name, help string) prometheus.Gauge {
-	if InstancePrefix == "" {
-		panic("instance prefix is empty")
-	}
-	if namespace == "" {
-		namespace = InstancePrefix
-	} else {
-		namespace = InstancePrefix + "_" + namespace
-	}
 	gauge := prometheus.NewGauge(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Subsystem: subsystem,
@@ -60,15 +42,8 @@ func PrometheusGauge(namespace, subsystem, name, help string) prometheus.Gauge {
 	prometheus.MustRegister(gauge)
 	return gauge
 }
+
 func PrometheusGaugeLabel(namespace, subsystem, name, help string, labels map[string]string) prometheus.Gauge {
-	if InstancePrefix == "" {
-		panic("instance prefix is empty")
-	}
-	if namespace == "" {
-		namespace = InstancePrefix
-	} else {
-		namespace = InstancePrefix + "_" + namespace
-	}
 	gauge := prometheus.NewGauge(prometheus.GaugeOpts{
 		Namespace:   namespace,
 		Subsystem:   subsystem,
@@ -82,14 +57,6 @@ func PrometheusGaugeLabel(namespace, subsystem, name, help string, labels map[st
 
 // for duration
 func NewSummary(name, help string) prometheus.Summary {
-	if InstancePrefix == "" {
-		panic("instance prefix is empty")
-	}
-	if name == "" {
-		name = InstancePrefix
-	} else {
-		name = InstancePrefix + "_" + name
-	}
 	summary := prometheus.NewSummary(
 		prometheus.SummaryOpts{
 			Name: name,
