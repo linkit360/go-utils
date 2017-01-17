@@ -1,7 +1,7 @@
 {
   "id": 2,
   "title": "Mobilink",
-  "description": "PK Mumbai",
+  "description": "ph1 Mumbai",
   "tags": [],
   "style": "dark",
   "timezone": "utc",
@@ -57,114 +57,114 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pk_mobilink1_qlistener_mt_manager_db_add_to_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_mt_manager_db_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "mt_manager",
-              "metric": "pk_mobilink1_qlistener_mt_manager_db_add_to_db_duration_seconds",
+              "metric": "qlistener_mt_manager_db_add_to_db_duration_seconds",
               "refId": "A",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_access_campaign_add_to_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_access_campaign_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "access campaign",
-              "metric": "pk_mobilink1_qlistener_access_campaign_add_to_db_duration_seconds",
+              "metric": "qlistener_access_campaign_add_to_db_duration_seconds",
               "refId": "B",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_content_sent_add_to_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_content_sent_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "content sent",
-              "metric": "pk_mobilink1_qlistener_content_sent_add_to_db_duration_seconds",
+              "metric": "qlistener_content_sent_add_to_db_duration_seconds",
               "refId": "C",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_operator_transactions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_operator_transactions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "operator transactions",
-              "metric": "pk_mobilink1_qlistener_operator_transactions_add_to_db_duration_seconds",
+              "metric": "qlistener_operator_transactions_add_to_db_duration_seconds",
               "refId": "D",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_user_actions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_user_actions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "user actions",
-              "metric": "pk_mobilink1_qlistener_user_actions_add_to_db_duration_seconds",
+              "metric": "qlistener_user_actions_add_to_db_duration_seconds",
               "refId": "E",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_pixel_transactions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_pixel_transactions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "pixel transactions",
-              "metric": "pk_mobilink1_qlistener_pixel_transactions_add_to_db_duration_seconds",
+              "metric": "qlistener_pixel_transactions_add_to_db_duration_seconds",
               "refId": "F",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_subscription_pixel_sent_update_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_subscription_pixel_sent_update_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "pixel update subscriptions",
-              "metric": "pk_mobilink1_qlistener_subscription_pixel_sent_update_db_duration_seconds",
+              "metric": "qlistener_subscription_pixel_sent_update_db_duration_seconds",
               "refId": "G",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_add_blacklisted_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_add_blacklisted_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "blacklisted",
-              "metric": "pk_mobilink1_qlistener_add_blacklisted_db_duration_seconds",
+              "metric": "qlistener_add_blacklisted_db_duration_seconds",
               "refId": "H",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_add_postpaid_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_add_postpaid_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "postpaid",
-              "metric": "pk_mobilink1_qlistener_add_postpaid_db_duration_seconds",
+              "metric": "qlistener_add_postpaid_db_duration_seconds",
               "refId": "I",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_start_retry_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_start_retry_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "start retry",
-              "metric": "pk_mobilink1_qlistener_start_retry_db_duration_seconds",
+              "metric": "qlistener_start_retry_db_duration_seconds",
               "refId": "J",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_touch_retry_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_touch_retry_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "touch retry",
-              "metric": "pk_mobilink1_qlistener_touch_retry_db_duration_seconds",
+              "metric": "qlistener_touch_retry_db_duration_seconds",
               "refId": "K",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_remove_retry_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_remove_retry_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "remove retry",
-              "metric": "pk_mobilink1_qlistener_remove_retry_db_duration_seconds",
+              "metric": "qlistener_remove_retry_db_duration_seconds",
               "refId": "L",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_write_subscription_status_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_write_subscription_status_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "write subscription status ",
-              "metric": "pk_mobilink1_qlistener_write_subscription_status_db_duration_seconds",
+              "metric": "qlistener_write_subscription_status_db_duration_seconds",
               "refId": "M",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_write_transaction_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_write_transaction_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "write transactions",
-              "metric": "pk_mobilink1_qlistener_write_transaction_db_duration_seconds",
+              "metric": "qlistener_write_transaction_db_duration_seconds",
               "refId": "N",
               "step": 20
             }
@@ -248,90 +248,90 @@
           ],
           "targets": [
             {
-              "expr": "pk_mobilink1_qlistener_mt_manager_db_add_to_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_mt_manager_db_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "mt manager",
-              "metric": "pk_mobilink1_qlistener_mt_manager_db_add_to_db_duration_seconds",
+              "metric": "qlistener_mt_manager_db_add_to_db_duration_seconds",
               "refId": "D",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_access_campaign_add_to_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_access_campaign_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "access campaign",
-              "metric": "pk_mobilink1_qlistener_access_campaign_add_to_db_duration_seconds",
+              "metric": "qlistener_access_campaign_add_to_db_duration_seconds",
               "refId": "A",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_user_actions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_user_actions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "user actions",
-              "metric": "pk_mobilink1_qlistener_user_actions_add_to_db_duration_seconds",
+              "metric": "qlistener_user_actions_add_to_db_duration_seconds",
               "refId": "C",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_operator_transactions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_operator_transactions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "operator transactions",
-              "metric": "pk_mobilink1_qlistener_operator_transactions_add_to_db_duration_seconds",
+              "metric": "qlistener_operator_transactions_add_to_db_duration_seconds",
               "refId": "B",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_add_postpaid_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_add_postpaid_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "add postpaid",
-              "metric": "pk_mobilink1_qlistener_add_postpaid_db_duration_seconds",
+              "metric": "qlistener_add_postpaid_db_duration_seconds",
               "refId": "E",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_content_sent_add_to_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_content_sent_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "content sent",
-              "metric": "pk_mobilink1_qlistener_content_sent_add_to_db_duration_seconds",
+              "metric": "qlistener_content_sent_add_to_db_duration_seconds",
               "refId": "F",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_touch_retry_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_touch_retry_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "touch retry",
-              "metric": "pk_mobilink1_qlistener_touch_retry_db_duration_seconds",
+              "metric": "qlistener_touch_retry_db_duration_seconds",
               "refId": "G",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_pixel_transactions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_pixel_transactions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "pixel transaction add",
-              "metric": "pk_mobilink1_qlistener_pixel_transactions_add_to_db_duration_seconds",
+              "metric": "qlistener_pixel_transactions_add_to_db_duration_seconds",
               "refId": "H",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_write_transaction_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_write_transaction_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "write transaction",
-              "metric": "pk_mobilink1_qlistener_write_transaction_db_duration_seconds",
+              "metric": "qlistener_write_transaction_db_duration_seconds",
               "refId": "I",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_write_subscription_status_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_write_subscription_status_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "update subscriptions status",
-              "metric": "pk_mobilink1_qlistener_write_subscription_status_db_duration_seconds",
+              "metric": "qlistener_write_subscription_status_db_duration_seconds",
               "refId": "J",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_remove_retry_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "qlistener_remove_retry_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "remove retry",
-              "metric": "pk_mobilink1_qlistener_remove_retry_db_duration_seconds",
+              "metric": "qlistener_remove_retry_db_duration_seconds",
               "refId": "K",
               "step": 120
             }
@@ -384,114 +384,114 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pk_mobilink1_qlistener_mt_manager_db_add_to_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_mt_manager_db_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "mt_manager",
-              "metric": "pk_mobilink1_qlistener_mt_manager_db_add_to_db_duration_seconds",
+              "metric": "qlistener_mt_manager_db_add_to_db_duration_seconds",
               "refId": "A",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_access_campaign_add_to_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_access_campaign_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "access campaign",
-              "metric": "pk_mobilink1_qlistener_access_campaign_add_to_db_duration_seconds",
+              "metric": "qlistener_access_campaign_add_to_db_duration_seconds",
               "refId": "B",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_content_sent_add_to_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_content_sent_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "content sent",
-              "metric": "pk_mobilink1_qlistener_content_sent_add_to_db_duration_seconds",
+              "metric": "qlistener_content_sent_add_to_db_duration_seconds",
               "refId": "C",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_operator_transactions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_operator_transactions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "operator transactions",
-              "metric": "pk_mobilink1_qlistener_operator_transactions_add_to_db_duration_seconds",
+              "metric": "qlistener_operator_transactions_add_to_db_duration_seconds",
               "refId": "D",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_user_actions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_user_actions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "user actions",
-              "metric": "pk_mobilink1_qlistener_user_actions_add_to_db_duration_seconds",
+              "metric": "qlistener_user_actions_add_to_db_duration_seconds",
               "refId": "E",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_pixel_transactions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_pixel_transactions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "pixel transactions",
-              "metric": "pk_mobilink1_qlistener_pixel_transactions_add_to_db_duration_seconds",
+              "metric": "qlistener_pixel_transactions_add_to_db_duration_seconds",
               "refId": "F",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_subscription_pixel_sent_update_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_subscription_pixel_sent_update_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "pixel update subscriptions",
-              "metric": "pk_mobilink1_qlistener_subscription_pixel_sent_update_db_duration_seconds",
+              "metric": "qlistener_subscription_pixel_sent_update_db_duration_seconds",
               "refId": "G",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_add_blacklisted_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_add_blacklisted_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "blacklisted",
-              "metric": "pk_mobilink1_qlistener_add_blacklisted_db_duration_seconds",
+              "metric": "qlistener_add_blacklisted_db_duration_seconds",
               "refId": "H",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_add_postpaid_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_add_postpaid_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "postpaid",
-              "metric": "pk_mobilink1_qlistener_add_postpaid_db_duration_seconds",
+              "metric": "qlistener_add_postpaid_db_duration_seconds",
               "refId": "I",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_start_retry_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_start_retry_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "start retry",
-              "metric": "pk_mobilink1_qlistener_start_retry_db_duration_seconds",
+              "metric": "qlistener_start_retry_db_duration_seconds",
               "refId": "J",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_touch_retry_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_touch_retry_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "touch retry",
-              "metric": "pk_mobilink1_qlistener_touch_retry_db_duration_seconds",
+              "metric": "qlistener_touch_retry_db_duration_seconds",
               "refId": "K",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_remove_retry_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_remove_retry_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "remove retry",
-              "metric": "pk_mobilink1_qlistener_remove_retry_db_duration_seconds",
+              "metric": "qlistener_remove_retry_db_duration_seconds",
               "refId": "L",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_write_subscription_status_db_duration_seconds{quantile=\"0.5\"}",
+              "expr": "qlistener_write_subscription_status_db_duration_seconds{quantile=\"0.5\"}",
               "intervalFactor": 2,
               "legendFormat": "write subscription status ",
-              "metric": "pk_mobilink1_qlistener_write_subscription_status_db_duration_seconds",
+              "metric": "qlistener_write_subscription_status_db_duration_seconds",
               "refId": "M",
               "step": 20
             },
             {
-              "expr": "pk_mobilink1_qlistener_write_transaction_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_write_transaction_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "write transactions",
-              "metric": "pk_mobilink1_qlistener_write_transaction_db_duration_seconds",
+              "metric": "qlistener_write_transaction_db_duration_seconds",
               "refId": "N",
               "step": 20
             }
@@ -575,90 +575,90 @@
           ],
           "targets": [
             {
-              "expr": "pk_mobilink1_qlistener_mt_manager_db_add_to_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_mt_manager_db_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "mt manager",
-              "metric": "pk_mobilink1_qlistener_mt_manager_db_add_to_db_duration_seconds",
+              "metric": "qlistener_mt_manager_db_add_to_db_duration_seconds",
               "refId": "D",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_access_campaign_add_to_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_access_campaign_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "access campaign",
-              "metric": "pk_mobilink1_qlistener_access_campaign_add_to_db_duration_seconds",
+              "metric": "qlistener_access_campaign_add_to_db_duration_seconds",
               "refId": "A",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_user_actions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_user_actions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "user actions",
-              "metric": "pk_mobilink1_qlistener_user_actions_add_to_db_duration_seconds",
+              "metric": "qlistener_user_actions_add_to_db_duration_seconds",
               "refId": "C",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_operator_transactions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_operator_transactions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "operator transactions",
-              "metric": "pk_mobilink1_qlistener_operator_transactions_add_to_db_duration_seconds",
+              "metric": "qlistener_operator_transactions_add_to_db_duration_seconds",
               "refId": "B",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_add_postpaid_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_add_postpaid_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "add postpaid",
-              "metric": "pk_mobilink1_qlistener_add_postpaid_db_duration_seconds",
+              "metric": "qlistener_add_postpaid_db_duration_seconds",
               "refId": "E",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_content_sent_add_to_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_content_sent_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "content sent",
-              "metric": "pk_mobilink1_qlistener_content_sent_add_to_db_duration_seconds",
+              "metric": "qlistener_content_sent_add_to_db_duration_seconds",
               "refId": "F",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_touch_retry_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_touch_retry_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "touch retry",
-              "metric": "pk_mobilink1_qlistener_touch_retry_db_duration_seconds",
+              "metric": "qlistener_touch_retry_db_duration_seconds",
               "refId": "G",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_pixel_transactions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_pixel_transactions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "pixel transaction add",
-              "metric": "pk_mobilink1_qlistener_pixel_transactions_add_to_db_duration_seconds",
+              "metric": "qlistener_pixel_transactions_add_to_db_duration_seconds",
               "refId": "H",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_write_transaction_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_write_transaction_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "write transaction",
-              "metric": "pk_mobilink1_qlistener_write_transaction_db_duration_seconds",
+              "metric": "qlistener_write_transaction_db_duration_seconds",
               "refId": "I",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_write_subscription_status_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_write_subscription_status_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "update subscriptions status",
-              "metric": "pk_mobilink1_qlistener_write_subscription_status_db_duration_seconds",
+              "metric": "qlistener_write_subscription_status_db_duration_seconds",
               "refId": "J",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_qlistener_remove_retry_db_duration_seconds{quantile=\"0.5\", group=\"pk\"}",
+              "expr": "qlistener_remove_retry_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "remove retry",
-              "metric": "pk_mobilink1_qlistener_remove_retry_db_duration_seconds",
+              "metric": "qlistener_remove_retry_db_duration_seconds",
               "refId": "K",
               "step": 120
             }
@@ -724,90 +724,90 @@
           ],
           "targets": [
             {
-              "expr": "pk_mobilink1_rbmq_consumer_pixels_connected{ group=\"pk\"}",
+              "expr": "rbmq_consumer_pixels_connected{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "pixels",
-              "metric": "pk_mobilink1_rbmq_consumer_pixels_connected",
+              "metric": "rbmq_consumer_pixels_connected",
               "refId": "A",
               "step": 2
             },
             {
-              "expr": "pk_mobilink1_rbmq_consumer_transaction_log_connected{ group=\"pk\"}",
+              "expr": "rbmq_consumer_transaction_log_connected{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "transaction_log",
-              "metric": "pk_mobilink1_rbmq_consumer_transaction_log_connected",
+              "metric": "rbmq_consumer_transaction_log_connected",
               "refId": "B",
               "step": 2
             },
             {
-              "expr": "pk_mobilink1_rbmq_consumer_user_actions_connected{ group=\"pk\"}",
+              "expr": "rbmq_consumer_user_actions_connected{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "user_actions",
-              "metric": "pk_mobilink1_rbmq_consumer_user_actions_connected",
+              "metric": "rbmq_consumer_user_actions_connected",
               "refId": "C",
               "step": 2
             },
             {
-              "expr": "pk_mobilink1_rbmq_consumer_access_campaign_connected{ group=\"pk\"}",
+              "expr": "rbmq_consumer_access_campaign_connected{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "access_campaign",
-              "metric": "pk_mobilink1_rbmq_consumer_access_campaign_connected",
+              "metric": "rbmq_consumer_access_campaign_connected",
               "refId": "D",
               "step": 2
             },
             {
-              "expr": "pk_mobilink1_rbmq_consumer_content_sent_connected{ group=\"pk\"}",
+              "expr": "rbmq_consumer_content_sent_connected{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "content sent",
-              "metric": "pk_mobilink1_rbmq_consumer_content_sent_connected",
+              "metric": "rbmq_consumer_content_sent_connected",
               "refId": "E",
               "step": 2
             },
             {
-              "expr": "pk_mobilink1_rbmq_consumer_access_campaign_connected{ group=\"pk\"}",
+              "expr": "rbmq_consumer_access_campaign_connected{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "mo_tarifficate",
-              "metric": "pk_mobilink1_rbmq_consumer_access_campaign_connected",
+              "metric": "rbmq_consumer_access_campaign_connected",
               "refId": "F",
               "step": 2
             },
             {
-              "expr": "pk_mobilink1_rbmq_consumer_mobilink_new_subscriptions_connected{ group=\"pk\"}",
+              "expr": "rbmq_consumer_mobilink_new_subscriptions_connected{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "new_subscriptions",
-              "metric": "pk_mobilink1_rbmq_consumer_mobilink_new_subscriptions_connected",
+              "metric": "rbmq_consumer_mobilink_new_subscriptions_connected",
               "refId": "G",
               "step": 2
             },
             {
-              "expr": "pk_mobilink1_rbmq_consumer_mobilink_requests_connected{ group=\"pk\"}",
+              "expr": "rbmq_consumer_mobilink_requests_connected{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "requests",
-              "metric": "pk_mobilink1_rbmq_consumer_mobilink_requests_connected",
+              "metric": "rbmq_consumer_mobilink_requests_connected",
               "refId": "H",
               "step": 2
             },
             {
-              "expr": "pk_mobilink1_rbmq_consumer_mobilink_responses_connected{ group=\"pk\"}",
+              "expr": "rbmq_consumer_mobilink_responses_connected{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "responses",
-              "metric": "pk_mobilink1_rbmq_consumer_mobilink_responses_connected",
+              "metric": "rbmq_consumer_mobilink_responses_connected",
               "refId": "I",
               "step": 2
             },
             {
-              "expr": "pk_mobilink1_rbmq_consumer_mobilink_sms_requests_connected{ group=\"pk\"}",
+              "expr": "rbmq_consumer_mobilink_sms_requests_connected{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "sms_requests",
-              "metric": "pk_mobilink1_rbmq_consumer_mobilink_sms_requests_connected",
+              "metric": "rbmq_consumer_mobilink_sms_requests_connected",
               "refId": "J",
               "step": 2
             },
             {
-              "expr": "pk_mobilink1_rbmq_consumer_mobilink_sms_responses_connected{ group=\"pk\"}",
+              "expr": "rbmq_consumer_mobilink_sms_responses_connected{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "sms_responses",
-              "metric": "pk_mobilink1_rbmq_consumer_mobilink_sms_responses_connected",
+              "metric": "rbmq_consumer_mobilink_sms_responses_connected",
               "refId": "K",
               "step": 2
             }
@@ -865,82 +865,50 @@
           ],
           "targets": [
             {
-              "expr": "pk_mobilink1_rbmq_consumer_mobilink_requests_queue_size{ group=\"pk\"}",
-              "intervalFactor": 2,
-              "legendFormat": "requests",
-              "metric": "pk_mobilink1_rbmq_consumer_mobilink_requests_queue_size",
-              "refId": "A",
-              "step": 120
-            },
-            {
-              "expr": "pk_mobilink1_rbmq_consumer_mobilink_mo_tarifficate_queue_size{ group=\"pk\"}",
-              "intervalFactor": 2,
-              "legendFormat": "mo tarifficate",
-              "metric": "pk_mobilink1_rbmq_consumer_mobilink_mo_tarifficate_queue_size",
-              "refId": "B",
-              "step": 120
-            },
-            {
-              "expr": "pk_mobilink1_rbmq_consumer_mobilink_new_subscriptions_queue_size{ group=\"pk\"}",
-              "intervalFactor": 2,
-              "legendFormat": "new subscriptions",
-              "metric": "pk_mobilink1_rbmq_consumer_mobilink_new_subscriptions_queue_size",
-              "refId": "C",
-              "step": 120
-            },
-            {
-              "expr": "pk_mobilink1_rbmq_consumer_mobilink_responses_queue_size{ group=\"pk\"}",
-              "intervalFactor": 2,
-              "legendFormat": "responses",
-              "metric": "pk_mobilink1_rbmq_consumer_mobilink_responses_queue_size",
-              "refId": "E",
-              "step": 120
-            },
-            {
-              "expr": "pk_mobilink1_rbmq_consumer_pixels_queue_size{ group=\"pk\"}",
+              "expr": "rbmq_consumer_pixels_queue_size{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "pixels",
-              "metric": "pk_mobilink1_rbmq_consumer_pixels_queue_size",
+              "metric": "rbmq_consumer_pixels_queue_size",
               "refId": "D",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_rbmq_consumer_transaction_log_queue_size{ group=\"pk\"}",
+              "expr": "rbmq_consumer_transaction_log_queue_size{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "transaction log",
-              "metric": "pk_mobilink1_rbmq_consumer_transaction_log_queue_size",
+              "metric": "rbmq_consumer_transaction_log_queue_size",
               "refId": "F",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_rbmq_consumer_user_actions_queue_size{ group=\"pk\"}",
+              "expr": "rbmq_consumer_user_actions_queue_size{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "user acrions",
-              "metric": "pk_mobilink1_rbmq_consumer_user_actions_queue_size",
+              "metric": "rbmq_consumer_user_actions_queue_size",
               "refId": "G",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_rbmq_consumer_access_campaign_queue_size{ group=\"pk\"}",
+              "expr": "rbmq_consumer_access_campaign_queue_size{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "access campaign",
-              "metric": "pk_mobilink1_rbmq_consumer_access_campaign_queue_size",
+              "metric": "rbmq_consumer_access_campaign_queue_size",
               "refId": "H",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_rbmq_consumer_content_sent_queue_size{ group=\"pk\"}",
+              "expr": "rbmq_consumer_content_sent_queue_size{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "content sent",
-              "metric": "pk_mobilink1_rbmq_consumer_content_sent_queue_size",
+              "metric": "rbmq_consumer_content_sent_queue_size",
               "refId": "I",
               "step": 120
             },
             {
-              "expr": "pk_mobilink1_rbmq_consumer_mt_manager_queue_size{ group=\"pk\"}",
+              "expr": "rbmq_consumer_mt_manager_queue_size{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "mt manager",
-              "metric": "pk_mobilink1_rbmq_consumer_mt_manager_queue_size",
+              "metric": "rbmq_consumer_mt_manager_queue_size",
               "refId": "J",
               "step": 120
             }
@@ -998,10 +966,10 @@
           ],
           "targets": [
             {
-              "expr": "pk_mobilink1_rbmq_notifier_connected{ group=\"pk\"}",
+              "expr": "rbmq_notifier_connected{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "{{job}}",
-              "metric": "pk_mobilink1_rbmq_notifier_connected",
+              "metric": "rbmq_notifier_connected",
               "refId": "A",
               "step": 2
             }
@@ -1059,28 +1027,28 @@
           ],
           "targets": [
             {
-              "expr": "pk_mobilink1_mt_manager_set_pending_status_db_duration_seconds{quantile=\"0.99\", group=\"pk\"}",
+              "expr": "mt_manager_set_pending_status_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "set status (sec)",
-              "metric": "pk_mobilink1_mt_manager_set_pending_status_db_duration_seconds",
+              "metric": "mt_manager_set_pending_status_db_duration_seconds",
               "refId": "C",
               "step": 2
             },
             {
-              "expr": "pk_mobilink1_mt_manager_pending_subscriptions_count{ group=\"pk\"}",
+              "expr": "mt_manager_pending_subscriptions_count{ group=\"ph1\"}",
               "hide": false,
               "intervalFactor": 2,
               "legendFormat": "subscriptions count",
-              "metric": "pk_mobilink1_mt_manager_pending_subscriptions_count",
+              "metric": "mt_manager_pending_subscriptions_count",
               "refId": "B",
               "step": 2
             },
             {
-              "expr": "pk_mobilink1_mt_manager_pending_retries_count{ group=\"pk\"}",
+              "expr": "mt_manager_pending_retries_count{ group=\"ph1\"}",
               "hide": false,
               "intervalFactor": 2,
               "legendFormat": "retries count",
-              "metric": "pk_mobilink1_mt_manager_pending_retries_count",
+              "metric": "mt_manager_pending_retries_count",
               "refId": "A",
               "step": 2
             }
@@ -1152,10 +1120,10 @@
           },
           "targets": [
             {
-              "expr": "pk_mobilink1_operator_load_headers_error{ group=\"pk\"}",
+              "expr": "operator_load_headers_error{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "load operators headers",
-              "metric": "pk_mobilink1_operator_load_headers_error",
+              "metric": "operator_load_headers_error",
               "refId": "A",
               "step": 2
             }
@@ -1247,9 +1215,9 @@
           },
           "targets": [
             {
-              "expr": "pk_mobilink1_campaign_load_error{ group=\"pk\"}",
+              "expr": "campaign_load_error{ group=\"ph1\"}",
               "intervalFactor": 2,
-              "metric": "pk_mobilink1_campaign_load_error",
+              "metric": "campaign_load_error",
               "refId": "A",
               "step": 2
             }
@@ -1340,9 +1308,9 @@
           },
           "targets": [
             {
-              "expr": "pk_mobilink1_mt_manager_mobilink_since_last_success_pay_seconds{ group=\"pk\"}",
+              "expr": "mt_manager_since_last_success_pay_seconds{ group=\"ph1\"}",
               "intervalFactor": 2,
-              "metric": "pk_mobilink1_mt_manager_mobilink_since_last_success_pay_seconds",
+              "metric": "mt_manager_since_last_success_pay_seconds",
               "refId": "A",
               "step": 240
             }
@@ -1415,7 +1383,7 @@
           },
           "targets": [
             {
-              "expr": "node_filesystem_free{device=\"/dev/xvda1\", group=\"pk\"}",
+              "expr": "node_filesystem_free{device=\"/dev/xvda1\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "",
               "metric": "node_filesystem_free",
@@ -1491,7 +1459,7 @@
           },
           "targets": [
             {
-              "expr": "node_memory_MemFree{group=\"pk\"}",
+              "expr": "node_memory_MemFree{group=\"ph1\"}",
               "intervalFactor": 2,
               "metric": "node_memory_MemFree",
               "refId": "B",
@@ -1508,16 +1476,16 @@
         },
         {
           "aliasColors": {
-            "pk_mobilink1_rpc_inmem_404_errors{group=\"mumbai\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#890F02",
-            "pk_mobilink1_rpc_inmem_404_errors{group=\"pk\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#E24D42",
-            "pk_mobilink1_rpc_inmem_404_errors{group=\"pk\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#890F02",
-            "pk_mobilink1_rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#7EB26D",
-            "pk_mobilink1_rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#508642",
-            "pk_mobilink1_rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#629E51",
-            "pk_mobilink1_rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#629E51",
-            "pk_mobilink1_rpc_inmem_success{group=\"pk\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#7EB26D",
-            "pk_mobilink1_rpc_inmem_success{group=\"pk\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
-            "pk_mobilink1_rpc_inmem_success{group=\"pk\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#508642",
+            "rpc_inmem_404_errors{group=\"mumbai\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#890F02",
+            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#E24D42",
+            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#890F02",
+            "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#7EB26D",
+            "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#508642",
+            "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#629E51",
+            "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#629E51",
+            "rpc_inmem_success{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#7EB26D",
+            "rpc_inmem_success{group=\"ph1\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
+            "rpc_inmem_success{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#508642",
             "rpc_inmem_errors{group=\"mumbai\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#E24D42",
             "rpc_inmem_errors{group=\"mumbai\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#890F02",
             "rpc_inmem_errors{group=\"mumbai\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#BF1B00",
@@ -1568,23 +1536,23 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pk_mobilink1_rpc_inmem_success{group=\"pk\"}",
+              "expr": "rpc_inmem_success{group=\"ph1\"}",
               "intervalFactor": 2,
-              "metric": "pk_mobilink1_rpc_inmem_success",
+              "metric": "rpc_inmem_success",
               "refId": "A",
               "step": 40
             },
             {
-              "expr": "pk_mobilink1_rpc_inmem_errors{group=\"pk\"}",
+              "expr": "rpc_inmem_errors{group=\"ph1\"}",
               "intervalFactor": 2,
-              "metric": "pk_mobilink1_rpc_inmem_errors",
+              "metric": "rpc_inmem_errors",
               "refId": "B",
               "step": 40
             },
             {
-              "expr": "pk_mobilink1_rpc_inmem_404_errors{group=\"pk\"}",
+              "expr": "rpc_inmem_404_errors{group=\"ph1\"}",
               "intervalFactor": 2,
-              "metric": "pk_mobilink1_rpc_inmem_404_errors",
+              "metric": "rpc_inmem_404_errors",
               "refId": "C",
               "step": 40
             }
@@ -1627,29 +1595,29 @@
             "mo notify errors ": "#890F02",
             "mt_manager notify errors ": "#890F02",
             "notify errors": "#890F02",
-            "pk_mobilink1_rbmq_notifier_buffer_pending_gauge_size{group=\"pk\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#7EB26D",
-            "pk_mobilink1_rbmq_notifier_buffer_pending_gauge_size{group=\"pk\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#7EB26D",
-            "pk_mobilink1_rbmq_notifier_buffer_pending_gauge_size{group=\"pk\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#7EB26D",
-            "pk_mobilink1_rbmq_notifier_buffer_pending_gauge_size{group=\"pk\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
-            "pk_mobilink1_rbmq_notifier_buffer_pending_gauge_size{group=\"pk\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#7EB26D",
-            "pk_mobilink1_rbmq_notifier_buffer_pending_gauge_size{group=\"pk\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#7EB26D",
-            "pk_mobilink1_rbmq_notifier_buffer_reading_gauge_size{group=\"pk\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#7EB26D",
-            "pk_mobilink1_rbmq_notifier_buffer_reading_gauge_size{group=\"pk\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#7EB26D",
-            "pk_mobilink1_rbmq_notifier_buffer_reading_gauge_size{group=\"pk\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#7EB26D",
-            "pk_mobilink1_rbmq_notifier_buffer_reading_gauge_size{group=\"pk\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
-            "pk_mobilink1_rbmq_notifier_buffer_reading_gauge_size{group=\"pk\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#7EB26D",
-            "pk_mobilink1_rbmq_notifier_buffer_reading_gauge_size{group=\"pk\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#7EB26D",
-            "pk_mobilink1_rbmq_notifier_errors{group=\"pk\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#890F02",
-            "pk_mobilink1_rbmq_notifier_errors{group=\"pk\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#890F02",
-            "pk_mobilink1_rbmq_notifier_errors{group=\"pk\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#890F02",
-            "pk_mobilink1_rbmq_notifier_errors{group=\"pk\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#890F02",
-            "pk_mobilink1_rbmq_notifier_errors{group=\"pk\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#890F02",
-            "pk_mobilink1_rbmq_notifier_errors{group=\"pk\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#890F02",
-            "pk_mobilink1_rbmq_notifier_reconnects_count{group=\"pk\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#6ED0E0",
-            "pk_mobilink1_rbmq_notifier_reconnects_count{group=\"pk\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#6ED0E0",
-            "pk_mobilink1_rbmq_notifier_reconnects_count{group=\"pk\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#6ED0E0",
-            "pk_mobilink1_rbmq_notifier_reconnects_count{group=\"pk\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#6ED0E0",
-            "pk_mobilink1_rbmq_notifier_reconnects_count{group=\"pk\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#6ED0E0"
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#7EB26D",
+            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#890F02",
+            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#890F02",
+            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#890F02",
+            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#890F02",
+            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#890F02",
+            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#890F02",
+            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#6ED0E0",
+            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#6ED0E0",
+            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#6ED0E0",
+            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#6ED0E0",
+            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#6ED0E0"
           },
           "bars": false,
           "datasource": null,
@@ -1691,39 +1659,39 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pk_mobilink1_rbmq_notifier_errors{group=\"pk\"}",
+              "expr": "rbmq_notifier_errors{group=\"ph1\"}",
               "intervalFactor": 2,
-              "metric": "pk_mobilink1_rbmq_notifier_errors",
+              "metric": "rbmq_notifier_errors",
               "refId": "A",
               "step": 40
             },
             {
-              "expr": "pk_mobilink1_rbmq_notifier_buffer_pending_gauge_size{group=\"pk\"}",
+              "expr": "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\"}",
               "hide": false,
               "intervalFactor": 2,
-              "metric": "pk_mobilink1_rbmq_notifier_buffer_pending_gauge_size",
+              "metric": "rbmq_notifier_buffer_pending_gauge_size",
               "refId": "B",
               "step": 40
             },
             {
-              "expr": "pk_mobilink1_rbmq_notifier_buffer_reading_gauge_size{group=\"pk\"}",
+              "expr": "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\"}",
               "intervalFactor": 2,
               "metric": "rbmq_notifier_buffer_reading_gauge_size",
               "refId": "C",
               "step": 40
             },
             {
-              "expr": "pk_mobilink1_rbmq_notifier_reconnects_count{group=\"pk\"}",
+              "expr": "rbmq_notifier_reconnects_count{group=\"ph1\"}",
               "intervalFactor": 2,
-              "metric": "pk_mobilink1_rbmq_notifier_reconnects_count",
+              "metric": "rbmq_notifier_reconnects_count",
               "refId": "D",
               "step": 40
             },
             {
-              "expr": "pk_mobilink1_notify_errors{group=\"pk\"}",
+              "expr": "notify_errors{group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "{{job}} notify errors ",
-              "metric": "pk_mobilink1_notify_errors",
+              "metric": "notify_errors",
               "refId": "E",
               "step": 40
             }
@@ -1821,7 +1789,7 @@
           },
           "targets": [
             {
-              "expr": "node_load15{group=\"pk\"}",
+              "expr": "node_load15{group=\"ph1\"}",
               "intervalFactor": 2,
               "metric": "node_load15",
               "refId": "A",
@@ -1887,18 +1855,18 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pk_mobilink1_balance_check_duration_seconds",
+              "expr": "balance_check_duration_seconds",
               "intervalFactor": 2,
               "legendFormat": "balance-req-{{quantile}}",
-              "metric": "pk_mobilink1_balance_check_duration_seconds",
+              "metric": "balance_check_duration_seconds",
               "refId": "A",
               "step": 40
             },
             {
-              "expr": "pk_mobilink1_charge_check_duration_seconds",
+              "expr": "charge_check_duration_seconds",
               "intervalFactor": 2,
               "legendFormat": "charge-req-{{quantile}}",
-              "metric": "pk_mobilink1_charge_check_duration_seconds",
+              "metric": "charge_check_duration_seconds",
               "refId": "B",
               "step": 40
             }
@@ -1984,50 +1952,50 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pk_mobilink1_balance_check_success{ group=\"pk\"}",
+              "expr": "balance_check_success{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "balance_check_success",
-              "metric": "pk_mobilink1_balance_check_success",
+              "metric": "balance_check_success",
               "refId": "A",
               "step": 40
             },
             {
-              "expr": "pk_mobilink1_balance_check_errors{ group=\"pk\"}",
+              "expr": "balance_check_errors{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "balance_check_errors",
-              "metric": "pk_mobilink1_balance_check_errors",
+              "metric": "balance_check_errors",
               "refId": "B",
               "step": 40
             },
             {
-              "expr": "telco_charge_errorspk_mobilink1_charge_errors{ group=\"pk\"}",
+              "expr": "telco_charge_errorscharge_errors{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "charge_errors",
-              "metric": "pk_mobilink1_charge_errors",
+              "metric": "charge_errors",
               "refId": "C",
               "step": 40
             },
             {
-              "expr": "pk_mobilink1_charge_success{ group=\"pk\"}",
+              "expr": "charge_success{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "charge_success",
-              "metric": "pk_mobilink1_charge_success",
+              "metric": "charge_success",
               "refId": "D",
               "step": 40
             },
             {
-              "expr": "pk_mobilink1_dropped{job=\"mobilink\",group=\"pk\"}",
+              "expr": "dropped{job=\"mobilink\",group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "dropped",
-              "metric": "pk_mobilink1_dropped",
+              "metric": "dropped",
               "refId": "E",
               "step": 40
             },
             {
-              "expr": "pk_mobilink1_empty{job=\"mobilink\", group=\"pk\"}",
+              "expr": "empty{job=\"mobilink\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "empty",
-              "metric": "pk_mobilink1_empty",
+              "metric": "empty",
               "refId": "F",
               "step": 40
             }
@@ -2125,10 +2093,10 @@
           },
           "targets": [
             {
-              "expr": "pk_mobilink1_mt_manager_mobilink_since_last_retries_fetch_seconds{ group=\"pk\"}",
+              "expr": "mt_manager_mobilink_since_last_retries_fetch_seconds{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "since last retries fetch",
-              "metric": "pk_mobilink1_mt_manager_mobilink_since_last_retries_fetch_seconds",
+              "metric": "mt_manager_mobilink_since_last_retries_fetch_seconds",
               "refId": "A",
               "step": 240
             }
@@ -2201,67 +2169,67 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pk_mobilink1_mt_manager_mobilink_response_success{ group=\"pk\"}",
+              "expr": "mt_manager_mobilink_response_success{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "response_success",
-              "metric": "pk_mobilink1_mt_manager_mobilink_response_success",
+              "metric": "mt_manager_mobilink_response_success",
               "refId": "A",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_mt_manager_mobilink_response_errors{ group=\"pk\"}",
+              "expr": "mt_manager_mobilink_response_errors{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "response_errors",
-              "metric": "pk_mobilink1_mt_manager_mobilink_response_errors",
+              "metric": "mt_manager_mobilink_response_errors",
               "refId": "B",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_mt_manager_mobilink_dropped{ group=\"pk\"}",
+              "expr": "mt_manager_mobilink_dropped{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "response_dropped",
-              "metric": "pk_mobilink1_mt_manager_mobilink_dropped",
+              "metric": "mt_manager_mobilink_dropped",
               "refId": "C",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_mt_manager_not_paid_status_mt_manager_postpaid{ group=\"pk\"}",
+              "expr": "mt_manager_not_paid_status_mt_manager_postpaid{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "postpaid",
-              "metric": "pk_mobilink1_mt_manager_not_paid_status_mt_manager_postpaid",
+              "metric": "mt_manager_not_paid_status_mt_manager_postpaid",
               "refId": "D",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_mt_manager_not_paid_status_mt_manager_blacklisted",
+              "expr": "mt_manager_not_paid_status_mt_manager_blacklisted",
               "intervalFactor": 2,
               "legendFormat": "blacklisted",
-              "metric": "pk_mobilink1_mt_manager_not_paid_status_mt_manager_blacklisted",
+              "metric": "mt_manager_not_paid_status_mt_manager_blacklisted",
               "refId": "E",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_mt_manager_not_paid_status_mt_manager_rejected{ group=\"pk\"}",
+              "expr": "mt_manager_not_paid_status_mt_manager_rejected{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "rejected",
-              "metric": "pk_mobilink1_mt_manager_not_paid_status_mt_manager_rejected",
+              "metric": "mt_manager_not_paid_status_mt_manager_rejected",
               "refId": "F",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_mt_manager_delay_hours_arent_passed{ group=\"pk\"}",
+              "expr": "mt_manager_delay_hours_arent_passed{ group=\"ph1\"}",
               "hide": false,
               "intervalFactor": 2,
               "legendFormat": "delay hours not passed",
-              "metric": "pk_mobilink1_mt_manager_delay_hours_arent_passed",
+              "metric": "mt_manager_delay_hours_arent_passed",
               "refId": "G",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_mt_manager_mobilink_notify_errors{ group=\"pk\"}",
+              "expr": "mt_manager_mobilink_notify_errors{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "notify errors",
-              "metric": "pk_mobilink1_mt_manager_mobilink_notify_errors",
+              "metric": "mt_manager_mobilink_notify_errors",
               "refId": "H",
               "step": 30
             }
@@ -2342,34 +2310,34 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pk_mobilink1_qlistener_operator_add_to_db_success{ group=\"pk\"}",
+              "expr": "qlistener_operator_add_to_db_success{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "add to db success",
-              "metric": "pk_mobilink1_qlistener_operator_add_to_db_success",
+              "metric": "qlistener_operator_add_to_db_success",
               "refId": "A",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_operator_add_to_db_errors{ group=\"pk\"}",
+              "expr": "qlistener_operator_add_to_db_errors{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "add to db errors",
-              "metric": "pk_mobilink1_qlistener_operator_add_to_db_errors",
+              "metric": "qlistener_operator_add_to_db_errors",
               "refId": "B",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_operator_empty{ group=\"pk\"}",
+              "expr": "qlistener_operator_empty{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "empty msgs",
-              "metric": "pk_mobilink1_qlistener_operator_empty",
+              "metric": "qlistener_operator_empty",
               "refId": "C",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_operator_dropped{ group=\"pk\"}",
+              "expr": "qlistener_operator_dropped{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "dropped msgs",
-              "metric": "pk_mobilink1_qlistener_operator_dropped",
+              "metric": "qlistener_operator_dropped",
               "refId": "D",
               "step": 30
             }
@@ -2435,10 +2403,10 @@
             "mumbai_dispatcherd_incoming_not_supported{group=\"mumbai\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#C15C17",
             "overall": "#B7DBAB",
             "page not found": "#890F02",
-            "pk_mobilink1_dispatcherd_campaign_hash_wrong{group=\"pk\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#E24D42",
-            "pk_mobilink1_dispatcherd_error404{group=\"pk\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#890F02",
-            "pk_mobilink1_dispatcherd_msisdn_not_found{group=\"pk\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#E5AC0E",
-            "pk_mobilink1_dispatcherd_serve_errors{group=\"pk\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#890F02",
+            "dispatcherd_campaign_hash_wrong{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#E24D42",
+            "dispatcherd_error404{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#890F02",
+            "dispatcherd_msisdn_not_found{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#E5AC0E",
+            "dispatcherd_serve_errors{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#890F02",
             "rejected": "#E5AC0E",
             "success": "#508642"
           },
@@ -2480,98 +2448,98 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pk_mobilink1_errors{job=\"dispatcherd\", group=\"pk\"}",
+              "expr": "errors{job=\"dispatcherd\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "errors",
-              "metric": "pk_mobilink1_errors",
+              "metric": "errors",
               "refId": "A",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_dispatcherd_contentd_rpc_errors{ group=\"pk\"}",
+              "expr": "dispatcherd_contentd_rpc_errors{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "contentd_rpc_errors",
-              "metric": "pk_mobilink1_dispatcherd_contentd_rpc_errors",
+              "metric": "dispatcherd_contentd_rpc_errors",
               "refId": "E",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_dispatcherd_serve_errors{ group=\"pk\"}",
+              "expr": "dispatcherd_serve_errors{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "content delivery errors",
-              "metric": "pk_mobilink1_dispatcherd_serve_errors",
+              "metric": "dispatcherd_serve_errors",
               "refId": "G",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_dispatcherd_agreed{ group=\"pk\"}",
+              "expr": "dispatcherd_agreed{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "agreed",
-              "metric": "pk_mobilink1_dispatcherd_agreed",
+              "metric": "dispatcherd_agreed",
               "refId": "B",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_dispatcherd_ip_not_found{ group=\"pk\"}",
+              "expr": "dispatcherd_ip_not_found{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "ip not recognized by system",
-              "metric": "pk_mobilink1_dispatcherd_ip_not_found",
+              "metric": "dispatcherd_ip_not_found",
               "refId": "D",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_contentd_success{ group=\"pk\"}",
+              "expr": "contentd_success{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "contentd success",
-              "metric": "pk_mobilink1_contentd_success",
+              "metric": "contentd_success",
               "refId": "F",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_dispatcherd_campaign_hash_wrong{ group=\"pk\"}",
+              "expr": "dispatcherd_campaign_hash_wrong{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "wrong hash ",
-              "metric": "pk_mobilink1_dispatcherd_campaign_hash_wrong",
+              "metric": "dispatcherd_campaign_hash_wrong",
               "refId": "H",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_dispatcherd_rejected{ group=\"pk\"}",
+              "expr": "dispatcherd_rejected{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "rejected",
-              "metric": "pk_mobilink1_dispatcherd_rejected",
+              "metric": "dispatcherd_rejected",
               "refId": "I",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_dispatcherd_msisdn_not_found{ group=\"pk\"}",
+              "expr": "dispatcherd_msisdn_not_found{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "msisdn not found",
-              "metric": "pk_mobilink1_dispatcherd_msisdn_not_found",
+              "metric": "dispatcherd_msisdn_not_found",
               "refId": "J",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_dispatcherd_error404{ group=\"pk\"}",
+              "expr": "dispatcherd_error404{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "page not found",
-              "metric": "pk_mobilink1_dispatcherd_error404",
+              "metric": "dispatcherd_error404",
               "refId": "K",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_dispatcherd_incoming{ group=\"pk\"}",
+              "expr": "dispatcherd_incoming{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "incoming",
-              "metric": "pk_mobilink1_dispatcherd_incoming",
+              "metric": "dispatcherd_incoming",
               "refId": "L",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_dispatcherd_truly_rejected{ group=\"pk\"}",
+              "expr": "dispatcherd_truly_rejected{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "rejected",
-              "metric": "pk_mobilink1_dispatcherd_truly_rejected",
+              "metric": "dispatcherd_truly_rejected",
               "refId": "C",
               "step": 30
             }
@@ -2646,18 +2614,18 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pk_mobilink1_dispatcherd_redirected{ group=\"pk\"}",
+              "expr": "dispatcherd_redirected{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "redirected",
-              "metric": "pk_mobilink1_dispatcherd_redirected",
+              "metric": "dispatcherd_redirected",
               "refId": "A",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_dispatcherd_truly_rejected{ group=\"pk\"}",
+              "expr": "dispatcherd_truly_rejected{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "rejected",
-              "metric": "pk_mobilink1_dispatcherd_truly_rejected",
+              "metric": "dispatcherd_truly_rejected",
               "refId": "B",
               "step": 30
             }
@@ -2744,7 +2712,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "http_request_duration_microseconds{job=\"dispatcherd\", group=\"pk\"}",
+              "expr": "http_request_duration_microseconds{job=\"dispatcherd\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "quantile {{quantile}}",
               "metric": "http_request_duration_microseconds",
@@ -2826,33 +2794,33 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pk_mobilink1_mt_manager_mobilink_dropped{ group=\"pk\"}",
+              "expr": "mt_manager_mobilink_dropped{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "dropped",
-              "metric": "pk_mobilink1_mt_manager_mobilink_dropped",
+              "metric": "mt_manager_mobilink_dropped",
               "refId": "A",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_mt_manager_mobilink_empty{ group=\"pk\"}",
+              "expr": "mt_manager_mobilink_empty{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "empty",
-              "metric": "pk_mobilink1_mt_manager_mobilink_empty",
+              "metric": "mt_manager_mobilink_empty",
               "refId": "B",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_mt_manager_mobilink_add_to_db_success{ group=\"pk\"}",
+              "expr": "mt_manager_mobilink_add_to_db_success{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "add_to_db_success",
-              "metric": "pk_mobilink1_mt_manager_mobilink_add_to_db_success",
+              "metric": "mt_manager_mobilink_add_to_db_success",
               "refId": "C",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_mt_manager_mobilink_add_to_db_errors{ group=\"pk\"}",
+              "expr": "mt_manager_mobilink_add_to_db_errors{ group=\"ph1\"}",
               "intervalFactor": 2,
-              "metric": "pk_mobilink1_mt_manager_mobilink_add_to_db_errors",
+              "metric": "mt_manager_mobilink_add_to_db_errors",
               "refId": "D",
               "step": 30
             }
@@ -2935,51 +2903,51 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pk_mobilink1_qlistener_access_campaign_parse_geoip_errors",
+              "expr": "qlistener_access_campaign_parse_geoip_errors",
               "intervalFactor": 2,
               "legendFormat": "geoip errors",
-              "metric": "pk_mobilink1_qlistener_access_campaign_parse_geoip_errors",
+              "metric": "qlistener_access_campaign_parse_geoip_errors",
               "refId": "E",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_access_campaign_add_to_db_success",
+              "expr": "qlistener_access_campaign_add_to_db_success",
               "intervalFactor": 2,
               "legendFormat": "add to db success",
-              "metric": "pk_mobilink1_qlistener_access_campaign_add_to_db_success",
+              "metric": "qlistener_access_campaign_add_to_db_success",
               "refId": "A",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_access_campaign_add_to_db_errors",
+              "expr": "qlistener_access_campaign_add_to_db_errors",
               "intervalFactor": 2,
               "legendFormat": "db errors",
-              "metric": "pk_mobilink1_qlistener_access_campaign_add_to_db_errors",
+              "metric": "qlistener_access_campaign_add_to_db_errors",
               "refId": "B",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_access_campaign_dropped",
+              "expr": "qlistener_access_campaign_dropped",
               "intervalFactor": 2,
               "legendFormat": "dropped",
-              "metric": "pk_mobilink1_qlistener_access_campaign_dropped",
+              "metric": "qlistener_access_campaign_dropped",
               "refId": "C",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_access_campaign_empty",
+              "expr": "qlistener_access_campaign_empty",
               "intervalFactor": 2,
               "legendFormat": "empty",
-              "metric": "pk_mobilink1_qlistener_access_campaign_empty",
+              "metric": "qlistener_access_campaign_empty",
               "refId": "D",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_access_campaign_unknown_hash",
+              "expr": "qlistener_access_campaign_unknown_hash",
               "hide": false,
               "intervalFactor": 2,
               "legendFormat": "unknown hash",
-              "metric": "pk_mobilink1_qlistener_access_campaign_unknown_hash",
+              "metric": "qlistener_access_campaign_unknown_hash",
               "refId": "F",
               "step": 30
             }
@@ -3067,35 +3035,35 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pk_mobilink1_qlistener_content_sent_add_to_db_success",
+              "expr": "qlistener_content_sent_add_to_db_success",
               "hide": false,
               "intervalFactor": 2,
               "legendFormat": "add to db success",
-              "metric": "pk_mobilink1_qlistener_content_sent_add_to_db_success",
+              "metric": "qlistener_content_sent_add_to_db_success",
               "refId": "A",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_content_sent_add_to_db_errors",
+              "expr": "qlistener_content_sent_add_to_db_errors",
               "intervalFactor": 2,
               "legendFormat": "db errors",
-              "metric": "pk_mobilink1_qlistener_content_sent_add_to_db_errors",
+              "metric": "qlistener_content_sent_add_to_db_errors",
               "refId": "B",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_content_sent_dropped",
+              "expr": "qlistener_content_sent_dropped",
               "intervalFactor": 2,
               "legendFormat": "dropped msgs",
-              "metric": "pk_mobilink1_qlistener_content_sent_dropped",
+              "metric": "qlistener_content_sent_dropped",
               "refId": "C",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_content_sent_empty",
+              "expr": "qlistener_content_sent_empty",
               "intervalFactor": 2,
               "legendFormat": "empty msgs",
-              "metric": "pk_mobilink1_qlistener_content_sent_empty",
+              "metric": "qlistener_content_sent_empty",
               "refId": "D",
               "step": 30
             }
@@ -3172,17 +3140,17 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pk_mobilink1_mt_manager_mobilink_response_sms_success",
+              "expr": "mt_manager_mobilink_response_sms_success",
               "intervalFactor": 2,
               "legendFormat": "response_sms_success",
-              "metric": "pk_mobilink1_mt_manager_mobilink_response_sms_success",
+              "metric": "mt_manager_mobilink_response_sms_success",
               "refId": "A",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_mt_manager_mobilink_response_sms_errors",
+              "expr": "mt_manager_mobilink_response_sms_errors",
               "intervalFactor": 2,
-              "metric": "pk_mobilink1_mt_manager_mobilink_response_sms_errors",
+              "metric": "mt_manager_mobilink_response_sms_errors",
               "refId": "B",
               "step": 30
             }
@@ -3271,34 +3239,34 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pk_mobilink1_qlistener_user_actions_add_to_db_success",
+              "expr": "qlistener_user_actions_add_to_db_success",
               "intervalFactor": 2,
               "legendFormat": "add to db success",
-              "metric": "pk_mobilink1_qlistener_user_actions_add_to_db_success",
+              "metric": "qlistener_user_actions_add_to_db_success",
               "refId": "A",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_user_actions_add_to_db_errors",
+              "expr": "qlistener_user_actions_add_to_db_errors",
               "intervalFactor": 2,
               "legendFormat": "db errors",
-              "metric": "pk_mobilink1_qlistener_user_actions_add_to_db_errors",
+              "metric": "qlistener_user_actions_add_to_db_errors",
               "refId": "B",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_user_actions_dropped",
+              "expr": "qlistener_user_actions_dropped",
               "intervalFactor": 2,
               "legendFormat": "dropped",
-              "metric": "pk_mobilink1_qlistener_user_actions_dropped",
+              "metric": "qlistener_user_actions_dropped",
               "refId": "C",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_user_actions_empty",
+              "expr": "qlistener_user_actions_empty",
               "intervalFactor": 2,
               "legendFormat": "empty",
-              "metric": "pk_mobilink1_qlistener_user_actions_empty",
+              "metric": "qlistener_user_actions_empty",
               "refId": "D",
               "step": 30
             }
@@ -3391,95 +3359,95 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pk_mobilink1_qlistener_pixel_add_to_db_errors{ group=\"pk\"}",
+              "expr": "qlistener_pixel_add_to_db_errors{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "add_to_db_errors",
-              "metric": "pk_mobilink1_qlistener_pixel_add_to_db_errors",
+              "metric": "qlistener_pixel_add_to_db_errors",
               "refId": "A",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_pixel_add_to_db_success{ group=\"pk\"}",
+              "expr": "qlistener_pixel_add_to_db_success{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "add_to_db_success",
-              "metric": "pk_mobilink1_qlistener_pixel_add_to_db_success",
+              "metric": "qlistener_pixel_add_to_db_success",
               "refId": "B",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_pixel_update_subscriptions_db_errors{ group=\"pk\"}",
+              "expr": "qlistener_pixel_update_subscriptions_db_errors{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "update_subscriptions_db_errors",
-              "metric": "pk_mobilink1_qlistener_pixel_update_subscriptions_db_errors",
+              "metric": "qlistener_pixel_update_subscriptions_db_errors",
               "refId": "H",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_pixel_dropped{ group=\"pk\"}",
+              "expr": "qlistener_pixel_dropped{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "dropped",
-              "metric": "pk_mobilink1_qlistener_pixel_dropped",
+              "metric": "qlistener_pixel_dropped",
               "refId": "I",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_pixel_empty{ group=\"pk\"}",
+              "expr": "qlistener_pixel_empty{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "empty",
-              "metric": "pk_mobilink1_qlistener_pixel_empty",
+              "metric": "qlistener_pixel_empty",
               "refId": "C",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_pixel_update_subscriptions_db_success{ group=\"pk\"}",
+              "expr": "qlistener_pixel_update_subscriptions_db_success{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "update subscription",
-              "metric": "pk_mobilink1_qlistener_pixel_update_subscriptions_db_success",
+              "metric": "qlistener_pixel_update_subscriptions_db_success",
               "refId": "D",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_qlistener_pixel_update_subscriptions_db_errors{ group=\"pk\"}",
+              "expr": "qlistener_pixel_update_subscriptions_db_errors{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "update subscription errors",
-              "metric": "pk_mobilink1_qlistener_pixel_update_subscriptions_db_errors",
+              "metric": "qlistener_pixel_update_subscriptions_db_errors",
               "refId": "E",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_pixels_empty_publisher{ group=\"pk\"}",
+              "expr": "pixels_empty_publisher{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "empty publisher",
-              "metric": "pk_mobilink1_pixels_empty_publisher",
+              "metric": "pixels_empty_publisher",
               "refId": "F",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_pixels_empty_settings{ group=\"pk\"}",
+              "expr": "pixels_empty_settings{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "empty_settings",
-              "metric": "pk_mobilink1_pixels_empty_settings",
+              "metric": "pixels_empty_settings",
               "refId": "G",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_pixels_publisher_error{ group=\"pk\"}",
+              "expr": "pixels_publisher_error{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "publisher_error",
-              "metric": "pk_mobilink1_pixels_publisher_error",
+              "metric": "pixels_publisher_error",
               "refId": "J",
               "step": 30
             },
             {
-              "expr": "pk_mobilink1_success{job=\"pixels\",group=\"pk\"}",
+              "expr": "success{job=\"pixels\",group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "success",
-              "metric": "pk_mobilink1_success",
+              "metric": "success",
               "refId": "K",
               "step": 30
             },
             {
-              "expr": "errors{job=\"pixels\", group=\"pk\"}",
+              "expr": "errors{job=\"pixels\", group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "errors",
               "metric": "errors",
@@ -3569,7 +3537,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "process_resident_memory_bytes{job!=\"prometheus\",group=\"pk\"}",
+              "expr": "process_resident_memory_bytes{job!=\"prometheus\",group=\"ph1\"}",
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "",
@@ -3656,10 +3624,10 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "pk_mobilink1_mt_manager_mobilink_since_last_retries_fetch_seconds{ group=\"pk\"}",
+              "expr": "mt_manager_mobilink_since_last_retries_fetch_seconds{ group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "mobilink last retries fetch",
-              "metric": "pk_mobilink1_mt_manager_mobilink_since_last_retries_fetch_seconds",
+              "metric": "mt_manager_mobilink_since_last_retries_fetch_seconds",
               "refId": "A",
               "step": 20
             }
