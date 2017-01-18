@@ -87,8 +87,7 @@ CREATE TABLE xmp_campaigns_access (
   geoip_is_satellite_provider boolean NOT NULL DEFAULT FALSE,
   geoip_accuracy_radius       int NOT NULL DEFAULT 0
 );
-CREATE EXTENSION btree_gist;
-CREATE INDEX xmp_campaigns_access_long_lat_gistidx ON xmp_campaigns_access USING gist(geoip_longitude, geoip_latitude);
+
 create index xmp_campaigns_access_sent_at_idx on xmp_campaigns_access(sent_at);
 
 
@@ -404,6 +403,22 @@ CREATE TABLE xmp_retries
 );
 create index xmp_retries_last_pay_attempt_at_idx on xmp_retries (last_pay_attempt_at);
 
+CREATE TYPE job_status AS ENUM ('ready', 'in progress', 'cancelled', 'done');
+CREATE TYPE job_type AS ENUM ('injection', 'expired');
+CREATE TABLE xmp_jobs
+(
+  id SERIAL PRIMARY KEY NOT NULL,
+  id_user INTEGER NOT NULL,
+  created_at TIMESTAMP DEFAULT now() NOT NULL,
+  run_at TIMESTAMP DEFAULT now() NOT NULL,
+  type job_type NOT NULL,
+  status job_status NOT NULL DEFAULT 'ready',
+  file_name varchar(127) NOT NULL DEFAULT '',
+  params JSONB DEFAULT '{}'::jsonb NOT NULL
+);
+create index xmp_jobs_created_at_idx on xmp_retries (created_at);
+
+
 CREATE TABLE xmp_retries_expired
 (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -425,6 +440,7 @@ create index xmp_retries_expired_last_pay_attempt_at_idx on xmp_retries_expired 
 create index xmp_retries_expired_created_at_idx on xmp_retries_expired(created_at);
 
 CREATE TYPE operator_transaction_log_type AS ENUM ('mo', 'mt', 'callback', 'consent', 'charge');
+
 CREATE TABLE xmp_operator_transaction_log (
   id serial PRIMARY KEY,
   created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
@@ -592,6 +608,7 @@ CREATE TABLE public.xmp_pixel_settings (
 CREATE TABLE public.xmp_pixel_transactions (
   id SERIAL PRIMARY KEY,
   created_at TIMESTAMP NOT NULL DEFAULT now(),
+  sent_at TIMESTAMP NOT NULL DEFAULT now(),
   tid CHARACTER VARYING(127) NOT NULL DEFAULT '',
   msisdn CHARACTER VARYING(32) NOT NULL DEFAULT '',
   id_campaign INTEGER NOT NULL DEFAULT 0,
@@ -602,6 +619,8 @@ CREATE TABLE public.xmp_pixel_transactions (
   publisher VARCHAR(511) NOT NULL DEFAULT '',
   response_code INT NOT NULL DEFAULT 0
 );
+create index xmp_pixel_transactions_sent_at_idx
+  on xmp_pixel_transactions(sent_at);
 
 CREATE INDEX index_xmp_subscriptions_active_id_service ON xmp_subscriptions_active (id_service);
 CREATE INDEX index_xmp_subscriptions_id_service ON xmp_subscriptions_active (id_service);
@@ -682,7 +701,8 @@ CREATE TABLE xmp_user_actions (
   error varchar(511) NOT NULL DEFAULT '',
   sent_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
-create index xmp_user_actions_sent_at_idx on xmp_user_actions(sent_at);
+create index xmp_user_actions_sent_at_idx
+  on xmp_user_actions(sent_at);
 
 
 CREATE TABLE xmp_user_activity_logs
@@ -768,3 +788,8 @@ CREATE TABLE xmp_users_transactions
 -- (operator_code, country_code, publisher, endpoint, enabled, ratio, id_campaign)
 -- VALUES (41001, 41, 'Kimia', 'http://wap.singiku.com/pass/jojokucpaga.php?aff_sub=%pixel%', true, 2, 290);
 --
+-- insert into subscriptions(msisdn, tid, price, delay_hours,days, allowed_from, allowed_to )
+-- values (
+--  '12312323', '1484727568-3ecf5094-b608-4ace-6a84-8837b921f58d',
+--   90, 10, '[]', 10, 12
+-- )

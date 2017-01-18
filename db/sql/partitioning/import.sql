@@ -151,7 +151,8 @@ insert into xmp_pixel_transactions(
                 endpoint ,
                 sent_at from xmp_pixel_transactions_2016_12_16;
 
-
+CREATE INDEX xmp_subscriptions_sent_at_idx ON xmp_subscriptions (sent_at);
+CREATE INDEX xmp_subscriptions_last_pay_attempt_at_idx ON xmp_subscriptions (last_pay_attempt_at);
 insert into xmp_subscriptions(
   last_request_at ,
   id_service ,

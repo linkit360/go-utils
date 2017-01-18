@@ -138,8 +138,8 @@ func GetRetriesPeriod() (seconds int64, err error) {
 		}()
 	}()
 
-	query := fmt.Sprintf("SELECT extract (epoch from (now() - "+
-		"MIN(last_pay_attempt_at))::interval) seconds from %sretries",
+	query := fmt.Sprintf("SELECT coalesce((SELECT extract (epoch from (now() - "+
+		"MIN(last_pay_attempt_at))::interval) seconds from %sretries), 0)",
 		conf.TablePrefix,
 	)
 	rows, err := dbConn.Query(query)
@@ -553,6 +553,7 @@ func AddNewSubscriptionToDB(r *Record) error {
 	if r.SubscriptionId > 0 {
 		log.WithFields(log.Fields{
 			"tid":    r.Tid,
+			"id":     r.SubscriptionId,
 			"msisdn": r.Msisdn,
 		}).Debug("already has subscription id")
 		return nil
@@ -592,7 +593,8 @@ func AddNewSubscriptionToDB(r *Record) error {
 		") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,"+
 		" $11, $12, $13, $14, $15, $16, $17, $18, $19) "+
 		"RETURNING id",
-		conf.TablePrefix)
+		conf.TablePrefix,
+	)
 
 	if err := dbConn.QueryRow(query,
 		r.SentAt,
@@ -629,6 +631,7 @@ func AddNewSubscriptionToDB(r *Record) error {
 	AddNewSubscriptionDuration.Observe(time.Since(begin).Seconds())
 	log.WithFields(log.Fields{
 		"tid":  r.Tid,
+		"id":   r.SubscriptionId,
 		"took": time.Since(begin).Seconds(),
 	}).Info("added new subscription")
 	return nil

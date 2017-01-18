@@ -6,19 +6,20 @@ DECLARE
   r xmp_operator_transaction_log%rowtype;
 BEGIN
   partition_date := to_char(NEW.sent_at,'YYYY_MM_DD');
-  partition := TG_RELNAME || '_' || partition_date;
+  partition := TG_TABLE_NAME || '_' || partition_date;
   IF NOT EXISTS(SELECT relname FROM pg_class WHERE relname=partition) THEN
     RAISE NOTICE 'A partition has been created %',partition;
 
     EXECUTE 'CREATE TABLE ' || partition || ' ( ' ||
             'check ( date(sent_at) = ''' || partition_date||
-            ''' ) ) INHERITS (' || TG_RELNAME || ');';
+            ''' ) ) INHERITS (' || TG_TABLE_NAME || ');';
 
     EXECUTE 'CREATE INDEX ' || partition || '_sent_at_idx ON ' || partition || '(sent_at);';
+    EXECUTE 'CREATE INDEX ' || partition || '_type_idx ON ' || partition || '(type);';
 
   END IF;
-  EXECUTE 'INSERT INTO ' || partition || ' SELECT(' || TG_RELNAME || ' ' || quote_literal(NEW) || ').* RETURNING * ' INTO r;
-  RETURN r;
+  EXECUTE 'INSERT INTO ' || partition || ' SELECT(' || TG_TABLE_NAME || ' ' || quote_literal(NEW) || ').* ';
+  RETURN NULL;
 END;
 $BODY$
 LANGUAGE plpgsql VOLATILE
