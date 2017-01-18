@@ -414,7 +414,8 @@ CREATE TABLE xmp_jobs
   type job_type NOT NULL,
   status job_status NOT NULL DEFAULT 'ready',
   file_name varchar(127) NOT NULL DEFAULT '',
-  params JSONB DEFAULT '{}'::jsonb NOT NULL
+  params JSONB DEFAULT '{}'::jsonb NOT NULL,
+  skip INTEGER NOT NULL DEFAULT 0
 );
 create index xmp_jobs_created_at_idx on xmp_retries (created_at);
 

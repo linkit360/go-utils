@@ -18,6 +18,7 @@ import (
 // please, do not add any json named field in old field,
 // bcz unmarshalling will brake the flow
 type Record struct {
+	Type                     string    `json:"type,omitempty"`
 	Msisdn                   string    `json:",omitempty"`
 	Tid                      string    `json:",omitempty"`
 	Result                   string    `json:",omitempty"`
@@ -50,6 +51,10 @@ type Record struct {
 	PeriodicAllowedToHours   int       `json:"allowed_to,omitempty"`
 }
 
+func (r Record) TransactionOnly() bool {
+	return r.Type == "injection" || r.Type == "expired"
+}
+
 var dbConn *sql.DB
 var conf db.DataBaseConfig
 var DBErrors m.Gauge
@@ -60,9 +65,10 @@ func Init(dbC db.DataBaseConfig) {
 	dbConn = db.Init(dbC)
 	conf = dbC
 
-	DBErrors = m.NewGauge("", "", "db_errors", "DB errors pverall mt_manager")
+	DBErrors = m.NewGauge("", "", "db_errors", "DB errors overall")
 	AddNewSubscriptionDuration = m.NewSummary("subscription_add_to_db_duration_seconds", "new subscription add duration")
 }
+
 func GenerateTID() string {
 	u4, err := uuid.NewV4()
 	if err != nil {
@@ -635,73 +641,6 @@ func AddNewSubscriptionToDB(r *Record) error {
 		"took": time.Since(begin).Seconds(),
 	}).Info("added new subscription")
 	return nil
-}
-
-func GetSuspendedSubscriptions(operatorCode int64, hours, limit int) (records []Record, err error) {
-	query := fmt.Sprintf("SELECT "+
-		"id, "+
-		"tid, "+
-		"msisdn, "+
-		"pixel, "+
-		"publisher, "+
-		"id_service, "+
-		"id_campaign, "+
-		"operator_code, "+
-		"country_code, "+
-		"attempts_count, "+
-		"delay_hours, "+
-		"paid_hours, "+
-		"keep_days, "+
-		"price "+
-		" FROM %ssubscriptions "+
-		" WHERE result = '' AND "+
-		"operator_code = $1 AND "+
-		" (CURRENT_TIMESTAMP - %d * INTERVAL '1 hour' ) > created_at "+
-		" ORDER BY id ASC LIMIT %s",
-		conf.TablePrefix,
-		hours,
-		strconv.Itoa(limit),
-	)
-	var rows *sql.Rows
-	rows, err = dbConn.Query(query, operatorCode)
-	if err != nil {
-		DBErrors.Inc()
-		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
-		return
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		record := Record{}
-
-		if err = rows.Scan(
-			&record.SubscriptionId,
-			&record.Tid,
-			&record.Msisdn,
-			&record.Pixel,
-			&record.Publisher,
-			&record.ServiceId,
-			&record.CampaignId,
-			&record.OperatorCode,
-			&record.CountryCode,
-			&record.AttemptsCount,
-			&record.DelayHours,
-			&record.PaidHours,
-			&record.KeepDays,
-			&record.Price,
-		); err != nil {
-			DBErrors.Inc()
-			err = fmt.Errorf("rows.Scan: %s", err.Error())
-			return
-		}
-		records = append(records, record)
-	}
-	if rows.Err() != nil {
-		DBErrors.Inc()
-		err = fmt.Errorf("rows.Err: %s", err.Error())
-		return
-	}
-	return
 }
 
 func GetPeriodics(operatorCode int64, batchLimit int) (records []Record, err error) {
