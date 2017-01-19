@@ -78,55 +78,6 @@ func GenerateTID() string {
 	log.WithField("tid", tid).Debug("generated tid")
 	return tid
 }
-func GetRetriesPeriod() (seconds int64, err error) {
-	begin := time.Now()
-	defer func() {
-		defer func() {
-			fields := log.Fields{
-				"took": time.Since(begin),
-			}
-			if err != nil {
-				fields["error"] = err.Error()
-				log.WithFields(fields).Error("get retries period failed")
-			} else {
-				log.WithFields(fields).Debug("get retries period")
-			}
-		}()
-	}()
-
-	query := fmt.Sprintf("SELECT coalesce((SELECT extract (epoch from (now() - "+
-		"MIN(last_pay_attempt_at))::interval) seconds from %sretries), 0)",
-		conf.TablePrefix,
-	)
-	rows, err := dbConn.Query(query)
-	if err != nil {
-		DBErrors.Inc()
-
-		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
-		return 0, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		if err = rows.Scan(
-			&seconds,
-		); err != nil {
-			DBErrors.Inc()
-
-			err = fmt.Errorf("rows.Scan: %s", err.Error())
-			return
-		}
-	}
-	if rows.Err() != nil {
-		DBErrors.Inc()
-
-		err = fmt.Errorf("rows.Err: %s", err.Error())
-		return
-	}
-
-	return
-}
-
 func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) {
 	begin := time.Now()
 	var retries []Record
@@ -168,7 +119,8 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) 
 		"FROM %sretries "+
 		"WHERE "+
 		" operator_code = $1 AND "+
-		" status = '' "+
+		" status = '' AND "+
+		" msisdn NOT IN ( SELECT DISTINCT msisdn from xmp_transactions WHERE sent_at > current_date AND ( result = 'paid' OR result = 'retry_paid') )"+
 		" ORDER BY last_pay_attempt_at ASC "+
 		" LIMIT %s", // get the last touched
 		conf.TablePrefix,
