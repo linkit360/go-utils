@@ -78,56 +78,6 @@ func GenerateTID() string {
 	log.WithField("tid", tid).Debug("generated tid")
 	return tid
 }
-func GetSuspendedRetriesCount() (count int, err error) {
-	begin := time.Now()
-	defer func() {
-		defer func() {
-			fields := log.Fields{
-				"took": time.Since(begin),
-			}
-			if err != nil {
-				fields["error"] = err.Error()
-				log.WithFields(fields).Error("get suspended retries count failed")
-			} else {
-				fields["count"] = count
-				log.WithFields(fields).Debug("get suspended retries")
-			}
-		}()
-	}()
-
-	query := fmt.Sprintf("SELECT count(*) count FROM %sretries "+
-		"WHERE status IN ( 'pending', 'script' ) "+
-		"AND updated_at < (CURRENT_TIMESTAMP - 4 * INTERVAL '1 hour' ) ",
-		conf.TablePrefix,
-	)
-	rows, err := dbConn.Query(query)
-	if err != nil {
-		DBErrors.Inc()
-
-		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
-		return 0, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		if err := rows.Scan(
-			&count,
-		); err != nil {
-			DBErrors.Inc()
-
-			err = fmt.Errorf("rows.Scan: %s", err.Error())
-			return count, err
-		}
-	}
-	if rows.Err() != nil {
-		DBErrors.Inc()
-
-		err = fmt.Errorf("get pending retries: rows.Err: %s", err.Error())
-		return count, err
-	}
-	return count, nil
-}
-
 func GetRetriesPeriod() (seconds int64, err error) {
 	begin := time.Now()
 	defer func() {
@@ -177,56 +127,6 @@ func GetRetriesPeriod() (seconds int64, err error) {
 	return
 }
 
-func GetSuspendedSubscriptionsCount() (count int, err error) {
-	begin := time.Now()
-	defer func() {
-		defer func() {
-			fields := log.Fields{
-				"took": time.Since(begin),
-			}
-			if err != nil {
-				fields["error"] = err.Error()
-				log.WithFields(fields).Error("get mo count failed")
-			} else {
-				fields["count"] = count
-				log.WithFields(fields).Debug("get mo count")
-			}
-		}()
-	}()
-
-	query := fmt.Sprintf("SELECT count(*) count FROM %ssubscriptions "+
-		"WHERE result = ''"+
-		"AND sent_at < (CURRENT_TIMESTAMP - 2 * INTERVAL '1 hour' ) ",
-		conf.TablePrefix,
-	)
-	rows, err := dbConn.Query(query)
-	if err != nil {
-		DBErrors.Inc()
-
-		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
-		return 0, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		if err := rows.Scan(
-			&count,
-		); err != nil {
-			DBErrors.Inc()
-
-			err = fmt.Errorf("rows.Scan: %s", err.Error())
-			return count, err
-		}
-	}
-	if rows.Err() != nil {
-		DBErrors.Inc()
-
-		err = fmt.Errorf("get pending subscriptions: rows.Err: %s", err.Error())
-		return count, err
-	}
-
-	return count, nil
-}
 func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) {
 	begin := time.Now()
 	var retries []Record

@@ -403,7 +403,7 @@ CREATE TABLE xmp_retries
 );
 create index xmp_retries_last_pay_attempt_at_idx on xmp_retries (last_pay_attempt_at);
 
-CREATE TYPE job_status AS ENUM ('ready', 'in progress', 'cancelled', 'done');
+CREATE TYPE job_status AS ENUM ('ready', 'in progress', 'cancelled', 'done', 'error');
 CREATE TYPE job_type AS ENUM ('injection', 'expired');
 CREATE TABLE xmp_jobs
 (

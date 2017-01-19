@@ -1,6 +1,6 @@
 {
-  "id": 2,
-  "title": "Mobilink",
+  "id": 11,
+  "title": "Yondu",
   "description": "ph1 Mumbai",
   "tags": [],
   "style": "dark",
@@ -1308,9 +1308,9 @@
           },
           "targets": [
             {
-              "expr": "mt_manager_since_last_success_pay_seconds{ group=\"ph1\"}",
+              "expr": "mt_manager_yondu_since_last_success_pay_seconds",
               "intervalFactor": 2,
-              "metric": "mt_manager_since_last_success_pay_seconds",
+              "metric": "mt_manager_yondu_since_last_success_pay_seconds",
               "refId": "A",
               "step": 240
             }
@@ -1479,24 +1479,41 @@
             "rpc_inmem_404_errors{group=\"mumbai\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#890F02",
             "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#E24D42",
             "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#890F02",
-            "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#7EB26D",
-            "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#508642",
-            "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#629E51",
-            "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#629E51",
-            "rpc_inmem_success{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#7EB26D",
-            "rpc_inmem_success{group=\"ph1\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
-            "rpc_inmem_success{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#508642",
+            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#BF1B00",
+            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#BF1B00",
+            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#BF1B00",
+            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.76.153.135:50304\",job=\"yondu1-qlistener\"}": "#BF1B00",
+            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#BF1B00",
+            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#BF1B00",
+            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#BF1B00",
             "rpc_inmem_errors{group=\"mumbai\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#E24D42",
             "rpc_inmem_errors{group=\"mumbai\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#890F02",
             "rpc_inmem_errors{group=\"mumbai\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#BF1B00",
             "rpc_inmem_errors{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#890F02",
             "rpc_inmem_errors{group=\"mumbai\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#BF1B00",
             "rpc_inmem_errors{group=\"mumbai\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#58140C",
+            "rpc_inmem_errors{group=\"ph1\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#890F02",
+            "rpc_inmem_errors{group=\"ph1\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#890F02",
+            "rpc_inmem_errors{group=\"ph1\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#890F02",
+            "rpc_inmem_errors{group=\"ph1\",instance=\"52.76.153.135:50304\",job=\"yondu1-qlistener\"}": "#890F02",
+            "rpc_inmem_errors{group=\"ph1\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#890F02",
+            "rpc_inmem_errors{group=\"ph1\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#890F02",
+            "rpc_inmem_errors{group=\"ph1\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#890F02",
+            "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#7EB26D",
             "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#9AC48A",
             "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#7EB26D",
             "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#629E51",
             "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
-            "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#3F6833"
+            "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#3F6833",
+            "rpc_inmem_success{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#7EB26D",
+            "rpc_inmem_success{group=\"ph1\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
+            "rpc_inmem_success{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#508642",
+            "rpc_inmem_success{group=\"ph1\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#7EB26D",
+            "rpc_inmem_success{group=\"ph1\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#7EB26D",
+            "rpc_inmem_success{group=\"ph1\",instance=\"52.76.153.135:50304\",job=\"yondu1-qlistener\"}": "#7EB26D",
+            "rpc_inmem_success{group=\"ph1\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#7EB26D",
+            "rpc_inmem_success{group=\"ph1\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#7EB26D",
+            "rpc_inmem_success{group=\"ph1\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#7EB26D"
           },
           "bars": false,
           "datasource": null,
@@ -1594,30 +1611,76 @@
           "aliasColors": {
             "mo notify errors ": "#890F02",
             "mt_manager notify errors ": "#890F02",
+            "notifier errors yondu1-contentd": "#890F02",
+            "notifier errors yondu1-dispatcherd": "#890F02",
+            "notifier errors yondu1-mo": "#890F02",
+            "notifier errors yondu1-mt_manager": "#890F02",
+            "notifier errors yondu1-pixels": "#890F02",
             "notify errors": "#890F02",
+            "pending buffer size yondu1-contentd": "#7EB26D",
+            "pending buffer size yondu1-dispatcherd": "#7EB26D",
+            "pending buffer size yondu1-mt_manager": "#7EB26D",
+            "pending buffer size yondu1-pixels": "#7EB26D",
+            "pending buffer size yondu1-telco": "#7EB26D",
             "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#7EB26D",
             "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#7EB26D",
             "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#7EB26D",
             "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
             "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#7EB26D",
             "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#7EB26D",
             "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#7EB26D",
             "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#7EB26D",
             "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#7EB26D",
             "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
             "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#7EB26D",
             "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#7EB26D",
             "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#890F02",
             "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#890F02",
             "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#890F02",
             "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#890F02",
             "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#890F02",
             "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#890F02",
+            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#BF1B00",
+            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#BF1B00",
+            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#BF1B00",
+            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#BF1B00",
+            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#BF1B00",
             "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#6ED0E0",
             "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#6ED0E0",
             "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#6ED0E0",
             "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#6ED0E0",
-            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#6ED0E0"
+            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#6ED0E0",
+            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#EAB839",
+            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#EAB839",
+            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#EAB839",
+            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#EAB839",
+            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#EAB839",
+            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#EAB839",
+            "reading buffer size yondu1-contentd": "#7EB26D",
+            "reading buffer size yondu1-dispatcherd": "#7EB26D",
+            "reading buffer size yondu1-mo": "#7EB26D",
+            "reading buffer size yondu1-mt_manager": "#7EB26D",
+            "reading buffer size yondu1-pixels": "#7EB26D",
+            "reading buffer size yondu1-telco": "#7EB26D",
+            "reconnects count yondu1-contentd": "#EAB839",
+            "reconnects count yondu1-dispatcherd": "#EAB839",
+            "reconnects count yondu1-mo": "#EAB839",
+            "reconnects count yondu1-mt_manager": "#EAB839",
+            "reconnects count yondu1-pixels": "#EAB839",
+            "reconnects count yondu1-telco": "#EAB839",
+            "yondu1-mo notify errors ": "#890F02",
+            "yondu1-mt_manager notify errors ": "#890F02"
           },
           "bars": false,
           "datasource": null,
@@ -1636,8 +1699,8 @@
           "legend": {
             "avg": false,
             "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
+            "hideEmpty": false,
+            "hideZero": false,
             "max": false,
             "min": false,
             "rightSide": false,
@@ -1661,6 +1724,7 @@
             {
               "expr": "rbmq_notifier_errors{group=\"ph1\"}",
               "intervalFactor": 2,
+              "legendFormat": "notifier errors {{ job }}",
               "metric": "rbmq_notifier_errors",
               "refId": "A",
               "step": 40
@@ -1669,6 +1733,7 @@
               "expr": "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\"}",
               "hide": false,
               "intervalFactor": 2,
+              "legendFormat": "pending buffer size {{job}}",
               "metric": "rbmq_notifier_buffer_pending_gauge_size",
               "refId": "B",
               "step": 40
@@ -1676,6 +1741,7 @@
             {
               "expr": "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\"}",
               "intervalFactor": 2,
+              "legendFormat": "reading buffer size {{job}}",
               "metric": "rbmq_notifier_buffer_reading_gauge_size",
               "refId": "C",
               "step": 40
@@ -1683,6 +1749,7 @@
             {
               "expr": "rbmq_notifier_reconnects_count{group=\"ph1\"}",
               "intervalFactor": 2,
+              "legendFormat": "reconnects count {{job}}",
               "metric": "rbmq_notifier_reconnects_count",
               "refId": "D",
               "step": 40
@@ -1803,311 +1870,6 @@
           "valueFontSize": "80%",
           "valueMaps": [],
           "valueName": "current"
-        },
-        {
-          "aliasColors": {
-            "balance-req-0.5": "#890F02",
-            "balance-req-0.9": "#EAB839",
-            "balance-req-0.99": "#7EB26D",
-            "charge-req-0.5": "#BF1B00",
-            "charge-req-0.9": "#CCA300",
-            "charge-req-0.99": "#629E51",
-            "mumbai_mobilink_balance_check_duration_seconds{group=\"mumbai\",instance=\"52.66.23.201:50306\",job=\"mobilink\",quantile=\"0.5\"}": "#890F02",
-            "mumbai_mobilink_balance_check_duration_seconds{group=\"mumbai\",instance=\"52.66.23.201:50306\",job=\"mobilink\",quantile=\"0.9\"}": "#C15C17",
-            "mumbai_mobilink_balance_check_duration_seconds{group=\"mumbai\",instance=\"52.66.23.201:50306\",job=\"mobilink\",quantile=\"0.99\"}": "#7EB26D",
-            "mumbai_mobilink_charge_check_duration_seconds{group=\"mumbai\",instance=\"52.66.23.201:50306\",job=\"mobilink\",quantile=\"0.5\"}": "#890F02",
-            "mumbai_mobilink_charge_check_duration_seconds{group=\"mumbai\",instance=\"52.66.23.201:50306\",job=\"mobilink\",quantile=\"0.9\"}": "#E0752D",
-            "mumbai_mobilink_charge_check_duration_seconds{group=\"mumbai\",instance=\"52.66.23.201:50306\",job=\"mobilink\",quantile=\"0.99\"}": "#3F6833"
-          },
-          "bars": false,
-          "datasource": null,
-          "editable": true,
-          "error": false,
-          "fill": 1,
-          "grid": {
-            "threshold1": null,
-            "threshold1Color": "rgba(216, 200, 27, 0.27)",
-            "threshold2": null,
-            "threshold2Color": "rgba(234, 112, 112, 0.22)"
-          },
-          "id": 36,
-          "isNew": true,
-          "legend": {
-            "avg": false,
-            "current": true,
-            "max": false,
-            "min": true,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "links": [],
-          "nullPointMode": "connected",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "span": 5,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "balance_check_duration_seconds",
-              "intervalFactor": 2,
-              "legendFormat": "balance-req-{{quantile}}",
-              "metric": "balance_check_duration_seconds",
-              "refId": "A",
-              "step": 40
-            },
-            {
-              "expr": "charge_check_duration_seconds",
-              "intervalFactor": 2,
-              "legendFormat": "charge-req-{{quantile}}",
-              "metric": "charge_check_duration_seconds",
-              "refId": "B",
-              "step": 40
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Mobilink Response Time",
-          "tooltip": {
-            "msResolution": false,
-            "shared": true,
-            "sort": 0,
-            "value_type": "cumulative"
-          },
-          "type": "graph",
-          "xaxis": {
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ]
-        },
-        {
-          "aliasColors": {
-            "balance_check_errors{group=\"mumbai\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#E24D42",
-            "charge_errors": "#E24D42",
-            "charge_success": "#1F78C1",
-            "mumbai_contentd_service_call_errors{group=\"mumbai\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#890F02",
-            "mumbai_contentd_service_campaign_not_found{group=\"mumbai\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#E24D42"
-          },
-          "bars": false,
-          "datasource": "Mumbai",
-          "editable": true,
-          "error": false,
-          "fill": 1,
-          "grid": {
-            "threshold1": 1,
-            "threshold1Color": "rgba(216, 200, 27, 0.27)",
-            "threshold2": 2,
-            "threshold2Color": "rgba(234, 112, 112, 0.22)",
-            "thresholdLine": true
-          },
-          "id": 1,
-          "isNew": true,
-          "legend": {
-            "alignAsTable": false,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": true,
-            "min": false,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null as zero",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "span": 5,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "balance_check_success{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "balance_check_success",
-              "metric": "balance_check_success",
-              "refId": "A",
-              "step": 40
-            },
-            {
-              "expr": "balance_check_errors{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "balance_check_errors",
-              "metric": "balance_check_errors",
-              "refId": "B",
-              "step": 40
-            },
-            {
-              "expr": "telco_charge_errorscharge_errors{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "charge_errors",
-              "metric": "charge_errors",
-              "refId": "C",
-              "step": 40
-            },
-            {
-              "expr": "charge_success{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "charge_success",
-              "metric": "charge_success",
-              "refId": "D",
-              "step": 40
-            },
-            {
-              "expr": "dropped{job=\"mobilink\",group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "dropped",
-              "metric": "dropped",
-              "refId": "E",
-              "step": 40
-            },
-            {
-              "expr": "empty{job=\"mobilink\", group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "empty",
-              "metric": "empty",
-              "refId": "F",
-              "step": 40
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Mobilink",
-          "tooltip": {
-            "msResolution": false,
-            "shared": false,
-            "sort": 0,
-            "value_type": "cumulative"
-          },
-          "transparent": false,
-          "type": "graph",
-          "xaxis": {
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ]
-        },
-        {
-          "cacheTimeout": null,
-          "colorBackground": false,
-          "colorValue": false,
-          "colors": [
-            "rgba(245, 54, 54, 0.9)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
-          ],
-          "datasource": null,
-          "decimals": null,
-          "editable": true,
-          "error": false,
-          "format": "s",
-          "gauge": {
-            "maxValue": 100000,
-            "minValue": 0,
-            "show": false,
-            "thresholdLabels": false,
-            "thresholdMarkers": true
-          },
-          "height": "200",
-          "id": 40,
-          "interval": null,
-          "isNew": true,
-          "links": [],
-          "mappingType": 1,
-          "mappingTypes": [
-            {
-              "name": "value to text",
-              "value": 1
-            },
-            {
-              "name": "range to text",
-              "value": 2
-            }
-          ],
-          "maxDataPoints": 100,
-          "nullPointMode": "connected",
-          "nullText": null,
-          "postfix": "",
-          "postfixFontSize": "50%",
-          "prefix": "",
-          "prefixFontSize": "50%",
-          "rangeMaps": [
-            {
-              "from": "null",
-              "text": "N/A",
-              "to": "null"
-            }
-          ],
-          "span": 2,
-          "sparkline": {
-            "fillColor": "rgba(31, 118, 189, 0.18)",
-            "full": false,
-            "lineColor": "rgb(31, 120, 193)",
-            "show": true
-          },
-          "targets": [
-            {
-              "expr": "mt_manager_mobilink_since_last_retries_fetch_seconds{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "since last retries fetch",
-              "metric": "mt_manager_mobilink_since_last_retries_fetch_seconds",
-              "refId": "A",
-              "step": 240
-            }
-          ],
-          "thresholds": "",
-          "title": "Since Last Retries Fetch",
-          "transparent": true,
-          "type": "singlestat",
-          "valueFontSize": "80%",
-          "valueMaps": [],
-          "valueName": "current"
         }
       ],
       "title": "New row"
@@ -2119,9 +1881,10 @@
       "panels": [
         {
           "aliasColors": {
+            "already subscribed": "#B7DBAB",
             "balance check ": "#629E51",
             "balance check falied": "#890F02",
-            "blacklisted": "#F2C96D",
+            "blacklisted": "#EF843C",
             "mumbai_mt_manager_mobilink_queue_requests{group=\"mumbai\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#5195CE",
             "mumbai_mt_manager_mobilink_queue_responses{group=\"mumbai\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#6ED0E0",
             "mumbai_mt_manager_not_paid_status_balance_check_falied{group=\"mumbai\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#E24D42",
@@ -2145,7 +1908,7 @@
           "id": 4,
           "isNew": true,
           "legend": {
-            "avg": true,
+            "avg": false,
             "current": true,
             "hideEmpty": true,
             "hideZero": true,
@@ -2220,7 +1983,7 @@
               "expr": "mt_manager_delay_hours_arent_passed{ group=\"ph1\"}",
               "hide": false,
               "intervalFactor": 2,
-              "legendFormat": "delay hours not passed",
+              "legendFormat": "already subscribed",
               "metric": "mt_manager_delay_hours_arent_passed",
               "refId": "G",
               "step": 30
@@ -2384,10 +2147,708 @@
       "panels": [
         {
           "aliasColors": {
+            "add to db errors": "#890F02",
+            "balance_check_errors{group=\"mumbai\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#E24D42",
+            "charge_errors": "#E24D42",
+            "charge_success": "#1F78C1",
+            "mo dropped": "#E24D42",
+            "mumbai_contentd_service_call_errors{group=\"mumbai\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#890F02",
+            "mumbai_contentd_service_campaign_not_found{group=\"mumbai\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#E24D42",
+            "new mo success": "#7EB26D",
+            "parse time error": "#890F02",
+            "rbmq consumer connect": "#890F02",
+            "telco incoming errors": "#890F02",
+            "telco incoming mo": "#508642",
+            "unknow campaign (keyword not found)": "#890F02",
+            "unknown service": "#890F02"
+          },
+          "bars": false,
+          "datasource": "Mumbai",
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": 1,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": 2,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)",
+            "thresholdLine": true
+          },
+          "id": 1,
+          "isNew": true,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": true,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": true,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null as zero",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "mt_manager_yondu_mo_dropped",
+              "intervalFactor": 2,
+              "legendFormat": "mo dropped",
+              "metric": "mt_manager_yondu_mo_dropped",
+              "refId": "E",
+              "step": 30
+            },
+            {
+              "expr": "mt_manager_yondu_mo_parse_time_error",
+              "intervalFactor": 2,
+              "legendFormat": "parse time error",
+              "metric": "mt_manager_yondu_mo_parse_time_error",
+              "refId": "A",
+              "step": 30
+            },
+            {
+              "expr": "mt_manager_yondu_mo_unknown_campaign",
+              "intervalFactor": 2,
+              "legendFormat": "unknow campaign (keyword not found)",
+              "metric": "mt_manager_yondu_mo_unknown_campaign",
+              "refId": "B",
+              "step": 30
+            },
+            {
+              "expr": "mt_manager_yondu_mo_unknown_service",
+              "intervalFactor": 2,
+              "legendFormat": "unknown service",
+              "metric": "mt_manager_yondu_mo_unknown_service",
+              "refId": "C",
+              "step": 30
+            },
+            {
+              "expr": "telco_mo_success",
+              "intervalFactor": 2,
+              "legendFormat": "telco incoming mo",
+              "metric": "telco_mo_success",
+              "refId": "F",
+              "step": 30
+            },
+            {
+              "expr": "telco_mo_errors",
+              "intervalFactor": 2,
+              "legendFormat": "telco incoming errors",
+              "metric": "telco_mo_errors",
+              "refId": "G",
+              "step": 30
+            },
+            {
+              "expr": "mt_manager_yondu_add_to_db_errors",
+              "intervalFactor": 2,
+              "legendFormat": "add to db errors",
+              "metric": "mt_manager_yondu_add_to_db_errors",
+              "refId": "D",
+              "step": 30
+            },
+            {
+              "expr": "mt_manager_yondu_add_to_db_success",
+              "intervalFactor": 2,
+              "legendFormat": "new mo success",
+              "metric": "mt_manager_yondu_add_to_db_success",
+              "refId": "H",
+              "step": 30
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Yondu MO",
+          "tooltip": {
+            "msResolution": false,
+            "shared": false,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "transparent": false,
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 47,
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "telco_mt_success",
+              "intervalFactor": 2,
+              "legendFormat": "mt out ",
+              "metric": "telco_mt_success",
+              "refId": "A",
+              "step": 30
+            },
+            {
+              "expr": "telco_mt_errors",
+              "intervalFactor": 2,
+              "legendFormat": "mt errors",
+              "metric": "telco_mt_errors",
+              "refId": "B",
+              "step": 30
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Yondu MT",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+            "dropped": "#890F02",
+            "parse time errors": "#E24D42",
+            "telco incoming traffic": "#508642",
+            "trans id error": "#E24D42"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 48,
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "mt_manager_yondu_callback_dropped",
+              "intervalFactor": 2,
+              "legendFormat": "dropped",
+              "metric": "mt_manager_yondu_callback_dropped",
+              "refId": "A",
+              "step": 30
+            },
+            {
+              "expr": "mt_manager_yondu_callback_transid_error",
+              "intervalFactor": 2,
+              "legendFormat": "trans id error",
+              "metric": "mt_manager_yondu_callback_transid_error",
+              "refId": "B",
+              "step": 30
+            },
+            {
+              "expr": "mt_manager_yondu_callback_parse_time_error",
+              "intervalFactor": 2,
+              "legendFormat": "parse time errors",
+              "metric": "mt_manager_yondu_callback_parse_time_error",
+              "refId": "C",
+              "step": 30
+            },
+            {
+              "expr": "telco_callback_success",
+              "intervalFactor": 2,
+              "legendFormat": "telco incoming traffic",
+              "metric": "telco_callback_success",
+              "refId": "D",
+              "step": 30
+            },
+            {
+              "expr": "telco_callback_errors",
+              "intervalFactor": 2,
+              "legendFormat": "telco incoming traffic errors",
+              "metric": "telco_callback_errors",
+              "refId": "E",
+              "step": 30
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Yondu CallBack",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+            "consent errors": "#890F02",
+            "telco_sentconsent_errors{group=\"ph1\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#E24D42"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 49,
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "telco_sentconsent_success",
+              "intervalFactor": 2,
+              "legendFormat": "consent success",
+              "metric": "telco_sentconsent_success",
+              "refId": "A",
+              "step": 30
+            },
+            {
+              "expr": "telco_sentconsent_errors",
+              "intervalFactor": 2,
+              "legendFormat": "consent errors",
+              "metric": "telco_sentconsent_errors",
+              "refId": "B",
+              "step": 30
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Yondu Sent Consent",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "title": "New row"
+    },
+    {
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "aliasColors": {
+            "balance-req-0.5": "#890F02",
+            "balance-req-0.9": "#EAB839",
+            "balance-req-0.99": "#7EB26D",
+            "charge 0.9": "#EAB839",
+            "charge 0.99": "#508642",
+            "charge-req-0.5": "#BF1B00",
+            "charge-req-0.9": "#CCA300",
+            "charge-req-0.99": "#629E51",
+            "consent 0.5": "#EF843C",
+            "consent 0.9": "#EAB839",
+            "consent 0.99": "#7EB26D",
+            "mt 0.5": "#EF843C",
+            "mt 0.99": "#7EB26D",
+            "mumbai_mobilink_balance_check_duration_seconds{group=\"mumbai\",instance=\"52.66.23.201:50306\",job=\"mobilink\",quantile=\"0.5\"}": "#890F02",
+            "mumbai_mobilink_balance_check_duration_seconds{group=\"mumbai\",instance=\"52.66.23.201:50306\",job=\"mobilink\",quantile=\"0.9\"}": "#C15C17",
+            "mumbai_mobilink_balance_check_duration_seconds{group=\"mumbai\",instance=\"52.66.23.201:50306\",job=\"mobilink\",quantile=\"0.99\"}": "#7EB26D",
+            "mumbai_mobilink_charge_check_duration_seconds{group=\"mumbai\",instance=\"52.66.23.201:50306\",job=\"mobilink\",quantile=\"0.5\"}": "#890F02",
+            "mumbai_mobilink_charge_check_duration_seconds{group=\"mumbai\",instance=\"52.66.23.201:50306\",job=\"mobilink\",quantile=\"0.9\"}": "#E0752D",
+            "mumbai_mobilink_charge_check_duration_seconds{group=\"mumbai\",instance=\"52.66.23.201:50306\",job=\"mobilink\",quantile=\"0.99\"}": "#3F6833"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 36,
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": false,
+            "min": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "telco_mt_duration_seconds",
+              "intervalFactor": 2,
+              "legendFormat": "mt {{quantile}}",
+              "metric": "telco_mt_duration_seconds",
+              "refId": "A",
+              "step": 30
+            },
+            {
+              "expr": "telco_charge_duration_seconds",
+              "intervalFactor": 2,
+              "legendFormat": "charge {{quantile}}",
+              "metric": "telco_charge_duration_seconds",
+              "refId": "B",
+              "step": 30
+            },
+            {
+              "expr": "telco_consent_duration_seconds",
+              "intervalFactor": 2,
+              "legendFormat": "consent {{quantile}}",
+              "metric": "telco_consent_duration_seconds",
+              "refId": "C",
+              "step": 30
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Yondu Response Time",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "Âµs",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+            "absent parameter": "#EF843C",
+            "errors": "#890F02",
+            "our errors": "#EA6460",
+            "page 404": "#BF1B00"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 50,
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "success{job=\"yondu1-telco\"}",
+              "intervalFactor": 2,
+              "legendFormat": "success",
+              "metric": "success",
+              "refId": "A",
+              "step": 30
+            },
+            {
+              "expr": "errors{job=\"yondu1-telco\"}",
+              "intervalFactor": 2,
+              "legendFormat": "errors",
+              "metric": "errors",
+              "refId": "B",
+              "step": 30
+            },
+            {
+              "expr": "telco_adsent_parameter",
+              "intervalFactor": 2,
+              "legendFormat": "absent parameter",
+              "metric": "telco_adsent_parameter",
+              "refId": "C",
+              "step": 30
+            },
+            {
+              "expr": "telco_404_page_not_found",
+              "intervalFactor": 2,
+              "legendFormat": "page 404",
+              "metric": "telco_404_page_not_found",
+              "refId": "D",
+              "step": 30
+            },
+            {
+              "expr": "telco_dropped",
+              "intervalFactor": 2,
+              "legendFormat": "our errors",
+              "metric": "telco_dropped",
+              "refId": "E",
+              "step": 30
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Yondu Module",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "title": "Pixels / QListener"
+    },
+    {
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "aliasColors": {
             "agree success": "#629E51",
             "agreed": "#64B0C8",
             "content delivery errors": "#BF1B00",
             "contentd success": "#629E51",
+            "dispatcherd_campaign_hash_wrong{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#E24D42",
+            "dispatcherd_error404{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#890F02",
+            "dispatcherd_msisdn_not_found{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#E5AC0E",
+            "dispatcherd_serve_errors{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#890F02",
             "errors": "#890F02",
             "incoming": "#7EB26D",
             "ip not recognized by system": "#967302",
@@ -2403,10 +2864,6 @@
             "mumbai_dispatcherd_incoming_not_supported{group=\"mumbai\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#C15C17",
             "overall": "#B7DBAB",
             "page not found": "#890F02",
-            "dispatcherd_campaign_hash_wrong{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#E24D42",
-            "dispatcherd_error404{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#890F02",
-            "dispatcherd_msisdn_not_found{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#E5AC0E",
-            "dispatcherd_serve_errors{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#890F02",
             "rejected": "#E5AC0E",
             "success": "#508642"
           },
@@ -2542,6 +2999,22 @@
               "metric": "dispatcherd_truly_rejected",
               "refId": "C",
               "step": 30
+            },
+            {
+              "expr": "dispatcherd_random_content_get",
+              "intervalFactor": 2,
+              "legendFormat": "random content get ",
+              "metric": "dispatcherd_random_content_get",
+              "refId": "M",
+              "step": 30
+            },
+            {
+              "expr": "dispatcherd_unique_url_get",
+              "intervalFactor": 2,
+              "legendFormat": "unique url get ",
+              "metric": "dispatcherd_unique_url_get",
+              "refId": "N",
+              "step": 30
             }
           ],
           "timeFrom": null,
@@ -2576,100 +3049,6 @@
             }
           ]
         },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "datasource": null,
-          "editable": true,
-          "error": false,
-          "fill": 1,
-          "grid": {
-            "threshold1": null,
-            "threshold1Color": "rgba(216, 200, 27, 0.27)",
-            "threshold2": null,
-            "threshold2Color": "rgba(234, 112, 112, 0.22)"
-          },
-          "id": 46,
-          "isNew": true,
-          "legend": {
-            "avg": false,
-            "current": true,
-            "max": true,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "links": [],
-          "nullPointMode": "connected",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "span": 6,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "dispatcherd_redirected{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "redirected",
-              "metric": "dispatcherd_redirected",
-              "refId": "A",
-              "step": 30
-            },
-            {
-              "expr": "dispatcherd_truly_rejected{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "rejected",
-              "metric": "dispatcherd_truly_rejected",
-              "refId": "B",
-              "step": 30
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Redirected",
-          "tooltip": {
-            "msResolution": false,
-            "shared": true,
-            "sort": 0,
-            "value_type": "cumulative"
-          },
-          "type": "graph",
-          "xaxis": {
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ]
-        }
-      ],
-      "title": "New row"
-    },
-    {
-      "collapse": false,
-      "editable": true,
-      "height": "250px",
-      "panels": [
         {
           "aliasColors": {},
           "bars": false,
@@ -2735,7 +3114,7 @@
           },
           "yaxes": [
             {
-              "format": "Âµs",
+              "format": "Ã‚Âµs",
               "label": null,
               "logBase": 1,
               "max": null,
@@ -2751,452 +3130,18 @@
               "show": true
             }
           ]
-        },
-        {
-          "aliasColors": {
-            "add_to_db_success": "#7EB26D"
-          },
-          "bars": false,
-          "datasource": null,
-          "editable": true,
-          "error": false,
-          "fill": 1,
-          "grid": {
-            "threshold1": null,
-            "threshold1Color": "rgba(216, 200, 27, 0.27)",
-            "threshold2": null,
-            "threshold2Color": "rgba(234, 112, 112, 0.22)"
-          },
-          "id": 25,
-          "isNew": true,
-          "legend": {
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": true,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "links": [],
-          "nullPointMode": "connected",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "span": 6,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "mt_manager_mobilink_dropped{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "dropped",
-              "metric": "mt_manager_mobilink_dropped",
-              "refId": "A",
-              "step": 30
-            },
-            {
-              "expr": "mt_manager_mobilink_empty{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "empty",
-              "metric": "mt_manager_mobilink_empty",
-              "refId": "B",
-              "step": 30
-            },
-            {
-              "expr": "mt_manager_mobilink_add_to_db_success{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "add_to_db_success",
-              "metric": "mt_manager_mobilink_add_to_db_success",
-              "refId": "C",
-              "step": 30
-            },
-            {
-              "expr": "mt_manager_mobilink_add_to_db_errors{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "metric": "mt_manager_mobilink_add_to_db_errors",
-              "refId": "D",
-              "step": 30
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "MO added to DB",
-          "tooltip": {
-            "msResolution": false,
-            "shared": true,
-            "sort": 0,
-            "value_type": "cumulative"
-          },
-          "type": "graph",
-          "xaxis": {
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ]
-        },
+        }
+      ],
+      "title": "New row"
+    },
+    {
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
         {
           "aliasColors": {
             "add to db success": "#7EB26D",
-            "geoip errors": "#E24D42",
-            "mumbai_qlistener_access_campaign_dropped{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#890F02",
-            "mumbai_qlistener_access_campaign_unknown_hash{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#BF1B00",
-            "unknown hash": "#E24D42"
-          },
-          "bars": false,
-          "datasource": null,
-          "editable": true,
-          "error": false,
-          "fill": 1,
-          "grid": {
-            "threshold1": null,
-            "threshold1Color": "rgba(216, 200, 27, 0.27)",
-            "threshold2": null,
-            "threshold2Color": "rgba(234, 112, 112, 0.22)"
-          },
-          "id": 8,
-          "isNew": true,
-          "legend": {
-            "avg": false,
-            "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": true,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "links": [],
-          "nullPointMode": "connected",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "span": 6,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "qlistener_access_campaign_parse_geoip_errors",
-              "intervalFactor": 2,
-              "legendFormat": "geoip errors",
-              "metric": "qlistener_access_campaign_parse_geoip_errors",
-              "refId": "E",
-              "step": 30
-            },
-            {
-              "expr": "qlistener_access_campaign_add_to_db_success",
-              "intervalFactor": 2,
-              "legendFormat": "add to db success",
-              "metric": "qlistener_access_campaign_add_to_db_success",
-              "refId": "A",
-              "step": 30
-            },
-            {
-              "expr": "qlistener_access_campaign_add_to_db_errors",
-              "intervalFactor": 2,
-              "legendFormat": "db errors",
-              "metric": "qlistener_access_campaign_add_to_db_errors",
-              "refId": "B",
-              "step": 30
-            },
-            {
-              "expr": "qlistener_access_campaign_dropped",
-              "intervalFactor": 2,
-              "legendFormat": "dropped",
-              "metric": "qlistener_access_campaign_dropped",
-              "refId": "C",
-              "step": 30
-            },
-            {
-              "expr": "qlistener_access_campaign_empty",
-              "intervalFactor": 2,
-              "legendFormat": "empty",
-              "metric": "qlistener_access_campaign_empty",
-              "refId": "D",
-              "step": 30
-            },
-            {
-              "expr": "qlistener_access_campaign_unknown_hash",
-              "hide": false,
-              "intervalFactor": 2,
-              "legendFormat": "unknown hash",
-              "metric": "qlistener_access_campaign_unknown_hash",
-              "refId": "F",
-              "step": 30
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Access Campaign",
-          "tooltip": {
-            "msResolution": false,
-            "shared": true,
-            "sort": 0,
-            "value_type": "cumulative"
-          },
-          "type": "graph",
-          "xaxis": {
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ]
-        }
-      ],
-      "title": "New row"
-    },
-    {
-      "collapse": false,
-      "editable": true,
-      "height": "250px",
-      "panels": [
-        {
-          "aliasColors": {
-            "mumbai_qlistener_content_sent_create_errors{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#890F02",
-            "mumbai_qlistener_content_sent_dropped{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#F2C96D",
-            "mumbai_qlistener_content_sent_subscription_create_count{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#629E51",
-            "mumbai_qlistener_content_sent_subscription_create_errors{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#BF1B00"
-          },
-          "bars": false,
-          "datasource": null,
-          "editable": true,
-          "error": false,
-          "fill": 1,
-          "grid": {
-            "threshold1": null,
-            "threshold1Color": "rgba(216, 200, 27, 0.27)",
-            "threshold2": null,
-            "threshold2Color": "rgba(234, 112, 112, 0.22)"
-          },
-          "id": 10,
-          "isNew": true,
-          "legend": {
-            "avg": false,
-            "current": true,
-            "max": true,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 2,
-          "links": [],
-          "nullPointMode": "connected",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "span": 6,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "qlistener_content_sent_add_to_db_success",
-              "hide": false,
-              "intervalFactor": 2,
-              "legendFormat": "add to db success",
-              "metric": "qlistener_content_sent_add_to_db_success",
-              "refId": "A",
-              "step": 30
-            },
-            {
-              "expr": "qlistener_content_sent_add_to_db_errors",
-              "intervalFactor": 2,
-              "legendFormat": "db errors",
-              "metric": "qlistener_content_sent_add_to_db_errors",
-              "refId": "B",
-              "step": 30
-            },
-            {
-              "expr": "qlistener_content_sent_dropped",
-              "intervalFactor": 2,
-              "legendFormat": "dropped msgs",
-              "metric": "qlistener_content_sent_dropped",
-              "refId": "C",
-              "step": 30
-            },
-            {
-              "expr": "qlistener_content_sent_empty",
-              "intervalFactor": 2,
-              "legendFormat": "empty msgs",
-              "metric": "qlistener_content_sent_empty",
-              "refId": "D",
-              "step": 30
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Content Sent",
-          "tooltip": {
-            "msResolution": false,
-            "shared": true,
-            "sort": 0,
-            "value_type": "cumulative"
-          },
-          "type": "graph",
-          "xaxis": {
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ]
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "datasource": null,
-          "editable": true,
-          "error": false,
-          "fill": 1,
-          "grid": {
-            "threshold1": null,
-            "threshold1Color": "rgba(216, 200, 27, 0.27)",
-            "threshold2": null,
-            "threshold2Color": "rgba(234, 112, 112, 0.22)"
-          },
-          "id": 21,
-          "isNew": true,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 2,
-          "links": [],
-          "nullPointMode": "connected",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "span": 6,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "mt_manager_mobilink_response_sms_success",
-              "intervalFactor": 2,
-              "legendFormat": "response_sms_success",
-              "metric": "mt_manager_mobilink_response_sms_success",
-              "refId": "A",
-              "step": 30
-            },
-            {
-              "expr": "mt_manager_mobilink_response_sms_errors",
-              "intervalFactor": 2,
-              "metric": "mt_manager_mobilink_response_sms_errors",
-              "refId": "B",
-              "step": 30
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "SMS",
-          "tooltip": {
-            "msResolution": false,
-            "shared": true,
-            "sort": 0,
-            "value_type": "cumulative"
-          },
-          "type": "graph",
-          "xaxis": {
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ]
-        }
-      ],
-      "title": "New row"
-    },
-    {
-      "collapse": false,
-      "editable": true,
-      "height": "250px",
-      "panels": [
-        {
-          "aliasColors": {
             "db errors": "#890F02",
             "mumbai_qlistener_user_actions_create_db_errors{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#BF1B00",
             "mumbai_qlistener_user_actions_dropped{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#64B0C8"
@@ -3239,7 +3184,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "qlistener_user_actions_add_to_db_success",
+              "expr": "qlistener_user_actions_add_to_db_success{group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "add to db success",
               "metric": "qlistener_user_actions_add_to_db_success",
@@ -3247,7 +3192,7 @@
               "step": 30
             },
             {
-              "expr": "qlistener_user_actions_add_to_db_errors",
+              "expr": "qlistener_user_actions_add_to_db_errors{group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "db errors",
               "metric": "qlistener_user_actions_add_to_db_errors",
@@ -3255,7 +3200,7 @@
               "step": 30
             },
             {
-              "expr": "qlistener_user_actions_dropped",
+              "expr": "qlistener_user_actions_dropped{group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "dropped",
               "metric": "qlistener_user_actions_dropped",
@@ -3263,7 +3208,7 @@
               "step": 30
             },
             {
-              "expr": "qlistener_user_actions_empty",
+              "expr": "qlistener_user_actions_empty{group=\"ph1\"}",
               "intervalFactor": 2,
               "legendFormat": "empty",
               "metric": "qlistener_user_actions_empty",
@@ -3305,21 +3250,13 @@
         },
         {
           "aliasColors": {
-            "add_to_db_errors": "#E24D42",
-            "add_to_db_errors{group=\"mumbai\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#E24D42",
-            "add_to_db_success": "#508642",
-            "add_to_db_success{group=\"mumbai\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#7EB26D",
-            "count of new with pixel": "#7EB26D",
-            "empty_settings": "#447EBC",
-            "empty_settings{group=\"mumbai\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#629E51",
-            "pixel_setting_not_found": "#7EB26D",
-            "pixel_setting_not_found{group=\"mumbai\",instance=\"52.66.23.201:50308\",job=\"inmem\"}": "#890F02",
-            "pixels_dropped": "#64B0C8",
-            "publisher_error": "#EAB839",
-            "publisher_error{group=\"mumbai\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#890F02",
-            "success": "#508642",
-            "success{group=\"mumbai\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#508642",
-            "update subscription errors": "#BF1B00"
+            "add to db success": "#7EB26D",
+            "db errors": "#890F02",
+            "empty msgs": "#BF1B00",
+            "mumbai_qlistener_content_sent_create_errors{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#890F02",
+            "mumbai_qlistener_content_sent_dropped{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#F2C96D",
+            "mumbai_qlistener_content_sent_subscription_create_count{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#629E51",
+            "mumbai_qlistener_content_sent_subscription_create_errors{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#BF1B00"
           },
           "bars": false,
           "datasource": null,
@@ -3332,7 +3269,7 @@
             "threshold2": null,
             "threshold2Color": "rgba(234, 112, 112, 0.22)"
           },
-          "id": 18,
+          "id": 10,
           "isNew": true,
           "legend": {
             "avg": false,
@@ -3359,105 +3296,42 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "qlistener_pixel_add_to_db_errors{ group=\"ph1\"}",
+              "expr": "qlistener_content_sent_add_to_db_success{group=\"ph1\"}",
+              "hide": false,
               "intervalFactor": 2,
-              "legendFormat": "add_to_db_errors",
-              "metric": "qlistener_pixel_add_to_db_errors",
+              "legendFormat": "add to db success",
+              "metric": "qlistener_content_sent_add_to_db_success",
               "refId": "A",
               "step": 30
             },
             {
-              "expr": "qlistener_pixel_add_to_db_success{ group=\"ph1\"}",
+              "expr": "qlistener_content_sent_add_to_db_errors{group=\"ph1\"}",
               "intervalFactor": 2,
-              "legendFormat": "add_to_db_success",
-              "metric": "qlistener_pixel_add_to_db_success",
+              "legendFormat": "db errors",
+              "metric": "qlistener_content_sent_add_to_db_errors",
               "refId": "B",
               "step": 30
             },
             {
-              "expr": "qlistener_pixel_update_subscriptions_db_errors{ group=\"ph1\"}",
+              "expr": "qlistener_content_sent_dropped{group=\"ph1\"}",
               "intervalFactor": 2,
-              "legendFormat": "update_subscriptions_db_errors",
-              "metric": "qlistener_pixel_update_subscriptions_db_errors",
-              "refId": "H",
-              "step": 30
-            },
-            {
-              "expr": "qlistener_pixel_dropped{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "dropped",
-              "metric": "qlistener_pixel_dropped",
-              "refId": "I",
-              "step": 30
-            },
-            {
-              "expr": "qlistener_pixel_empty{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "empty",
-              "metric": "qlistener_pixel_empty",
+              "legendFormat": "dropped msgs",
+              "metric": "qlistener_content_sent_dropped",
               "refId": "C",
               "step": 30
             },
             {
-              "expr": "qlistener_pixel_update_subscriptions_db_success{ group=\"ph1\"}",
+              "expr": "qlistener_content_sent_empty{group=\"ph1\"}",
               "intervalFactor": 2,
-              "legendFormat": "update subscription",
-              "metric": "qlistener_pixel_update_subscriptions_db_success",
+              "legendFormat": "empty msgs",
+              "metric": "qlistener_content_sent_empty",
               "refId": "D",
-              "step": 30
-            },
-            {
-              "expr": "qlistener_pixel_update_subscriptions_db_errors{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "update subscription errors",
-              "metric": "qlistener_pixel_update_subscriptions_db_errors",
-              "refId": "E",
-              "step": 30
-            },
-            {
-              "expr": "pixels_empty_publisher{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "empty publisher",
-              "metric": "pixels_empty_publisher",
-              "refId": "F",
-              "step": 30
-            },
-            {
-              "expr": "pixels_empty_settings{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "empty_settings",
-              "metric": "pixels_empty_settings",
-              "refId": "G",
-              "step": 30
-            },
-            {
-              "expr": "pixels_publisher_error{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "publisher_error",
-              "metric": "pixels_publisher_error",
-              "refId": "J",
-              "step": 30
-            },
-            {
-              "expr": "success{job=\"pixels\",group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "success",
-              "metric": "success",
-              "refId": "K",
-              "step": 30
-            },
-            {
-              "expr": "errors{job=\"pixels\", group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "errors",
-              "metric": "errors",
-              "refId": "L",
               "step": 30
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Pixels",
+          "title": "Content Sent",
           "tooltip": {
             "msResolution": false,
             "shared": true,
@@ -3488,7 +3362,101 @@
           ]
         }
       ],
-      "title": "Pixels / QListener"
+      "title": "New row"
+    },
+    {
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 45,
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "process_periodics_duration_seconds ",
+              "intervalFactor": 2,
+              "legendFormat": "process periodics  {{quantile}}",
+              "metric": "process_periodics_duration_seconds",
+              "refId": "B",
+              "step": 20
+            },
+            {
+              "expr": "mt_manager_retry_process_duration_seconds  ",
+              "intervalFactor": 2,
+              "legendFormat": "retries {{quantile}}",
+              "metric": "mt_manager_retry_process_duration_seconds",
+              "refId": "C",
+              "step": 20
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Process Periodics and Retries Duration",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "s",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "title": "New row"
     },
     {
       "collapse": false,
@@ -3580,92 +3548,6 @@
         }
       ],
       "title": "New row"
-    },
-    {
-      "collapse": false,
-      "editable": true,
-      "height": "250px",
-      "panels": [
-        {
-          "aliasColors": {},
-          "bars": false,
-          "datasource": null,
-          "editable": true,
-          "error": false,
-          "fill": 1,
-          "grid": {
-            "threshold1": null,
-            "threshold1Color": "rgba(216, 200, 27, 0.27)",
-            "threshold2": null,
-            "threshold2Color": "rgba(234, 112, 112, 0.22)"
-          },
-          "id": 45,
-          "isNew": true,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 2,
-          "links": [],
-          "nullPointMode": "connected",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "span": 12,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "mt_manager_mobilink_since_last_retries_fetch_seconds{ group=\"ph1\"}",
-              "intervalFactor": 2,
-              "legendFormat": "mobilink last retries fetch",
-              "metric": "mt_manager_mobilink_since_last_retries_fetch_seconds",
-              "refId": "A",
-              "step": 20
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Mobilink last retries fetch",
-          "tooltip": {
-            "msResolution": false,
-            "shared": true,
-            "sort": 0,
-            "value_type": "cumulative"
-          },
-          "type": "graph",
-          "xaxis": {
-            "show": true
-          },
-          "yaxes": [
-            {
-              "format": "s",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "s",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ]
-        }
-      ],
-      "title": "New row"
     }
   ],
   "time": {
@@ -3705,7 +3587,7 @@
   },
   "refresh": false,
   "schemaVersion": 12,
-  "version": 480,
+  "version": 21,
   "links": [],
   "gnetId": null
 }
