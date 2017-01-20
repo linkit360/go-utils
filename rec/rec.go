@@ -78,7 +78,7 @@ func GenerateTID() string {
 	log.WithField("tid", tid).Debug("generated tid")
 	return tid
 }
-func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) {
+func GetRetryTransactions(operatorCode int64, batchLimit int, paidOnceHours int) ([]Record, error) {
 	begin := time.Now()
 	var retries []Record
 	var err error
@@ -101,6 +101,16 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) 
 		}()
 	}()
 
+	notPaidInHours := ""
+	if paidOnceHours > 0 {
+		notPaidInHours = fmt.Sprintf(" AND msisdn NOT IN ("+
+			" SELECT DISTINCT msisdn "+
+			" FROM %stransactions "+
+			" WHERE sent_at > (CURRENT_TIMESTAMP -  INTERVAL '%d hours' ) AND "+
+			"       ( result = 'paid' OR result = 'retry_paid') )",
+			conf.TablePrefix,
+			paidOnceHours)
+	}
 	query = fmt.Sprintf("SELECT "+
 		"id, "+
 		"tid, "+
@@ -119,13 +129,9 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) 
 		"FROM %sretries "+
 		"WHERE "+
 		" operator_code = $1 AND "+
-		" status = '' AND "+
-		" msisdn NOT IN ( SELECT DISTINCT msisdn FROM %stransactions "+
-		" 	WHERE sent_at > (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) AND "+
-		"	( result = 'paid' OR result = 'retry_paid') )"+
+		" status = ''  "+notPaidInHours+
 		" ORDER BY last_pay_attempt_at ASC "+
 		" LIMIT %s", // get the last touched
-		conf.TablePrefix,
 		conf.TablePrefix,
 		strconv.Itoa(batchLimit),
 	)

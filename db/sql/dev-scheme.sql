@@ -403,6 +403,30 @@ CREATE TABLE xmp_retries
 );
 create index xmp_retries_last_pay_attempt_at_idx on xmp_retries (last_pay_attempt_at);
 
+CREATE TABLE xmp_retries_expired
+(
+  id SERIAL PRIMARY KEY NOT NULL,
+  status retry_status NOT NULL DEFAULT  '',
+  tid varchar(127) NOT NULL DEFAULT '',
+  created_at TIMESTAMP DEFAULT now() NOT NULL,
+  updated_at TIMESTAMP DEFAULT now() NOT NULL,
+  expired_at TIMESTAMP DEFAULT now() NOT NULL,
+  last_pay_attempt_at TIMESTAMP DEFAULT now() NOT NULL,
+  attempts_count INTEGER DEFAULT 1 NOT NULL,
+  price INTEGER NOT NULL,
+  keep_days INTEGER NOT NULL,
+  delay_hours INTEGER NOT NULL,
+  msisdn VARCHAR(32) NOT NULL,
+  operator_code INTEGER NOT NULL,
+  country_code INTEGER NOT NULL,
+  id_service INTEGER NOT NULL,
+  id_subscription INTEGER NOT NULL,
+  id_campaign INTEGER NOT NULL
+);
+create index xmp_retries_expired_last_pay_attempt_at_idx on xmp_retries_expired (last_pay_attempt_at);
+create index xmp_retries_expired_created_at_idx on xmp_retries_expired(created_at);
+
+
 CREATE TYPE job_status AS ENUM ('ready', 'in progress', 'cancelled', 'done', 'error');
 CREATE TYPE job_type AS ENUM ('injection', 'expired');
 CREATE TABLE xmp_jobs
@@ -419,26 +443,6 @@ CREATE TABLE xmp_jobs
 );
 create index xmp_jobs_created_at_idx on xmp_retries (created_at);
 
-
-CREATE TABLE xmp_retries_expired
-(
-  id SERIAL PRIMARY KEY NOT NULL,
-  status retry_status NOT NULL DEFAULT  '',
-  tid varchar(127) NOT NULL DEFAULT '',
-  created_at TIMESTAMP DEFAULT now() NOT NULL,
-  last_pay_attempt_at TIMESTAMP DEFAULT now() NOT NULL,
-  attempts_count INTEGER DEFAULT 1 NOT NULL,
-  keep_days INTEGER NOT NULL,
-  delay_hours INTEGER NOT NULL,
-  msisdn VARCHAR(32) NOT NULL,
-  operator_code INTEGER NOT NULL,
-  country_code INTEGER NOT NULL,
-  id_service INTEGER NOT NULL,
-  id_subscription INTEGER NOT NULL,
-  id_campaign INTEGER NOT NULL
-);
-create index xmp_retries_expired_last_pay_attempt_at_idx on xmp_retries_expired (last_pay_attempt_at);
-create index xmp_retries_expired_created_at_idx on xmp_retries_expired(created_at);
 
 CREATE TYPE operator_transaction_log_type AS ENUM ('mo', 'mt', 'callback', 'consent', 'charge');
 
