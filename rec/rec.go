@@ -120,9 +120,12 @@ func GetRetryTransactions(operatorCode int64, batchLimit int) ([]Record, error) 
 		"WHERE "+
 		" operator_code = $1 AND "+
 		" status = '' AND "+
-		" msisdn NOT IN ( SELECT DISTINCT msisdn from xmp_transactions WHERE sent_at > current_date AND ( result = 'paid' OR result = 'retry_paid') )"+
+		" msisdn NOT IN ( SELECT DISTINCT msisdn FROM %stransactions "+
+		" 	WHERE sent_at > (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) AND "+
+		"	( result = 'paid' OR result = 'retry_paid') )"+
 		" ORDER BY last_pay_attempt_at ASC "+
 		" LIMIT %s", // get the last touched
+		conf.TablePrefix,
 		conf.TablePrefix,
 		strconv.Itoa(batchLimit),
 	)
