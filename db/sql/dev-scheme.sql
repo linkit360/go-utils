@@ -784,6 +784,17 @@ CREATE TABLE xmp_users_transactions
 );
 
 
+CREATE TABLE xmp_partner_hits
+(
+  id SERIAL PRIMARY KEY NOT NULL,
+  tid VARCHAR(127) NOT NULL,
+  created_at TIMESTAMP DEFAULT now() NOT NULL,
+  sent_at TIMESTAMP DEFAULT now() NOT NULL,
+  msisdn VARCHAR(32) DEFAULT ''::character varying NOT NULL,
+  response_code INT NOT NULL DEFAULT 0
+);
+create index xmp_partner_hits_sent_sent_at_idx
+  on xmp_partner_hits(sent_at);
 
 -- pixel settings
 -- insert INTO xmp_pixel_settings

@@ -111,7 +111,10 @@ func GetRetryTransactions(operatorCode int64, batchLimit int, paidOnceHours int)
 			conf.TablePrefix,
 			paidOnceHours)
 	}
+
 	query = fmt.Sprintf("SELECT "+
+		//"DISTINCT ON ( msisdn ) msisdn, "+
+		"msisdn, "+
 		"id, "+
 		"tid, "+
 		"created_at, "+
@@ -119,7 +122,6 @@ func GetRetryTransactions(operatorCode int64, batchLimit int, paidOnceHours int)
 		"attempts_count, "+
 		"keep_days, "+
 		"delay_hours, "+
-		"msisdn, "+
 		"price, "+
 		"operator_code, "+
 		"country_code, "+
@@ -148,6 +150,7 @@ func GetRetryTransactions(operatorCode int64, batchLimit int, paidOnceHours int)
 	for rows.Next() {
 		record := Record{}
 		if err := rows.Scan(
+			&record.Msisdn,
 			&record.RetryId,
 			&record.Tid,
 			&record.CreatedAt,
@@ -155,7 +158,6 @@ func GetRetryTransactions(operatorCode int64, batchLimit int, paidOnceHours int)
 			&record.AttemptsCount,
 			&record.KeepDays,
 			&record.DelayHours,
-			&record.Msisdn,
 			&record.Price,
 			&record.OperatorCode,
 			&record.CountryCode,
