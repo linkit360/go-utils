@@ -436,7 +436,7 @@ CREATE TABLE xmp_jobs
   id_user INTEGER NOT NULL,
   created_at TIMESTAMP DEFAULT now() NOT NULL,
   run_at TIMESTAMP DEFAULT now() NOT NULL,
-  finish_at TIMESTAMP DEFAULT now() NOT NULL,
+  finished_at TIMESTAMP DEFAULT now() NOT NULL,
   type job_type NOT NULL,
   status job_status NOT NULL DEFAULT 'ready',
   file_name varchar(127) NOT NULL DEFAULT '',

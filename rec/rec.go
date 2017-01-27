@@ -127,11 +127,9 @@ func GetRetryTransactions(operatorCode int64, batchLimit int, paidOnceHours int)
 		"id_service, "+
 		"id_subscription, "+
 		"id_campaign "+
-		//"age(now(), last_pay_attempt_at) age "+
 		"FROM %sretries "+
 		"WHERE "+
 		" operator_code = $1 AND "+
-		//" age > INTERVAL '1 hour' AND "+
 		" status = ''  "+notPaidInHours+
 		" ORDER BY last_pay_attempt_at ASC "+
 		" LIMIT %s", // get the last touched
@@ -600,7 +598,7 @@ func GetPeriodics(operatorCode int64, batchLimit int) (records []Record, err err
 	return periodics, nil
 }
 
-func GetPeriodicSubscriptionByToken(token string) (p Record, err error) {
+func GetSubscriptionByToken(token string) (p Record, err error) {
 	begin := time.Now()
 	defer func() {
 		defer func() {
@@ -671,4 +669,86 @@ func GetPeriodicSubscriptionByToken(token string) (p Record, err error) {
 		return Record{}, err
 	}
 	return p, nil
+}
+
+func GetRetryByMsisdn(msisdn, status string) (Record, error) {
+	begin := time.Now()
+	var err error
+	defer func() {
+		defer func() {
+			fields := log.Fields{
+				"msisdn": msisdn,
+				"took":   time.Since(begin),
+			}
+			if err != nil {
+				fields["error"] = err.Error()
+				log.WithFields(fields).Error("load retry failed")
+			} else {
+				log.WithFields(fields).Debug("load retry")
+			}
+		}()
+	}()
+
+	query := fmt.Sprintf("SELECT "+
+		"msisdn, "+
+		"id, "+
+		"tid, "+
+		"created_at, "+
+		"last_pay_attempt_at, "+
+		"attempts_count, "+
+		"keep_days, "+
+		"delay_hours, "+
+		"price, "+
+		"operator_code, "+
+		"country_code, "+
+		"id_service, "+
+		"id_subscription, "+
+		"id_campaign "+
+		"FROM %sretries "+
+		"WHERE "+
+		" msisdn = $1 AND status = $2"+
+		" ORDER BY id "+
+		" LIMIT 1", // get the oldest retry
+		conf.TablePrefix,
+	)
+
+	rows, err := dbConn.Query(query, msisdn, status)
+	if err != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		return Record{}, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		record := Record{}
+		if err := rows.Scan(
+			&record.Msisdn,
+			&record.RetryId,
+			&record.Tid,
+			&record.CreatedAt,
+			&record.LastPayAttemptAt,
+			&record.AttemptsCount,
+			&record.KeepDays,
+			&record.DelayHours,
+			&record.Price,
+			&record.OperatorCode,
+			&record.CountryCode,
+			&record.ServiceId,
+			&record.SubscriptionId,
+			&record.CampaignId,
+		); err != nil {
+			DBErrors.Inc()
+			return Record{}, fmt.Errorf("rows.Scan: %s", err.Error())
+		}
+		return record, nil
+	}
+	if rows.Err() != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("rows.Err: %s", err.Error())
+		return Record{}, err
+	}
+	return Record{}, nil
 }
