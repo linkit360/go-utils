@@ -89,7 +89,7 @@ func GetRetryTransactions(operatorCode int64, batchLimit int, paidOnceHours int)
 				"took":          time.Since(begin),
 				"operator_code": operatorCode,
 				"limit":         batchLimit,
-				//"query":         query,
+				"query":         query,
 			}
 			if err != nil {
 				fields["error"] = err.Error()
@@ -113,7 +113,6 @@ func GetRetryTransactions(operatorCode int64, batchLimit int, paidOnceHours int)
 	}
 
 	query = fmt.Sprintf("SELECT "+
-		//"DISTINCT ON ( msisdn ) msisdn, "+
 		"msisdn, "+
 		"id, "+
 		"tid, "+
@@ -128,9 +127,11 @@ func GetRetryTransactions(operatorCode int64, batchLimit int, paidOnceHours int)
 		"id_service, "+
 		"id_subscription, "+
 		"id_campaign "+
+		//"age(now(), last_pay_attempt_at) age "+
 		"FROM %sretries "+
 		"WHERE "+
 		" operator_code = $1 AND "+
+		//" age > INTERVAL '1 hour' AND "+
 		" status = ''  "+notPaidInHours+
 		" ORDER BY last_pay_attempt_at ASC "+
 		" LIMIT %s", // get the last touched

@@ -402,6 +402,7 @@ CREATE TABLE xmp_retries
   id_campaign INTEGER NOT NULL
 );
 create index xmp_retries_last_pay_attempt_at_idx on xmp_retries (last_pay_attempt_at);
+create index xmp_retries_status_idx on xmp_retries(status);
 
 CREATE TABLE xmp_retries_expired
 (
@@ -427,7 +428,7 @@ create index xmp_retries_expired_last_pay_attempt_at_idx on xmp_retries_expired 
 create index xmp_retries_expired_created_at_idx on xmp_retries_expired(created_at);
 
 
-CREATE TYPE job_status AS ENUM ('ready', 'in progress', 'cancelled', 'done', 'error');
+CREATE TYPE job_status AS ENUM ('ready', 'in progress', 'canceled', 'done', 'error');
 CREATE TYPE job_type AS ENUM ('injection', 'expired');
 CREATE TABLE xmp_jobs
 (
@@ -435,14 +436,14 @@ CREATE TABLE xmp_jobs
   id_user INTEGER NOT NULL,
   created_at TIMESTAMP DEFAULT now() NOT NULL,
   run_at TIMESTAMP DEFAULT now() NOT NULL,
+  finish_at TIMESTAMP DEFAULT now() NOT NULL,
   type job_type NOT NULL,
   status job_status NOT NULL DEFAULT 'ready',
   file_name varchar(127) NOT NULL DEFAULT '',
   params JSONB DEFAULT '{}'::jsonb NOT NULL,
   skip INTEGER NOT NULL DEFAULT 0
 );
-create index xmp_jobs_created_at_idx on xmp_retries (created_at);
-
+create index xmp_jobs_created_at_idx on xmp_jobs(created_at);
 
 CREATE TYPE operator_transaction_log_type AS ENUM ('mo', 'mt', 'callback', 'consent', 'charge');
 
@@ -494,6 +495,7 @@ CREATE TABLE xmp_revenue_report
   total_retry_hits_mobilink INTEGER,
   unique_retry_hits_mobilink INTEGER
 );
+
 CREATE TABLE xmp_roles
 (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -784,17 +786,43 @@ CREATE TABLE xmp_users_transactions
 );
 
 
+--
+
+CREATE TABLE tr.partners
+(
+  id SERIAL PRIMARY KEY NOT NULL,
+  created_at TIMESTAMP DEFAULT now() NOT NULL,
+  name VARCHAR(127) NOT NULL
+);
+
+CREATE TABLE tr.partners_targets
+(
+  id SERIAL PRIMARY KEY NOT NULL,
+  created_at TIMESTAMP DEFAULT now() NOT NULL,
+  amount INTEGER DEFAULT 0 NOT NULL,
+  target VARCHAR(2048) DEFAULT ''::character varying NOT NULL,
+  rate_limit INT NOT NULL DEFAULT 0,
+  price_per_hit DOUBLE PRECISION NOT NULL DEFAULT 0,
+  score INT NOT NULL DEFAULT 0
+);
+
 CREATE TABLE xmp_partner_hits
 (
   id SERIAL PRIMARY KEY NOT NULL,
   tid VARCHAR(127) NOT NULL,
   created_at TIMESTAMP DEFAULT now() NOT NULL,
   sent_at TIMESTAMP DEFAULT now() NOT NULL,
+  target VARCHAR(2048) DEFAULT ''::character varying NOT NULL,
   msisdn VARCHAR(32) DEFAULT ''::character varying NOT NULL,
+  operator_code INTEGER DEFAULT 0 NOT NULL,
+  country_code INTEGER DEFAULT 0 NOT NULL,
   response_code INT NOT NULL DEFAULT 0
 );
+
 create index xmp_partner_hits_sent_sent_at_idx
   on xmp_partner_hits(sent_at);
+
+
 
 -- pixel settings
 -- insert INTO xmp_pixel_settings
