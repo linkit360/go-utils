@@ -603,13 +603,14 @@ func GetSubscriptionByToken(token string) (p Record, err error) {
 	defer func() {
 		defer func() {
 			fields := log.Fields{
-				"took": time.Since(begin),
+				"took":  time.Since(begin),
+				"token": token,
 			}
 			if err != nil {
 				fields["error"] = err.Error()
 				log.WithFields(fields).Error("load periodic cache failed")
 			} else {
-				log.WithFields(fields).Debug("load periodic cache")
+				log.WithFields(fields).Debug("loaded periodic cache")
 			}
 		}()
 	}()
@@ -671,9 +672,8 @@ func GetSubscriptionByToken(token string) (p Record, err error) {
 	return p, nil
 }
 
-func GetRetryByMsisdn(msisdn, status string) (Record, error) {
+func GetRetryByMsisdn(msisdn, status string) (r Record, err error) {
 	begin := time.Now()
-	var err error
 	defer func() {
 		defer func() {
 			fields := log.Fields{
@@ -684,7 +684,9 @@ func GetRetryByMsisdn(msisdn, status string) (Record, error) {
 				fields["error"] = err.Error()
 				log.WithFields(fields).Error("load retry failed")
 			} else {
-				log.WithFields(fields).Debug("load retry")
+				fields["att_count"] = r.AttemptsCount
+				fields["tid"] = r.Tid
+				log.WithFields(fields).Debug("loaded retry")
 			}
 		}()
 	}()
@@ -712,43 +714,27 @@ func GetRetryByMsisdn(msisdn, status string) (Record, error) {
 		conf.TablePrefix,
 	)
 
-	rows, err := dbConn.Query(query, msisdn, status)
-	if err != nil {
-		DBErrors.Inc()
-
-		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
-		return Record{}, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		record := Record{}
-		if err := rows.Scan(
-			&record.Msisdn,
-			&record.RetryId,
-			&record.Tid,
-			&record.CreatedAt,
-			&record.LastPayAttemptAt,
-			&record.AttemptsCount,
-			&record.KeepDays,
-			&record.DelayHours,
-			&record.Price,
-			&record.OperatorCode,
-			&record.CountryCode,
-			&record.ServiceId,
-			&record.SubscriptionId,
-			&record.CampaignId,
-		); err != nil {
+	if err := dbConn.QueryRow(query, msisdn, status).Scan(
+		&r.Msisdn,
+		&r.RetryId,
+		&r.Tid,
+		&r.CreatedAt,
+		&r.LastPayAttemptAt,
+		&r.AttemptsCount,
+		&r.KeepDays,
+		&r.DelayHours,
+		&r.Price,
+		&r.OperatorCode,
+		&r.CountryCode,
+		&r.ServiceId,
+		&r.SubscriptionId,
+		&r.CampaignId,
+	); err != nil {
+		if err != sql.ErrNoRows {
 			DBErrors.Inc()
-			return Record{}, fmt.Errorf("rows.Scan: %s", err.Error())
 		}
-		return record, nil
+		return Record{}, err // do not change type of error, please, it's being checked further
 	}
-	if rows.Err() != nil {
-		DBErrors.Inc()
 
-		err = fmt.Errorf("rows.Err: %s", err.Error())
-		return Record{}, err
-	}
-	return Record{}, nil
+	return
 }
