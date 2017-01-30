@@ -3,7 +3,6 @@ $BODY$
 DECLARE
   partition_date TEXT;
   partition TEXT;
-  r xmp_transactions%rowtype;
 BEGIN
   partition_date := to_char(NEW.sent_at,'YYYY_MM_DD');
   partition := TG_TABLE_NAME || '_' || partition_date;

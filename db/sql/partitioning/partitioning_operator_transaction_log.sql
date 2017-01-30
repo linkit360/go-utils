@@ -17,8 +17,7 @@ BEGIN
     EXECUTE 'CREATE INDEX ' || partition || '_type_idx ON ' || partition || '(type);';
 
   END IF;
-  EXECUTE 'INSERT INTO ' || partition || ' VALUES (' || quote_literal(NEW) || ').* ';
-
+  EXECUTE 'INSERT INTO ' || partition || ' SELECT(' || TG_TABLE_NAME || ' ' || quote_literal(NEW) || ').*';
   RETURN NULL;
 END;
 $BODY$
