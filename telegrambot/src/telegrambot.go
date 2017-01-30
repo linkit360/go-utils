@@ -200,7 +200,7 @@ func alert(c *gin.Context) {
 			log.WithFields(log.Fields{
 				"error":  err.Error(),
 				"chatId": chat.Id,
-			}).Error("send alert error")
+			}).Error("send alert")
 
 			msg := tgbotapi.NewMessage(chat.Id, "Cought error while sending alert")
 			bot.Send(msg)

@@ -1,7 +1,7 @@
 {
   "id": 11,
   "title": "Yondu",
-  "description": "ph1 Mumbai",
+  "description": "ph Mumbai",
   "tags": [],
   "style": "dark",
   "timezone": "utc",
@@ -57,7 +57,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "qlistener_mt_manager_db_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_mt_manager_db_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "mt_manager",
               "metric": "qlistener_mt_manager_db_add_to_db_duration_seconds",
@@ -65,7 +65,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_access_campaign_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_access_campaign_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "access campaign",
               "metric": "qlistener_access_campaign_add_to_db_duration_seconds",
@@ -73,7 +73,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_content_sent_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_content_sent_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "content sent",
               "metric": "qlistener_content_sent_add_to_db_duration_seconds",
@@ -81,7 +81,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_operator_transactions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_operator_transactions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "operator transactions",
               "metric": "qlistener_operator_transactions_add_to_db_duration_seconds",
@@ -89,7 +89,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_user_actions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_user_actions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "user actions",
               "metric": "qlistener_user_actions_add_to_db_duration_seconds",
@@ -97,7 +97,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_pixel_transactions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_pixel_transactions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "pixel transactions",
               "metric": "qlistener_pixel_transactions_add_to_db_duration_seconds",
@@ -105,7 +105,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_subscription_pixel_sent_update_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_subscription_pixel_sent_update_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "pixel update subscriptions",
               "metric": "qlistener_subscription_pixel_sent_update_db_duration_seconds",
@@ -113,7 +113,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_add_blacklisted_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_add_blacklisted_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "blacklisted",
               "metric": "qlistener_add_blacklisted_db_duration_seconds",
@@ -121,7 +121,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_add_postpaid_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_add_postpaid_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "postpaid",
               "metric": "qlistener_add_postpaid_db_duration_seconds",
@@ -129,7 +129,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_start_retry_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_start_retry_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "start retry",
               "metric": "qlistener_start_retry_db_duration_seconds",
@@ -137,7 +137,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_touch_retry_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_touch_retry_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "touch retry",
               "metric": "qlistener_touch_retry_db_duration_seconds",
@@ -145,7 +145,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_remove_retry_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_remove_retry_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "remove retry",
               "metric": "qlistener_remove_retry_db_duration_seconds",
@@ -153,7 +153,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_write_subscription_status_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_write_subscription_status_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "write subscription status ",
               "metric": "qlistener_write_subscription_status_db_duration_seconds",
@@ -161,7 +161,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_write_transaction_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_write_transaction_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "write transactions",
               "metric": "qlistener_write_transaction_db_duration_seconds",
@@ -248,7 +248,7 @@
           ],
           "targets": [
             {
-              "expr": "qlistener_mt_manager_db_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_mt_manager_db_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "mt manager",
               "metric": "qlistener_mt_manager_db_add_to_db_duration_seconds",
@@ -256,7 +256,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_access_campaign_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_access_campaign_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "access campaign",
               "metric": "qlistener_access_campaign_add_to_db_duration_seconds",
@@ -264,7 +264,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_user_actions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_user_actions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "user actions",
               "metric": "qlistener_user_actions_add_to_db_duration_seconds",
@@ -272,7 +272,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_operator_transactions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_operator_transactions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "operator transactions",
               "metric": "qlistener_operator_transactions_add_to_db_duration_seconds",
@@ -280,7 +280,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_add_postpaid_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_add_postpaid_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "add postpaid",
               "metric": "qlistener_add_postpaid_db_duration_seconds",
@@ -288,7 +288,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_content_sent_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_content_sent_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "content sent",
               "metric": "qlistener_content_sent_add_to_db_duration_seconds",
@@ -296,7 +296,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_touch_retry_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_touch_retry_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "touch retry",
               "metric": "qlistener_touch_retry_db_duration_seconds",
@@ -304,7 +304,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_pixel_transactions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_pixel_transactions_add_to_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "pixel transaction add",
               "metric": "qlistener_pixel_transactions_add_to_db_duration_seconds",
@@ -312,7 +312,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_write_transaction_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_write_transaction_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "write transaction",
               "metric": "qlistener_write_transaction_db_duration_seconds",
@@ -320,7 +320,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_write_subscription_status_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_write_subscription_status_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "update subscriptions status",
               "metric": "qlistener_write_subscription_status_db_duration_seconds",
@@ -328,7 +328,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_remove_retry_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "qlistener_remove_retry_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "remove retry",
               "metric": "qlistener_remove_retry_db_duration_seconds",
@@ -384,7 +384,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "qlistener_mt_manager_db_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_mt_manager_db_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "mt_manager",
               "metric": "qlistener_mt_manager_db_add_to_db_duration_seconds",
@@ -392,7 +392,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_access_campaign_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_access_campaign_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "access campaign",
               "metric": "qlistener_access_campaign_add_to_db_duration_seconds",
@@ -400,7 +400,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_content_sent_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_content_sent_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "content sent",
               "metric": "qlistener_content_sent_add_to_db_duration_seconds",
@@ -408,7 +408,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_operator_transactions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_operator_transactions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "operator transactions",
               "metric": "qlistener_operator_transactions_add_to_db_duration_seconds",
@@ -416,7 +416,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_user_actions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_user_actions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "user actions",
               "metric": "qlistener_user_actions_add_to_db_duration_seconds",
@@ -424,7 +424,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_pixel_transactions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_pixel_transactions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "pixel transactions",
               "metric": "qlistener_pixel_transactions_add_to_db_duration_seconds",
@@ -432,7 +432,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_subscription_pixel_sent_update_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_subscription_pixel_sent_update_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "pixel update subscriptions",
               "metric": "qlistener_subscription_pixel_sent_update_db_duration_seconds",
@@ -440,7 +440,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_add_blacklisted_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_add_blacklisted_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "blacklisted",
               "metric": "qlistener_add_blacklisted_db_duration_seconds",
@@ -448,7 +448,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_add_postpaid_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_add_postpaid_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "postpaid",
               "metric": "qlistener_add_postpaid_db_duration_seconds",
@@ -456,7 +456,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_start_retry_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_start_retry_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "start retry",
               "metric": "qlistener_start_retry_db_duration_seconds",
@@ -464,7 +464,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_touch_retry_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_touch_retry_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "touch retry",
               "metric": "qlistener_touch_retry_db_duration_seconds",
@@ -472,7 +472,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_remove_retry_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_remove_retry_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "remove retry",
               "metric": "qlistener_remove_retry_db_duration_seconds",
@@ -488,7 +488,7 @@
               "step": 20
             },
             {
-              "expr": "qlistener_write_transaction_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_write_transaction_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "write transactions",
               "metric": "qlistener_write_transaction_db_duration_seconds",
@@ -575,7 +575,7 @@
           ],
           "targets": [
             {
-              "expr": "qlistener_mt_manager_db_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_mt_manager_db_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "mt manager",
               "metric": "qlistener_mt_manager_db_add_to_db_duration_seconds",
@@ -583,7 +583,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_access_campaign_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_access_campaign_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "access campaign",
               "metric": "qlistener_access_campaign_add_to_db_duration_seconds",
@@ -591,7 +591,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_user_actions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_user_actions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "user actions",
               "metric": "qlistener_user_actions_add_to_db_duration_seconds",
@@ -599,7 +599,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_operator_transactions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_operator_transactions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "operator transactions",
               "metric": "qlistener_operator_transactions_add_to_db_duration_seconds",
@@ -607,7 +607,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_add_postpaid_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_add_postpaid_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "add postpaid",
               "metric": "qlistener_add_postpaid_db_duration_seconds",
@@ -615,7 +615,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_content_sent_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_content_sent_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "content sent",
               "metric": "qlistener_content_sent_add_to_db_duration_seconds",
@@ -623,7 +623,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_touch_retry_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_touch_retry_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "touch retry",
               "metric": "qlistener_touch_retry_db_duration_seconds",
@@ -631,7 +631,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_pixel_transactions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_pixel_transactions_add_to_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "pixel transaction add",
               "metric": "qlistener_pixel_transactions_add_to_db_duration_seconds",
@@ -639,7 +639,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_write_transaction_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_write_transaction_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "write transaction",
               "metric": "qlistener_write_transaction_db_duration_seconds",
@@ -647,7 +647,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_write_subscription_status_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_write_subscription_status_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "update subscriptions status",
               "metric": "qlistener_write_subscription_status_db_duration_seconds",
@@ -655,7 +655,7 @@
               "step": 120
             },
             {
-              "expr": "qlistener_remove_retry_db_duration_seconds{quantile=\"0.5\", group=\"ph1\"}",
+              "expr": "qlistener_remove_retry_db_duration_seconds{quantile=\"0.5\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "remove retry",
               "metric": "qlistener_remove_retry_db_duration_seconds",
@@ -724,7 +724,7 @@
           ],
           "targets": [
             {
-              "expr": "rbmq_consumer_pixels_connected{ group=\"ph1\"}",
+              "expr": "rbmq_consumer_pixels_connected{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "pixels",
               "metric": "rbmq_consumer_pixels_connected",
@@ -732,7 +732,7 @@
               "step": 2
             },
             {
-              "expr": "rbmq_consumer_transaction_log_connected{ group=\"ph1\"}",
+              "expr": "rbmq_consumer_transaction_log_connected{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "transaction_log",
               "metric": "rbmq_consumer_transaction_log_connected",
@@ -740,7 +740,7 @@
               "step": 2
             },
             {
-              "expr": "rbmq_consumer_user_actions_connected{ group=\"ph1\"}",
+              "expr": "rbmq_consumer_user_actions_connected{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "user_actions",
               "metric": "rbmq_consumer_user_actions_connected",
@@ -748,7 +748,7 @@
               "step": 2
             },
             {
-              "expr": "rbmq_consumer_access_campaign_connected{ group=\"ph1\"}",
+              "expr": "rbmq_consumer_access_campaign_connected{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "access_campaign",
               "metric": "rbmq_consumer_access_campaign_connected",
@@ -756,7 +756,7 @@
               "step": 2
             },
             {
-              "expr": "rbmq_consumer_content_sent_connected{ group=\"ph1\"}",
+              "expr": "rbmq_consumer_content_sent_connected{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "content sent",
               "metric": "rbmq_consumer_content_sent_connected",
@@ -764,7 +764,7 @@
               "step": 2
             },
             {
-              "expr": "rbmq_consumer_access_campaign_connected{ group=\"ph1\"}",
+              "expr": "rbmq_consumer_access_campaign_connected{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "mo_tarifficate",
               "metric": "rbmq_consumer_access_campaign_connected",
@@ -772,7 +772,7 @@
               "step": 2
             },
             {
-              "expr": "rbmq_consumer_mobilink_new_subscriptions_connected{ group=\"ph1\"}",
+              "expr": "rbmq_consumer_mobilink_new_subscriptions_connected{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "new_subscriptions",
               "metric": "rbmq_consumer_mobilink_new_subscriptions_connected",
@@ -780,7 +780,7 @@
               "step": 2
             },
             {
-              "expr": "rbmq_consumer_mobilink_requests_connected{ group=\"ph1\"}",
+              "expr": "rbmq_consumer_mobilink_requests_connected{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "requests",
               "metric": "rbmq_consumer_mobilink_requests_connected",
@@ -788,7 +788,7 @@
               "step": 2
             },
             {
-              "expr": "rbmq_consumer_mobilink_responses_connected{ group=\"ph1\"}",
+              "expr": "rbmq_consumer_mobilink_responses_connected{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "responses",
               "metric": "rbmq_consumer_mobilink_responses_connected",
@@ -796,7 +796,7 @@
               "step": 2
             },
             {
-              "expr": "rbmq_consumer_mobilink_sms_requests_connected{ group=\"ph1\"}",
+              "expr": "rbmq_consumer_mobilink_sms_requests_connected{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "sms_requests",
               "metric": "rbmq_consumer_mobilink_sms_requests_connected",
@@ -804,7 +804,7 @@
               "step": 2
             },
             {
-              "expr": "rbmq_consumer_mobilink_sms_responses_connected{ group=\"ph1\"}",
+              "expr": "rbmq_consumer_mobilink_sms_responses_connected{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "sms_responses",
               "metric": "rbmq_consumer_mobilink_sms_responses_connected",
@@ -865,7 +865,7 @@
           ],
           "targets": [
             {
-              "expr": "rbmq_consumer_pixels_queue_size{ group=\"ph1\"}",
+              "expr": "rbmq_consumer_pixels_queue_size{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "pixels",
               "metric": "rbmq_consumer_pixels_queue_size",
@@ -873,7 +873,7 @@
               "step": 120
             },
             {
-              "expr": "rbmq_consumer_transaction_log_queue_size{ group=\"ph1\"}",
+              "expr": "rbmq_consumer_transaction_log_queue_size{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "transaction log",
               "metric": "rbmq_consumer_transaction_log_queue_size",
@@ -881,7 +881,7 @@
               "step": 120
             },
             {
-              "expr": "rbmq_consumer_user_actions_queue_size{ group=\"ph1\"}",
+              "expr": "rbmq_consumer_user_actions_queue_size{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "user acrions",
               "metric": "rbmq_consumer_user_actions_queue_size",
@@ -889,7 +889,7 @@
               "step": 120
             },
             {
-              "expr": "rbmq_consumer_access_campaign_queue_size{ group=\"ph1\"}",
+              "expr": "rbmq_consumer_access_campaign_queue_size{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "access campaign",
               "metric": "rbmq_consumer_access_campaign_queue_size",
@@ -897,7 +897,7 @@
               "step": 120
             },
             {
-              "expr": "rbmq_consumer_content_sent_queue_size{ group=\"ph1\"}",
+              "expr": "rbmq_consumer_content_sent_queue_size{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "content sent",
               "metric": "rbmq_consumer_content_sent_queue_size",
@@ -905,7 +905,7 @@
               "step": 120
             },
             {
-              "expr": "rbmq_consumer_mt_manager_queue_size{ group=\"ph1\"}",
+              "expr": "rbmq_consumer_mt_manager_queue_size{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "mt manager",
               "metric": "rbmq_consumer_mt_manager_queue_size",
@@ -966,7 +966,7 @@
           ],
           "targets": [
             {
-              "expr": "rbmq_notifier_connected{ group=\"ph1\"}",
+              "expr": "rbmq_notifier_connected{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "{{job}}",
               "metric": "rbmq_notifier_connected",
@@ -1027,7 +1027,7 @@
           ],
           "targets": [
             {
-              "expr": "mt_manager_set_pending_status_db_duration_seconds{quantile=\"0.99\", group=\"ph1\"}",
+              "expr": "mt_manager_set_pending_status_db_duration_seconds{quantile=\"0.99\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "set status (sec)",
               "metric": "mt_manager_set_pending_status_db_duration_seconds",
@@ -1035,7 +1035,7 @@
               "step": 2
             },
             {
-              "expr": "mt_manager_pending_subscriptions_count{ group=\"ph1\"}",
+              "expr": "mt_manager_pending_subscriptions_count{ group=\"ph\"}",
               "hide": false,
               "intervalFactor": 2,
               "legendFormat": "subscriptions count",
@@ -1044,7 +1044,7 @@
               "step": 2
             },
             {
-              "expr": "mt_manager_pending_retries_count{ group=\"ph1\"}",
+              "expr": "mt_manager_pending_retries_count{ group=\"ph\"}",
               "hide": false,
               "intervalFactor": 2,
               "legendFormat": "retries count",
@@ -1120,7 +1120,7 @@
           },
           "targets": [
             {
-              "expr": "operator_load_headers_error{ group=\"ph1\"}",
+              "expr": "operator_load_headers_error{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "load operators headers",
               "metric": "operator_load_headers_error",
@@ -1215,7 +1215,7 @@
           },
           "targets": [
             {
-              "expr": "campaign_load_error{ group=\"ph1\"}",
+              "expr": "campaign_load_error{ group=\"ph\"}",
               "intervalFactor": 2,
               "metric": "campaign_load_error",
               "refId": "A",
@@ -1383,7 +1383,7 @@
           },
           "targets": [
             {
-              "expr": "node_filesystem_free{device=\"/dev/xvda1\", group=\"ph1\"}",
+              "expr": "node_filesystem_free{device=\"/dev/xvda1\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "",
               "metric": "node_filesystem_free",
@@ -1459,7 +1459,7 @@
           },
           "targets": [
             {
-              "expr": "node_memory_MemFree{group=\"ph1\"}",
+              "expr": "node_memory_MemFree{group=\"ph\"}",
               "intervalFactor": 2,
               "metric": "node_memory_MemFree",
               "refId": "B",
@@ -1477,43 +1477,43 @@
         {
           "aliasColors": {
             "rpc_inmem_404_errors{group=\"mumbai\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#890F02",
-            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#E24D42",
-            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#890F02",
-            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#BF1B00",
-            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#BF1B00",
-            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#BF1B00",
-            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.76.153.135:50304\",job=\"yondu1-qlistener\"}": "#BF1B00",
-            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#BF1B00",
-            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#BF1B00",
-            "rpc_inmem_404_errors{group=\"ph1\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#BF1B00",
+            "rpc_inmem_404_errors{group=\"ph\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#E24D42",
+            "rpc_inmem_404_errors{group=\"ph\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#890F02",
+            "rpc_inmem_404_errors{group=\"ph\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#BF1B00",
+            "rpc_inmem_404_errors{group=\"ph\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#BF1B00",
+            "rpc_inmem_404_errors{group=\"ph\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#BF1B00",
+            "rpc_inmem_404_errors{group=\"ph\",instance=\"52.76.153.135:50304\",job=\"yondu1-qlistener\"}": "#BF1B00",
+            "rpc_inmem_404_errors{group=\"ph\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#BF1B00",
+            "rpc_inmem_404_errors{group=\"ph\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#BF1B00",
+            "rpc_inmem_404_errors{group=\"ph\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#BF1B00",
             "rpc_inmem_errors{group=\"mumbai\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#E24D42",
             "rpc_inmem_errors{group=\"mumbai\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#890F02",
             "rpc_inmem_errors{group=\"mumbai\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#BF1B00",
             "rpc_inmem_errors{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#890F02",
             "rpc_inmem_errors{group=\"mumbai\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#BF1B00",
             "rpc_inmem_errors{group=\"mumbai\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#58140C",
-            "rpc_inmem_errors{group=\"ph1\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#890F02",
-            "rpc_inmem_errors{group=\"ph1\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#890F02",
-            "rpc_inmem_errors{group=\"ph1\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#890F02",
-            "rpc_inmem_errors{group=\"ph1\",instance=\"52.76.153.135:50304\",job=\"yondu1-qlistener\"}": "#890F02",
-            "rpc_inmem_errors{group=\"ph1\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#890F02",
-            "rpc_inmem_errors{group=\"ph1\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#890F02",
-            "rpc_inmem_errors{group=\"ph1\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#890F02",
+            "rpc_inmem_errors{group=\"ph\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#890F02",
+            "rpc_inmem_errors{group=\"ph\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#890F02",
+            "rpc_inmem_errors{group=\"ph\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#890F02",
+            "rpc_inmem_errors{group=\"ph\",instance=\"52.76.153.135:50304\",job=\"yondu1-qlistener\"}": "#890F02",
+            "rpc_inmem_errors{group=\"ph\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#890F02",
+            "rpc_inmem_errors{group=\"ph\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#890F02",
+            "rpc_inmem_errors{group=\"ph\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#890F02",
             "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#7EB26D",
             "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#9AC48A",
             "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#7EB26D",
             "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#629E51",
             "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
             "rpc_inmem_success{group=\"mumbai\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#3F6833",
-            "rpc_inmem_success{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#7EB26D",
-            "rpc_inmem_success{group=\"ph1\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
-            "rpc_inmem_success{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#508642",
-            "rpc_inmem_success{group=\"ph1\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#7EB26D",
-            "rpc_inmem_success{group=\"ph1\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#7EB26D",
-            "rpc_inmem_success{group=\"ph1\",instance=\"52.76.153.135:50304\",job=\"yondu1-qlistener\"}": "#7EB26D",
-            "rpc_inmem_success{group=\"ph1\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#7EB26D",
-            "rpc_inmem_success{group=\"ph1\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#7EB26D",
-            "rpc_inmem_success{group=\"ph1\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#7EB26D"
+            "rpc_inmem_success{group=\"ph\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#7EB26D",
+            "rpc_inmem_success{group=\"ph\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
+            "rpc_inmem_success{group=\"ph\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#508642",
+            "rpc_inmem_success{group=\"ph\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#7EB26D",
+            "rpc_inmem_success{group=\"ph\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#7EB26D",
+            "rpc_inmem_success{group=\"ph\",instance=\"52.76.153.135:50304\",job=\"yondu1-qlistener\"}": "#7EB26D",
+            "rpc_inmem_success{group=\"ph\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#7EB26D",
+            "rpc_inmem_success{group=\"ph\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#7EB26D",
+            "rpc_inmem_success{group=\"ph\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#7EB26D"
           },
           "bars": false,
           "datasource": null,
@@ -1553,21 +1553,21 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "rpc_inmem_success{group=\"ph1\"}",
+              "expr": "rpc_inmem_success{group=\"ph\"}",
               "intervalFactor": 2,
               "metric": "rpc_inmem_success",
               "refId": "A",
               "step": 40
             },
             {
-              "expr": "rpc_inmem_errors{group=\"ph1\"}",
+              "expr": "rpc_inmem_errors{group=\"ph\"}",
               "intervalFactor": 2,
               "metric": "rpc_inmem_errors",
               "refId": "B",
               "step": 40
             },
             {
-              "expr": "rpc_inmem_404_errors{group=\"ph1\"}",
+              "expr": "rpc_inmem_404_errors{group=\"ph\"}",
               "intervalFactor": 2,
               "metric": "rpc_inmem_404_errors",
               "refId": "C",
@@ -1622,51 +1622,51 @@
             "pending buffer size yondu1-mt_manager": "#7EB26D",
             "pending buffer size yondu1-pixels": "#7EB26D",
             "pending buffer size yondu1-telco": "#7EB26D",
-            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#7EB26D",
-            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#7EB26D",
-            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#7EB26D",
-            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
-            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#7EB26D",
-            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#7EB26D",
-            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#7EB26D",
-            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#7EB26D",
-            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#7EB26D",
-            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#7EB26D",
-            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#7EB26D",
-            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#7EB26D",
-            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#7EB26D",
-            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#7EB26D",
-            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#7EB26D",
-            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
-            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#7EB26D",
-            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#7EB26D",
-            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#7EB26D",
-            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#7EB26D",
-            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#7EB26D",
-            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#7EB26D",
-            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#7EB26D",
-            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#890F02",
-            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#890F02",
-            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#890F02",
-            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#890F02",
-            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#890F02",
-            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#890F02",
-            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#BF1B00",
-            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#BF1B00",
-            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#BF1B00",
-            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#BF1B00",
-            "rbmq_notifier_errors{group=\"ph1\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#BF1B00",
-            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#6ED0E0",
-            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#6ED0E0",
-            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#6ED0E0",
-            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#6ED0E0",
-            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#6ED0E0",
-            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#EAB839",
-            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#EAB839",
-            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#EAB839",
-            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#EAB839",
-            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#EAB839",
-            "rbmq_notifier_reconnects_count{group=\"ph1\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#EAB839",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#7EB26D",
+            "rbmq_notifier_buffer_pending_gauge_size{group=\"ph\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#7EB26D",
+            "rbmq_notifier_buffer_reading_gauge_size{group=\"ph\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#7EB26D",
+            "rbmq_notifier_errors{group=\"ph\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#890F02",
+            "rbmq_notifier_errors{group=\"ph\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#890F02",
+            "rbmq_notifier_errors{group=\"ph\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#890F02",
+            "rbmq_notifier_errors{group=\"ph\",instance=\"52.66.23.201:50305\",job=\"mt_manager\"}": "#890F02",
+            "rbmq_notifier_errors{group=\"ph\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#890F02",
+            "rbmq_notifier_errors{group=\"ph\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#890F02",
+            "rbmq_notifier_errors{group=\"ph\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#BF1B00",
+            "rbmq_notifier_errors{group=\"ph\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#BF1B00",
+            "rbmq_notifier_errors{group=\"ph\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#BF1B00",
+            "rbmq_notifier_errors{group=\"ph\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#BF1B00",
+            "rbmq_notifier_errors{group=\"ph\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#BF1B00",
+            "rbmq_notifier_reconnects_count{group=\"ph\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#6ED0E0",
+            "rbmq_notifier_reconnects_count{group=\"ph\",instance=\"52.66.23.201:50302\",job=\"contentd\"}": "#6ED0E0",
+            "rbmq_notifier_reconnects_count{group=\"ph\",instance=\"52.66.23.201:50303\",job=\"mo\"}": "#6ED0E0",
+            "rbmq_notifier_reconnects_count{group=\"ph\",instance=\"52.66.23.201:50306\",job=\"mobilink\"}": "#6ED0E0",
+            "rbmq_notifier_reconnects_count{group=\"ph\",instance=\"52.66.23.201:50309\",job=\"pixels\"}": "#6ED0E0",
+            "rbmq_notifier_reconnects_count{group=\"ph\",instance=\"52.76.153.135:50300\",job=\"yondu1-dispatcherd\"}": "#EAB839",
+            "rbmq_notifier_reconnects_count{group=\"ph\",instance=\"52.76.153.135:50302\",job=\"yondu1-contentd\"}": "#EAB839",
+            "rbmq_notifier_reconnects_count{group=\"ph\",instance=\"52.76.153.135:50303\",job=\"yondu1-mo\"}": "#EAB839",
+            "rbmq_notifier_reconnects_count{group=\"ph\",instance=\"52.76.153.135:50305\",job=\"yondu1-mt_manager\"}": "#EAB839",
+            "rbmq_notifier_reconnects_count{group=\"ph\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#EAB839",
+            "rbmq_notifier_reconnects_count{group=\"ph\",instance=\"52.76.153.135:50309\",job=\"yondu1-pixels\"}": "#EAB839",
             "reading buffer size yondu1-contentd": "#7EB26D",
             "reading buffer size yondu1-dispatcherd": "#7EB26D",
             "reading buffer size yondu1-mo": "#7EB26D",
@@ -1722,7 +1722,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "rbmq_notifier_errors{group=\"ph1\"}",
+              "expr": "rbmq_notifier_errors{group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "notifier errors {{ job }}",
               "metric": "rbmq_notifier_errors",
@@ -1730,7 +1730,7 @@
               "step": 40
             },
             {
-              "expr": "rbmq_notifier_buffer_pending_gauge_size{group=\"ph1\"}",
+              "expr": "rbmq_notifier_buffer_pending_gauge_size{group=\"ph\"}",
               "hide": false,
               "intervalFactor": 2,
               "legendFormat": "pending buffer size {{job}}",
@@ -1739,7 +1739,7 @@
               "step": 40
             },
             {
-              "expr": "rbmq_notifier_buffer_reading_gauge_size{group=\"ph1\"}",
+              "expr": "rbmq_notifier_buffer_reading_gauge_size{group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "reading buffer size {{job}}",
               "metric": "rbmq_notifier_buffer_reading_gauge_size",
@@ -1747,7 +1747,7 @@
               "step": 40
             },
             {
-              "expr": "rbmq_notifier_reconnects_count{group=\"ph1\"}",
+              "expr": "rbmq_notifier_reconnects_count{group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "reconnects count {{job}}",
               "metric": "rbmq_notifier_reconnects_count",
@@ -1755,7 +1755,7 @@
               "step": 40
             },
             {
-              "expr": "notify_errors{group=\"ph1\"}",
+              "expr": "notify_errors{group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "{{job}} notify errors ",
               "metric": "notify_errors",
@@ -1856,7 +1856,7 @@
           },
           "targets": [
             {
-              "expr": "node_load15{group=\"ph1\"}",
+              "expr": "node_load15{group=\"ph\"}",
               "intervalFactor": 2,
               "metric": "node_load15",
               "refId": "A",
@@ -1932,7 +1932,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "mt_manager_mobilink_response_success{ group=\"ph1\"}",
+              "expr": "mt_manager_mobilink_response_success{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "response_success",
               "metric": "mt_manager_mobilink_response_success",
@@ -1940,7 +1940,7 @@
               "step": 30
             },
             {
-              "expr": "mt_manager_mobilink_response_errors{ group=\"ph1\"}",
+              "expr": "mt_manager_mobilink_response_errors{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "response_errors",
               "metric": "mt_manager_mobilink_response_errors",
@@ -1948,7 +1948,7 @@
               "step": 30
             },
             {
-              "expr": "mt_manager_mobilink_dropped{ group=\"ph1\"}",
+              "expr": "mt_manager_mobilink_dropped{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "response_dropped",
               "metric": "mt_manager_mobilink_dropped",
@@ -1956,7 +1956,7 @@
               "step": 30
             },
             {
-              "expr": "mt_manager_not_paid_status_mt_manager_postpaid{ group=\"ph1\"}",
+              "expr": "mt_manager_not_paid_status_mt_manager_postpaid{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "postpaid",
               "metric": "mt_manager_not_paid_status_mt_manager_postpaid",
@@ -1972,7 +1972,7 @@
               "step": 30
             },
             {
-              "expr": "mt_manager_not_paid_status_mt_manager_rejected{ group=\"ph1\"}",
+              "expr": "mt_manager_not_paid_status_mt_manager_rejected{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "rejected",
               "metric": "mt_manager_not_paid_status_mt_manager_rejected",
@@ -1980,7 +1980,7 @@
               "step": 30
             },
             {
-              "expr": "mt_manager_delay_hours_arent_passed{ group=\"ph1\"}",
+              "expr": "mt_manager_delay_hours_arent_passed{ group=\"ph\"}",
               "hide": false,
               "intervalFactor": 2,
               "legendFormat": "already subscribed",
@@ -1989,7 +1989,7 @@
               "step": 30
             },
             {
-              "expr": "mt_manager_mobilink_notify_errors{ group=\"ph1\"}",
+              "expr": "mt_manager_mobilink_notify_errors{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "notify errors",
               "metric": "mt_manager_mobilink_notify_errors",
@@ -2073,7 +2073,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "qlistener_operator_add_to_db_success{ group=\"ph1\"}",
+              "expr": "qlistener_operator_add_to_db_success{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "add to db success",
               "metric": "qlistener_operator_add_to_db_success",
@@ -2081,7 +2081,7 @@
               "step": 30
             },
             {
-              "expr": "qlistener_operator_add_to_db_errors{ group=\"ph1\"}",
+              "expr": "qlistener_operator_add_to_db_errors{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "add to db errors",
               "metric": "qlistener_operator_add_to_db_errors",
@@ -2089,7 +2089,7 @@
               "step": 30
             },
             {
-              "expr": "qlistener_operator_empty{ group=\"ph1\"}",
+              "expr": "qlistener_operator_empty{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "empty msgs",
               "metric": "qlistener_operator_empty",
@@ -2097,7 +2097,7 @@
               "step": 30
             },
             {
-              "expr": "qlistener_operator_dropped{ group=\"ph1\"}",
+              "expr": "qlistener_operator_dropped{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "dropped msgs",
               "metric": "qlistener_operator_dropped",
@@ -2506,7 +2506,7 @@
         {
           "aliasColors": {
             "consent errors": "#890F02",
-            "telco_sentconsent_errors{group=\"ph1\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#E24D42"
+            "telco_sentconsent_errors{group=\"ph\",instance=\"52.76.153.135:50306\",job=\"yondu1-telco\"}": "#E24D42"
           },
           "bars": false,
           "datasource": null,
@@ -2845,10 +2845,10 @@
             "agreed": "#64B0C8",
             "content delivery errors": "#BF1B00",
             "contentd success": "#629E51",
-            "dispatcherd_campaign_hash_wrong{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#E24D42",
-            "dispatcherd_error404{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#890F02",
-            "dispatcherd_msisdn_not_found{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#E5AC0E",
-            "dispatcherd_serve_errors{group=\"ph1\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#890F02",
+            "dispatcherd_campaign_hash_wrong{group=\"ph\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#E24D42",
+            "dispatcherd_error404{group=\"ph\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#890F02",
+            "dispatcherd_msisdn_not_found{group=\"ph\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#E5AC0E",
+            "dispatcherd_serve_errors{group=\"ph\",instance=\"52.66.23.201:50300\",job=\"dispatcherd\"}": "#890F02",
             "errors": "#890F02",
             "incoming": "#7EB26D",
             "ip not recognized by system": "#967302",
@@ -2905,7 +2905,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "errors{job=\"dispatcherd\", group=\"ph1\"}",
+              "expr": "errors{job=\"dispatcherd\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "errors",
               "metric": "errors",
@@ -2913,7 +2913,7 @@
               "step": 30
             },
             {
-              "expr": "dispatcherd_contentd_rpc_errors{ group=\"ph1\"}",
+              "expr": "dispatcherd_contentd_rpc_errors{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "contentd_rpc_errors",
               "metric": "dispatcherd_contentd_rpc_errors",
@@ -2921,7 +2921,7 @@
               "step": 30
             },
             {
-              "expr": "dispatcherd_serve_errors{ group=\"ph1\"}",
+              "expr": "dispatcherd_serve_errors{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "content delivery errors",
               "metric": "dispatcherd_serve_errors",
@@ -2929,7 +2929,7 @@
               "step": 30
             },
             {
-              "expr": "dispatcherd_agreed{ group=\"ph1\"}",
+              "expr": "dispatcherd_agreed{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "agreed",
               "metric": "dispatcherd_agreed",
@@ -2937,7 +2937,7 @@
               "step": 30
             },
             {
-              "expr": "dispatcherd_ip_not_found{ group=\"ph1\"}",
+              "expr": "dispatcherd_ip_not_found{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "ip not recognized by system",
               "metric": "dispatcherd_ip_not_found",
@@ -2945,7 +2945,7 @@
               "step": 30
             },
             {
-              "expr": "contentd_success{ group=\"ph1\"}",
+              "expr": "contentd_success{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "contentd success",
               "metric": "contentd_success",
@@ -2953,7 +2953,7 @@
               "step": 30
             },
             {
-              "expr": "dispatcherd_campaign_hash_wrong{ group=\"ph1\"}",
+              "expr": "dispatcherd_campaign_hash_wrong{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "wrong hash ",
               "metric": "dispatcherd_campaign_hash_wrong",
@@ -2961,7 +2961,7 @@
               "step": 30
             },
             {
-              "expr": "dispatcherd_rejected{ group=\"ph1\"}",
+              "expr": "dispatcherd_rejected{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "rejected",
               "metric": "dispatcherd_rejected",
@@ -2969,7 +2969,7 @@
               "step": 30
             },
             {
-              "expr": "dispatcherd_msisdn_not_found{ group=\"ph1\"}",
+              "expr": "dispatcherd_msisdn_not_found{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "msisdn not found",
               "metric": "dispatcherd_msisdn_not_found",
@@ -2977,7 +2977,7 @@
               "step": 30
             },
             {
-              "expr": "dispatcherd_error404{ group=\"ph1\"}",
+              "expr": "dispatcherd_error404{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "page not found",
               "metric": "dispatcherd_error404",
@@ -2985,7 +2985,7 @@
               "step": 30
             },
             {
-              "expr": "dispatcherd_incoming{ group=\"ph1\"}",
+              "expr": "dispatcherd_incoming{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "incoming",
               "metric": "dispatcherd_incoming",
@@ -2993,7 +2993,7 @@
               "step": 30
             },
             {
-              "expr": "dispatcherd_truly_rejected{ group=\"ph1\"}",
+              "expr": "dispatcherd_truly_rejected{ group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "rejected",
               "metric": "dispatcherd_truly_rejected",
@@ -3091,7 +3091,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "http_request_duration_microseconds{job=\"dispatcherd\", group=\"ph1\"}",
+              "expr": "http_request_duration_microseconds{job=\"dispatcherd\", group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "quantile {{quantile}}",
               "metric": "http_request_duration_microseconds",
@@ -3184,7 +3184,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "qlistener_user_actions_add_to_db_success{group=\"ph1\"}",
+              "expr": "qlistener_user_actions_add_to_db_success{group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "add to db success",
               "metric": "qlistener_user_actions_add_to_db_success",
@@ -3192,7 +3192,7 @@
               "step": 30
             },
             {
-              "expr": "qlistener_user_actions_add_to_db_errors{group=\"ph1\"}",
+              "expr": "qlistener_user_actions_add_to_db_errors{group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "db errors",
               "metric": "qlistener_user_actions_add_to_db_errors",
@@ -3200,7 +3200,7 @@
               "step": 30
             },
             {
-              "expr": "qlistener_user_actions_dropped{group=\"ph1\"}",
+              "expr": "qlistener_user_actions_dropped{group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "dropped",
               "metric": "qlistener_user_actions_dropped",
@@ -3208,7 +3208,7 @@
               "step": 30
             },
             {
-              "expr": "qlistener_user_actions_empty{group=\"ph1\"}",
+              "expr": "qlistener_user_actions_empty{group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "empty",
               "metric": "qlistener_user_actions_empty",
@@ -3296,7 +3296,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "qlistener_content_sent_add_to_db_success{group=\"ph1\"}",
+              "expr": "qlistener_content_sent_add_to_db_success{group=\"ph\"}",
               "hide": false,
               "intervalFactor": 2,
               "legendFormat": "add to db success",
@@ -3305,7 +3305,7 @@
               "step": 30
             },
             {
-              "expr": "qlistener_content_sent_add_to_db_errors{group=\"ph1\"}",
+              "expr": "qlistener_content_sent_add_to_db_errors{group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "db errors",
               "metric": "qlistener_content_sent_add_to_db_errors",
@@ -3313,7 +3313,7 @@
               "step": 30
             },
             {
-              "expr": "qlistener_content_sent_dropped{group=\"ph1\"}",
+              "expr": "qlistener_content_sent_dropped{group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "dropped msgs",
               "metric": "qlistener_content_sent_dropped",
@@ -3321,7 +3321,7 @@
               "step": 30
             },
             {
-              "expr": "qlistener_content_sent_empty{group=\"ph1\"}",
+              "expr": "qlistener_content_sent_empty{group=\"ph\"}",
               "intervalFactor": 2,
               "legendFormat": "empty msgs",
               "metric": "qlistener_content_sent_empty",
@@ -3505,7 +3505,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "process_resident_memory_bytes{job!=\"prometheus\",group=\"ph1\"}",
+              "expr": "process_resident_memory_bytes{job!=\"prometheus\",group=\"ph\"}",
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "",

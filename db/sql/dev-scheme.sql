@@ -642,9 +642,9 @@ CREATE TABLE xmp_transaction_types
   id SERIAL PRIMARY KEY NOT NULL,
   name VARCHAR(64)
 );
+
 CREATE TYPE transaction_result AS ENUM (
   'failed', 'sms', 'paid', 'retry_failed', 'retry_paid', 'rejected', 'past');
-
 CREATE TABLE xmp_transactions
 (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -654,18 +654,20 @@ CREATE TABLE xmp_transactions
   msisdn VARCHAR(32) NOT NULL,
   country_code INTEGER NOT NULL DEFAULT 0,
   id_service INTEGER NOT NULL DEFAULT 0,
+  id_campaign INTEGER DEFAULT 0 NOT NULL,
   operator_code INTEGER NOT NULL DEFAULT 0,
   id_subscription INTEGER NOT NULL DEFAULT 0,
   id_content INTEGER NOT NULL DEFAULT 0,
   operator_token VARCHAR(511) NOT NULL,
   price INTEGER NOT NULL,
-  result TRANSACTION_RESULT NOT NULL,
-  id_campaign INTEGER DEFAULT 0 NOT NULL
+  result TRANSACTION_RESULT NOT NULL
 );
 create index xmp_transactions_sent_at_idx
   on xmp_transactions(sent_at);
 create index xmp_transactions_msisdn_idx
   on xmp_transactions(msisdn);
+create index xmp_transactions_result_idx
+  on xmp_transactions(result);
 
 CREATE TABLE xmp_transactions_dr (
   id SERIAL PRIMARY KEY NOT NULL,

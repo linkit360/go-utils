@@ -215,7 +215,6 @@ func SetSubscriptionStatus(status string, id int64) (err error) {
 	}
 	return nil
 }
-
 func SetRetryStatus(status string, id int64) (err error) {
 	if id == 0 {
 		log.WithFields(log.Fields{"error": "no retry id"}).Error("set retry status")
@@ -251,7 +250,6 @@ func SetRetryStatus(status string, id int64) (err error) {
 	}
 	return nil
 }
-
 func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (records []Record, err error) {
 	var retries []Record
 	query := ""
@@ -598,6 +596,103 @@ func GetPeriodics(operatorCode int64, batchLimit int) (records []Record, err err
 	return periodics, nil
 }
 
+func GetNotPaidPeriodics(operatorCode int64, delay_minutes, batchLimit int) (records []Record, err error) {
+	begin := time.Now()
+	query := ""
+	defer func() {
+		defer func() {
+			fields := log.Fields{
+				"took":         time.Since(begin),
+				"query":        query,
+				"operatorCode": operatorCode,
+			}
+			if err != nil {
+				fields["error"] = err.Error()
+				log.WithFields(fields).Error("load periodic failed")
+			} else {
+				fields["count"] = len(records)
+				log.WithFields(fields).Debug("load periodic")
+			}
+		}()
+	}()
+
+	dayName := strings.ToLower(time.Now().Format("Mon"))
+
+	var periodics []Record
+	matchedToday := "( days ? '" + dayName + "' OR days ? 'any' ) "
+
+	earlierMatchedToday := matchedToday +
+		"AND last_pay_attempt_at < (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) AND " +
+		"result NOT IN ('rejected', 'blacklisted', 'canceled', 'pending') "
+
+	notPaidAtAllMatchedTime := matchedToday +
+		"AND last_pay_attempt_at > (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) AND " +
+		"result NOT IN ('rejected', 'blacklisted', 'canceled', 'pending', 'paid') " +
+		fmt.Sprintf("AND last_pay_attempt_at > %d * INTERVAL '1 minute' ", delay_minutes)
+
+	query = fmt.Sprintf("SELECT "+
+		"id, "+
+		"sent_at, "+
+		"tid , "+
+		"operator_token, "+
+		"price, "+
+		"id_service, "+
+		"id_campaign, "+
+		"country_code, "+
+		"operator_code, "+
+		"msisdn, "+
+		"keep_days, "+
+		"delay_hours, "+
+		"paid_hours "+
+		"FROM %ssubscriptions "+
+		"WHERE "+
+		"operator_code = $1 AND periodic = true AND "+
+		"("+earlierMatchedToday+" OR "+notPaidAtAllMatchedTime+")"+
+		"ORDER BY last_pay_attempt_at ASC LIMIT %s",
+		conf.TablePrefix,
+		strconv.Itoa(batchLimit),
+	)
+
+	rows, err := dbConn.Query(query, operatorCode)
+	if err != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		return []Record{}, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		p := Record{}
+		if err := rows.Scan(
+			&p.SubscriptionId,
+			&p.SentAt,
+			&p.Tid,
+			&p.OperatorToken,
+			&p.Price,
+			&p.ServiceId,
+			&p.CampaignId,
+			&p.OperatorCode,
+			&p.CountryCode,
+			&p.Msisdn,
+			&p.KeepDays,
+			&p.DelayHours,
+			&p.PaidHours,
+		); err != nil {
+			DBErrors.Inc()
+			return []Record{}, fmt.Errorf("Rows.Next: %s", err.Error())
+		}
+
+		periodics = append(periodics, p)
+	}
+	if rows.Err() != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("GetPeriodic RowsError: %s", err.Error())
+		return []Record{}, err
+	}
+	return periodics, nil
+}
 func GetSubscriptionByToken(token string) (p Record, err error) {
 	begin := time.Now()
 	defer func() {
