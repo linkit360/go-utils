@@ -603,15 +603,15 @@ func GetNotPaidPeriodics(operatorCode int64, delay_minutes, batchLimit int) (rec
 		defer func() {
 			fields := log.Fields{
 				"took":         time.Since(begin),
-				"query":        query,
 				"operatorCode": operatorCode,
 			}
 			if err != nil {
 				fields["error"] = err.Error()
-				log.WithFields(fields).Error("load periodic failed")
+				log.WithFields(fields).Error("load not paid periodic failed")
 			} else {
+				fields["query"] = query
 				fields["count"] = len(records)
-				log.WithFields(fields).Debug("load periodic")
+				log.WithFields(fields).Debug("load not paid periodic")
 			}
 		}()
 	}()
@@ -621,14 +621,12 @@ func GetNotPaidPeriodics(operatorCode int64, delay_minutes, batchLimit int) (rec
 	var periodics []Record
 	matchedToday := "( days ? '" + dayName + "' OR days ? 'any' ) "
 
-	earlierMatchedToday := matchedToday +
-		"AND last_pay_attempt_at < (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) AND " +
+	earlierMatchedToday := "last_pay_attempt_at + INTERVAL '24 hours' < NOW() AND " +
 		"result NOT IN ('rejected', 'blacklisted', 'canceled', 'pending') "
 
-	notPaidAtAllMatchedTime := matchedToday +
-		"AND last_pay_attempt_at > (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) AND " +
+	notPaidAtAllMatchedTime := "last_pay_attempt_at + INTERVAL '24 hours' > NOW() AND " +
 		"result NOT IN ('rejected', 'blacklisted', 'canceled', 'pending', 'paid') " +
-		fmt.Sprintf("AND last_pay_attempt_at > %d * INTERVAL '1 minute' ", delay_minutes)
+		fmt.Sprintf("AND last_pay_attempt_at + %d * INTERVAL '1 minute' < NOW() ", delay_minutes)
 
 	query = fmt.Sprintf("SELECT "+
 		"id, "+
@@ -646,7 +644,7 @@ func GetNotPaidPeriodics(operatorCode int64, delay_minutes, batchLimit int) (rec
 		"paid_hours "+
 		"FROM %ssubscriptions "+
 		"WHERE "+
-		"operator_code = $1 AND periodic = true AND "+
+		matchedToday+" AND operator_code = $1 AND periodic = true AND "+
 		"("+earlierMatchedToday+" OR "+notPaidAtAllMatchedTime+")"+
 		"ORDER BY last_pay_attempt_at ASC LIMIT %s",
 		conf.TablePrefix,
