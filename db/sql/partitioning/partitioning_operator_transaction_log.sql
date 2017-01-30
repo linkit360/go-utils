@@ -3,7 +3,6 @@ $BODY$
 DECLARE
   partition_date TEXT;
   partition TEXT;
-  r xmp_operator_transaction_log%rowtype;
 BEGIN
   partition_date := to_char(NEW.sent_at,'YYYY_MM_DD');
   partition := TG_TABLE_NAME || '_' || partition_date;
@@ -18,7 +17,8 @@ BEGIN
     EXECUTE 'CREATE INDEX ' || partition || '_type_idx ON ' || partition || '(type);';
 
   END IF;
-  EXECUTE 'INSERT INTO ' || partition || ' SELECT(' || TG_TABLE_NAME || ' ' || quote_literal(NEW) || ').* ';
+  EXECUTE 'INSERT INTO ' || partition || ' VALUES (' || quote_literal(NEW) || ').* ';
+
   RETURN NULL;
 END;
 $BODY$

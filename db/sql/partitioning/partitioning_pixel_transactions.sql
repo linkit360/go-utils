@@ -24,5 +24,5 @@ LANGUAGE plpgsql VOLATILE
 COST 100;
 
 CREATE TRIGGER xmp_pixel_transactions_insert_trigger
-AFTER INSERT ON xmp_pixel_transactions
+BEFORE INSERT ON xmp_pixel_transactions
 FOR EACH ROW EXECUTE PROCEDURE xmp_pixel_transactions_create_partition_and_insert();
