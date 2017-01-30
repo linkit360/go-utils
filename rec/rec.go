@@ -621,12 +621,12 @@ func GetNotPaidPeriodics(operatorCode int64, delay_minutes, batchLimit int) (rec
 	var periodics []Record
 	matchedToday := "( days ? '" + dayName + "' OR days ? 'any' ) "
 
-	earlierMatchedToday := "last_pay_attempt_at + INTERVAL '24 hours' < NOW() AND " +
-		"result NOT IN ('rejected', 'blacklisted', 'canceled', 'pending') "
+	earlierMatchedToday := "( last_pay_attempt_at + INTERVAL '24 hours' < NOW() AND " +
+		"result NOT IN ('rejected', 'blacklisted', 'canceled', 'pending') )"
 
-	notPaidAtAllMatchedTime := "last_pay_attempt_at + INTERVAL '24 hours' > NOW() AND " +
+	notPaidAtAllMatchedTime := "( last_pay_attempt_at + INTERVAL '24 hours' > NOW() AND " +
 		"result NOT IN ('rejected', 'blacklisted', 'canceled', 'pending', 'paid') " +
-		fmt.Sprintf("AND last_pay_attempt_at + %d * INTERVAL '1 minute' < NOW() ", delay_minutes)
+		fmt.Sprintf("AND last_pay_attempt_at + %d * INTERVAL '1 minute' < NOW() )", delay_minutes)
 
 	query = fmt.Sprintf("SELECT "+
 		"id, "+
