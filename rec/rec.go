@@ -39,6 +39,7 @@ type Record struct {
 	OperatorName             string    `json:",omitempty"`
 	OperatorToken            string    `json:",omitempty"`
 	OperatorErr              string    `json:",omitempty"`
+	Notice                   bool      `json:",omitempty"`
 	Paid                     bool      `json:",omitempty"`
 	Price                    int       `json:",omitempty"`
 	Pixel                    string    `json:",omitempty"`
@@ -200,7 +201,8 @@ func SetSubscriptionStatus(status string, id int64) (err error) {
 
 	query := fmt.Sprintf("UPDATE %ssubscriptions SET "+
 		"result = $1, "+
-		"updated_at = $2 "+
+		"updated_at = $2, "+
+		"attempts_count = attempts_count + 1 "+ // for retry sent consent
 		"WHERE id = $3",
 		conf.TablePrefix,
 	)
@@ -609,7 +611,7 @@ func GetNotPaidPeriodics(operatorCode int64, delay_minutes, batchLimit int) (rec
 				fields["error"] = err.Error()
 				log.WithFields(fields).Error("load not paid periodic failed")
 			} else {
-				fields["query"] = query
+				//fields["query"] = query
 				fields["count"] = len(records)
 				log.WithFields(fields).Debug("load not paid periodic")
 			}
@@ -830,4 +832,94 @@ func GetRetryByMsisdn(msisdn, status string) (r Record, err error) {
 	}
 
 	return
+}
+
+func GetRepeatSentConsent(operatorCode int64, delayMinutes, batchLimit int) (records []Record, err error) {
+	begin := time.Now()
+	query := ""
+	defer func() {
+		defer func() {
+			fields := log.Fields{
+				"took":         time.Since(begin),
+				"query":        query,
+				"operatorCode": operatorCode,
+			}
+			if err != nil {
+				fields["error"] = err.Error()
+				log.WithFields(fields).Error("load sent consent repeat failed")
+			} else {
+				fields["count"] = len(records)
+				log.WithFields(fields).Debug("load sent consent repeat")
+			}
+		}()
+	}()
+
+	dayName := strings.ToLower(time.Now().Format("Mon"))
+
+	var periodics []Record
+	query = fmt.Sprintf("SELECT "+
+		"id, "+
+		"sent_at, "+
+		"tid , "+
+		"operator_token, "+
+		"price, "+
+		"id_service, "+
+		"id_campaign, "+
+		"country_code, "+
+		"operator_code, "+
+		"msisdn, "+
+		"keep_days, "+
+		"delay_hours, "+
+		"paid_hours "+
+		"FROM %ssubscriptions "+
+		"WHERE "+
+		"operator_code = $1 AND periodic = true AND "+
+		"( days ? '"+dayName+"' OR days ? 'any' ) AND "+
+		"result = 'consent' AND attempts_count = 0 AND "+
+		"updated_at < (CURRENT_TIMESTAMP -  %d * INTERVAL '1 minutes' ) "+
+		"ORDER BY last_pay_attempt_at ASC LIMIT %s",
+		conf.TablePrefix,
+		delayMinutes,
+		strconv.Itoa(batchLimit),
+	)
+
+	rows, err := dbConn.Query(query, operatorCode)
+	if err != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		return []Record{}, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		p := Record{}
+		if err := rows.Scan(
+			&p.SubscriptionId,
+			&p.SentAt,
+			&p.Tid,
+			&p.OperatorToken,
+			&p.Price,
+			&p.ServiceId,
+			&p.CampaignId,
+			&p.OperatorCode,
+			&p.CountryCode,
+			&p.Msisdn,
+			&p.KeepDays,
+			&p.DelayHours,
+			&p.PaidHours,
+		); err != nil {
+			DBErrors.Inc()
+			return []Record{}, fmt.Errorf("rows.Scan: %s", err.Error())
+		}
+
+		periodics = append(periodics, p)
+	}
+	if rows.Err() != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("rows.Err: %s", err.Error())
+		return []Record{}, err
+	}
+	return periodics, nil
 }

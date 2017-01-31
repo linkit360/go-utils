@@ -362,6 +362,7 @@ CREATE TABLE xmp_publishers
   id SERIAL PRIMARY KEY NOT NULL,
   name VARCHAR(256),
   contact_person VARCHAR(256),
+  regex VARCHAR(2047) NOT NULL DEFAULT '{23}',
   created_at TIMESTAMP DEFAULT now() NOT NULL,
   publisher_code INTEGER,
   status INTEGER
@@ -465,13 +466,15 @@ CREATE TABLE xmp_operator_transaction_log (
   response_body varchar(16391) NOT NULL DEFAULT '',
   response_decision varchar(511) NOT NULL DEFAULT '',
   response_code INT NOT NULL DEFAULT 0,
+  notice varchar(2047) NOT NULL DEFAULT '',
   type operator_transaction_log_type not null
 );
 create index xmp_operator_transaction_log_sent_at_idx
   on xmp_operator_transaction_log(sent_at);
 create index xmp_operator_transaction_log_type_idx
   on xmp_operator_transaction_log(type);
-
+create index xmp_operator_transaction_log_notice_idx
+  on xmp_operator_transaction_log(notice);
 
 CREATE TABLE xmp_revenue_report
 (
@@ -808,7 +811,7 @@ CREATE TABLE tr.partners_targets
   score INT NOT NULL DEFAULT 0
 );
 
-CREATE TABLE xmp_partner_hits
+CREATE TABLE tr.partners_hits
 (
   id SERIAL PRIMARY KEY NOT NULL,
   tid VARCHAR(127) NOT NULL,
@@ -822,7 +825,7 @@ CREATE TABLE xmp_partner_hits
 );
 
 create index xmp_partner_hits_sent_sent_at_idx
-  on xmp_partner_hits(sent_at);
+  on xmp_partners_hits(sent_at);
 
 
 
