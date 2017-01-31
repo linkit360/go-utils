@@ -36,7 +36,6 @@ alter table xmp_content_sent disable trigger xmp_content_sent_insert_trigger;
 alter table xmp_campaigns_access disable trigger xmp_campaigns_access_insert_trigger;
 
 
-
 drop trigger xmp_user_actions_insert_trigger on xmp_user_actions ;
 drop trigger xmp_subscriptions_insert_trigger on xmp_subscriptions ;
 drop trigger xmp_pixel_transactions_insert_trigger on xmp_pixel_transactions ;

@@ -17,6 +17,7 @@ BEGIN
     EXECUTE 'CREATE INDEX ' || partition || '_sent_at_idx ON ' || partition || '(sent_at);';
     EXECUTE 'CREATE INDEX ' || partition || '_last_pay_attempt_at_idx ON ' || partition || '(last_pay_attempt_at);';
   END IF;
+
   EXECUTE 'INSERT INTO ' || partition || ' SELECT(' || TG_RELNAME || ' ' || quote_literal(NEW) || ').* RETURNING * ' INTO r;
   RETURN r;
 END;

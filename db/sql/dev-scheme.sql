@@ -584,6 +584,10 @@ create index xmp_subscriptions_last_pay_attempt_at_idx
   on xmp_subscriptions (last_pay_attempt_at);
 create index xmp_subscriptions_sent_at_idx
   on xmp_subscriptions (sent_at);
+create index xmp_subscriptions_result_idx
+  on xmp_subscriptions(result);
+create index xmp_subscriptions_periodic_idx
+  on xmp_subscriptions(periodic);
 
 CREATE TABLE xmp_subscription_type
 (
