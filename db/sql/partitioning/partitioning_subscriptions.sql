@@ -25,9 +25,27 @@ $BODY$
 LANGUAGE plpgsql VOLATILE
 COST 100;
 
--- https://wiki.postgresql.org/wiki/INSERT_RETURNING_vs_Partitioning article.
--- Check all variables inside the trigger and replace all empty variables with implicit NULL-s and check if it works.
-
 CREATE TRIGGER xmp_subscriptions_insert_trigger
 BEFORE INSERT ON xmp_subscriptions
 FOR EACH ROW EXECUTE PROCEDURE xmp_subscriptions_create_partition_and_insert();
+
+
+CREATE OR REPLACE FUNCTION  xmp_subscriptions_clean_parent_after_child_insert() RETURNS trigger AS
+$BODY$
+BEGIN
+  IF EXISTS (   SELECT  tgenabled
+                FROM    pg_trigger
+                WHERE   tgname='xmp_subscriptions_insert_trigger' AND
+                        tgenabled != 'D'
+  ) THEN
+    DELETE FROM ONLY xmp_subscriptions WHERE id = NEW.id;
+  END IF;
+  RETURN NULL;
+END;
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100;
+
+CREATE TRIGGER xmp_subscriptions_clean_parent_after_child_insert_trigger
+AFTER INSERT ON xmp_subscriptions
+FOR EACH ROW EXECUTE PROCEDURE xmp_subscriptions_clean_parent_after_child_insert();
