@@ -14,7 +14,9 @@ BEGIN
             ''' ) ) INHERITS (' || TG_TABLE_NAME || ');';
 
     EXECUTE 'CREATE INDEX ' || partition || '_sent_at_idx ON ' || partition || '(sent_at);';
+    EXECUTE 'CREATE INDEX ' || partition || '_tid_idx ON ' || partition || '(tid);';
   END IF;
+
   EXECUTE 'INSERT INTO ' || partition || ' SELECT(' || TG_TABLE_NAME || ' ' || quote_literal(NEW) || ').* ';
   RETURN NULL;
 END;
@@ -25,3 +27,5 @@ COST 100;
 CREATE TRIGGER xmp_content_sent_insert_trigger
 BEFORE INSERT ON xmp_content_sent
 FOR EACH ROW EXECUTE PROCEDURE xmp_content_sent_create_partition_and_insert();
+
+alter table xmp_content_sent disable trigger xmp_content_sent_insert_trigger;

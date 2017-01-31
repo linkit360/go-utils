@@ -15,8 +15,13 @@ BEGIN
             ''' ) ) INHERITS (' || TG_TABLE_NAME || ');';
 
     EXECUTE 'CREATE INDEX ' || partition || '_sent_at_idx ON ' || partition || '(sent_at);';
+    EXECUTE 'CREATE INDEX ' || partition || '_tid_idx ON ' || partition || '(tid);';
+    EXECUTE 'CREATE INDEX ' || partition || '_msisdn_idx ON ' || partition || '(msisdn);';
+    EXECUTE 'CREATE INDEX ' || partition || '_action_idx ON ' || partition || '(action);';
   END IF;
+
   EXECUTE 'INSERT INTO ' || partition || ' SELECT(' || TG_TABLE_NAME || ' ' || quote_literal(NEW) || ').* ';
+  RETURN NULL;
 END;
 $BODY$
 LANGUAGE plpgsql VOLATILE

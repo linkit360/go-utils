@@ -14,6 +14,7 @@ BEGIN
             ''' ) ) INHERITS (' || TG_TABLE_NAME || ');';
 
     EXECUTE 'CREATE INDEX ' || partition || '_sent_at_idx ON ' || partition || '(sent_at);';
+    EXECUTE 'CREATE INDEX ' || partition || '_tid_idx ON ' || partition || '(tid);';
   END IF;
   EXECUTE 'INSERT INTO ' || partition || ' SELECT(' || TG_TABLE_NAME || ' ' || quote_literal(NEW) || ').* ';
   RETURN NULL;

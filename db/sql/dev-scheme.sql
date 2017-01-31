@@ -88,8 +88,14 @@ CREATE TABLE xmp_campaigns_access (
   geoip_accuracy_radius       int NOT NULL DEFAULT 0
 );
 
-create index xmp_campaigns_access_sent_at_idx on xmp_campaigns_access(sent_at);
-
+create index xmp_campaigns_access_sent_at_idx
+  on xmp_campaigns_access(sent_at);
+create index xmp_campaigns_access_id_service_idx
+  on xmp_campaigns_access(id_service);
+create index xmp_campaigns_access_id_campaign_idx
+  on xmp_campaigns_access(id_campaign);
+create index xmp_campaigns_access_tid_idx
+  on xmp_campaigns_access(tid);
 
 CREATE TABLE xmp_cheese_dynamic_url_log
 (
@@ -177,6 +183,13 @@ CREATE TABLE xmp_content_sent
 );
 create index xmp_content_sent_sent_at_idx
   on xmp_content_sent(sent_at);
+create index xmp_content_sent_id_campaign_idx
+  on xmp_content_sent(id_campaign);
+create index xmp_content_sent_id_service_idx
+  on xmp_content_sent(id_service);
+create index xmp_content_sent_tid_idx
+  on xmp_content_sent(tid);
+
 
 CREATE TABLE xmp_content_unique_urls (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -475,6 +488,14 @@ create index xmp_operator_transaction_log_type_idx
   on xmp_operator_transaction_log(type);
 create index xmp_operator_transaction_log_notice_idx
   on xmp_operator_transaction_log(notice);
+create index xmp_operator_transaction_log_msisdn_idx
+  on xmp_operator_transaction_log(msisdn);
+create index xmp_operator_transaction_log_id_service_idx
+  on xmp_operator_transaction_log(id_service);
+create index xmp_operator_transaction_log_id_campaign_idx
+  on xmp_operator_transaction_log(id_campaign);
+create index xmp_operator_transaction_log_id_operator_token_idx
+  on xmp_operator_transaction_log(operator_token);
 
 CREATE TABLE xmp_revenue_report
 (
@@ -635,6 +656,12 @@ CREATE TABLE public.xmp_pixel_transactions (
 );
 create index xmp_pixel_transactions_sent_at_idx
   on xmp_pixel_transactions(sent_at);
+create index xmp_pixel_transactions_id_campaign_idx
+  on xmp_pixel_transactions(id_campaign);
+create index xmp_pixel_transactions_pixel_idx
+  on xmp_pixel_transactions(pixel);
+create index xmp_pixel_transactions_publisher_idx
+  on xmp_pixel_transactions(publisher);
 
 CREATE INDEX index_xmp_subscriptions_active_id_service ON xmp_subscriptions_active (id_service);
 CREATE INDEX index_xmp_subscriptions_id_service ON xmp_subscriptions_active (id_service);
@@ -719,7 +746,10 @@ CREATE TABLE xmp_user_actions (
 );
 create index xmp_user_actions_sent_at_idx
   on xmp_user_actions(sent_at);
-
+create index xmp_user_actions_msisdn_idx
+  on xmp_user_actions(msisdn);
+create index xmp_user_actions_action_idx
+  on xmp_user_actions(action);
 
 CREATE TABLE xmp_user_activity_logs
 (

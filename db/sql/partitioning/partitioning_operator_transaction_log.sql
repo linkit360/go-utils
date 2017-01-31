@@ -14,10 +14,17 @@ BEGIN
             ''' ) ) INHERITS (' || TG_TABLE_NAME || ');';
 
     EXECUTE 'CREATE INDEX ' || partition || '_sent_at_idx ON ' || partition || '(sent_at);';
-    EXECUTE 'CREATE INDEX ' || partition || '_type_idx ON ' || partition || '(type);';
+--     EXECUTE 'CREATE INDEX ' || partition || '_type_idx ON ' || partition || '(type);';
+--     EXECUTE 'CREATE INDEX ' || partition || '_notice_idx ON ' || partition || '(notice);';
+    EXECUTE 'CREATE INDEX ' || partition || '_msisdn_idx ON ' || partition || '(msisdn);';
+    EXECUTE 'CREATE INDEX ' || partition || '_tid_idx ON ' || partition || '(tid);';
+    EXECUTE 'CREATE INDEX ' || partition || '_id_service_idx ON ' || partition || '(id_service);';
+    EXECUTE 'CREATE INDEX ' || partition || '_id_campaign_idx ON ' || partition || '(id_campaign);';
+    EXECUTE 'CREATE INDEX ' || partition || '_operator_token_idx ON ' || partition || '(operator_token);';
 
   END IF;
-  EXECUTE 'INSERT INTO ' || partition || ' SELECT(' || TG_TABLE_NAME || ' ' || quote_literal(NEW) || ').*';
+
+  EXECUTE 'INSERT INTO ' || partition || ' SELECT(' || TG_TABLE_NAME || ' ' || quote_literal(NEW) || ').* ';
   RETURN NULL;
 END;
 $BODY$
@@ -27,3 +34,5 @@ COST 100;
 CREATE TRIGGER xmp_operator_transaction_log_insert_trigger
 BEFORE INSERT ON xmp_operator_transaction_log
 FOR EACH ROW EXECUTE PROCEDURE xmp_operator_transaction_log_create_partition_and_insert();
+
+alter table xmp_operator_transaction_log disable trigger xmp_operator_transaction_log_insert_trigger;

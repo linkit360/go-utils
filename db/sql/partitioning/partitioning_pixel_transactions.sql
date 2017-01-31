@@ -3,7 +3,6 @@ $BODY$
 DECLARE
   partition_date TEXT;
   partition TEXT;
-  r xmp_pixel_transactions%rowtype;
 BEGIN
   partition_date := to_char(NEW.sent_at,'YYYY_MM_DD');
   partition := TG_TABLE_NAME || '_' || partition_date;
@@ -15,8 +14,9 @@ BEGIN
             ''' ) ) INHERITS (' || TG_TABLE_NAME || ');';
 
     EXECUTE 'CREATE INDEX ' || partition || '_sent_at_idx ON ' || partition || '(sent_at);';
+    EXECUTE 'CREATE INDEX ' || partition || '_pixel_idx ON ' || partition || '(pixel);';
   END IF;
-  EXECUTE 'INSERT INTO ' || partition || ' SELECT(' || TG_TABLE_NAME || ' ' || quote_literal(NEW) || ').*';
+  EXECUTE 'INSERT INTO ' || partition || ' SELECT(' || TG_TABLE_NAME || ' ' || quote_literal(NEW) || ').* ';
   RETURN NULL;
 END;
 $BODY$
@@ -26,3 +26,6 @@ COST 100;
 CREATE TRIGGER xmp_pixel_transactions_insert_trigger
 BEFORE INSERT ON xmp_pixel_transactions
 FOR EACH ROW EXECUTE PROCEDURE xmp_pixel_transactions_create_partition_and_insert();
+
+
+alter table xmp_pixel_transactions disable trigger  xmp_pixel_transactions_insert_trigger;

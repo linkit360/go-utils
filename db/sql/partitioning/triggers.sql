@@ -31,6 +31,7 @@ FOR EACH ROW EXECUTE PROCEDURE xmp_transactions_create_partition_and_insert();
 alter table xmp_user_actions disable trigger xmp_user_actions_insert_trigger;
 alter table xmp_subscriptions disable trigger xmp_subscriptions_insert_trigger;
 alter table xmp_pixel_transactions disable trigger  xmp_pixel_transactions_insert_trigger;
+alter table xmp_transactions disable trigger  xmp_transactions_insert_trigger;
 alter table xmp_operator_transaction_log disable trigger xmp_operator_transaction_log_insert_trigger;
 alter table xmp_content_sent disable trigger xmp_content_sent_insert_trigger;
 alter table xmp_campaigns_access disable trigger xmp_campaigns_access_insert_trigger;
