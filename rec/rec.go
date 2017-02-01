@@ -19,33 +19,33 @@ import (
 // bcz unmarshalling will brake the flow
 type Record struct {
 	Type                     string    `json:"type,omitempty"`
-	Msisdn                   string    `json:",omitempty"`
-	Tid                      string    `json:",omitempty"`
-	Result                   string    `json:",omitempty"`
-	SubscriptionStatus       string    `json:",omitempty"`
-	OperatorCode             int64     `json:",omitempty"`
-	CountryCode              int64     `json:",omitempty"`
-	ServiceId                int64     `json:",omitempty"`
-	SubscriptionId           int64     `json:",omitempty"`
-	CampaignId               int64     `json:",omitempty"`
-	RetryId                  int64     `json:",omitempty"`
-	SentAt                   time.Time `json:",omitempty"`
-	CreatedAt                time.Time `json:",omitempty"`
-	LastPayAttemptAt         time.Time `json:",omitempty"`
-	AttemptsCount            int       `json:",omitempty"`
-	KeepDays                 int       `json:",omitempty"`
-	DelayHours               int       `json:",omitempty"`
-	PaidHours                int       `json:",omitempty"`
-	OperatorName             string    `json:",omitempty"`
-	OperatorToken            string    `json:",omitempty"`
-	OperatorErr              string    `json:",omitempty"`
-	Notice                   string    `json:",omitempty"`
-	Paid                     bool      `json:",omitempty"`
-	Price                    int       `json:",omitempty"`
-	Pixel                    string    `json:",omitempty"`
-	Publisher                string    `json:",omitempty"`
-	SMSText                  string    `json:",omitempty"`
-	SMSSend                  bool      `json:",omitempty"`
+	Msisdn                   string    `json:"msisdn,omitempty"`
+	Tid                      string    `json:"tid,omitempty"`
+	Result                   string    `json:"result,omitempty"`
+	SubscriptionStatus       string    `json:"subscription_status,omitempty"`
+	OperatorCode             int64     `json:"operator_code,omitempty"`
+	CountryCode              int64     `json:"country_code,omitempty"`
+	ServiceId                int64     `json:"service_id,omitempty"`
+	SubscriptionId           int64     `json:"subscription_is,omitempty"`
+	CampaignId               int64     `json:"campaign_id,omitempty"`
+	RetryId                  int64     `json:"retry_id,omitempty"`
+	SentAt                   time.Time `json:"sent_at,omitempty"`
+	CreatedAt                time.Time `json:"created_at,omitempty"`
+	LastPayAttemptAt         time.Time `json:"last_pay_attempt_at,omitempty"`
+	AttemptsCount            int       `json:"attempts_count,omitempty"`
+	KeepDays                 int       `json:"keep_days,omitempty"`
+	DelayHours               int       `json:"delay_hours,omitempty"`
+	PaidHours                int       `json:"paid_hours,omitempty"`
+	OperatorName             string    `json:"operator_name,omitempty"`
+	OperatorToken            string    `json:"operator_token,omitempty"`
+	OperatorErr              string    `json:"opertor_err,omitempty"`
+	Notice                   string    `json:"notice,omitempty"`
+	Paid                     bool      `json:"paid,omitempty"`
+	Price                    int       `json:"price,omitempty"`
+	Pixel                    string    `json:"pixel,omitempty"`
+	Publisher                string    `json:"publisher,omitempty"`
+	SMSText                  string    `json:"sms_text,omitempty"`
+	SMSSend                  bool      `json:"sms_send,omitempty"`
 	Periodic                 bool      `json:"periodic,omitempty"`
 	PeriodicDays             string    `json:"days,omitempty"`
 	PeriodicAllowedFromHours int       `json:"allowed_from,omitempty"`

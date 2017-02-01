@@ -450,10 +450,11 @@ CREATE TABLE xmp_jobs
   id_user INTEGER NOT NULL,
   created_at TIMESTAMP DEFAULT now() NOT NULL,
   run_at TIMESTAMP DEFAULT now() NOT NULL,
-  finished_at TIMESTAMP DEFAULT now() NOT NULL,
+  finished_at TIMESTAMP DEFAULT '1970-01-01 00:00:00'::timestamp without time zone NOT NULL,
   type job_type NOT NULL,
   status job_status NOT NULL DEFAULT 'ready',
   file_name varchar(127) NOT NULL DEFAULT '',
+  log_path  varchar(1023) NOT NULL DEFAULT '',
   params JSONB DEFAULT '{}'::jsonb NOT NULL,
   skip INTEGER NOT NULL DEFAULT 0
 );
@@ -837,9 +838,10 @@ CREATE TABLE tr.partners
 CREATE TABLE tr.partners_targets
 (
   id SERIAL PRIMARY KEY NOT NULL,
+  id_partner int NOT NULL,
   created_at TIMESTAMP DEFAULT now() NOT NULL,
   amount INTEGER DEFAULT 0 NOT NULL,
-  target VARCHAR(2048) DEFAULT ''::character varying NOT NULL,
+  target VARCHAR(2047) DEFAULT ''::character varying NOT NULL,
   rate_limit INT NOT NULL DEFAULT 0,
   price_per_hit DOUBLE PRECISION NOT NULL DEFAULT 0,
   score INT NOT NULL DEFAULT 0
@@ -848,6 +850,8 @@ CREATE TABLE tr.partners_targets
 CREATE TABLE tr.partners_hits
 (
   id SERIAL PRIMARY KEY NOT NULL,
+  id_partner int NOT NULL,
+  id_target int NOT NULL,
   tid VARCHAR(127) NOT NULL,
   created_at TIMESTAMP DEFAULT now() NOT NULL,
   sent_at TIMESTAMP DEFAULT now() NOT NULL,

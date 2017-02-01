@@ -25,6 +25,7 @@ type InMemIf interface {
 }
 
 type CQRConfig struct {
+	Enabled bool
 	Tables  []string
 	Data    InMemIf
 	WebHook string
@@ -40,6 +41,12 @@ func InitCQR(cqrConfigs []CQRConfig) error {
 	}).Debug("init request")
 
 	for _, cqrConfig := range cqrConfigs {
+		if !cqrConfig.Enabled {
+			log.WithFields(log.Fields{
+				"tables": fmt.Sprintf("%#v", cqrConfig.Tables),
+			}).Debug("disabled")
+			continue
+		}
 		begin := time.Now()
 		log.WithFields(log.Fields{
 			"cqr": fmt.Sprintf("%#v", cqrConfig),
@@ -83,6 +90,8 @@ func InitCQR(cqrConfigs []CQRConfig) error {
 	return nil
 }
 
+// attention: no check for cqrConfig.Enabled for certain table
+// it's ok, since if it's broken, we do nothing.
 func CQRReloadFunc(cqrConfigs []CQRConfig, c *gin.Context) func(*gin.Context) {
 	var tableNames []string
 	for _, v := range cqrConfigs {
