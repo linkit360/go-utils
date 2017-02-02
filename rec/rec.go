@@ -59,6 +59,7 @@ func (r Record) TransactionOnly() bool {
 var dbConn *sql.DB
 var conf db.DataBaseConfig
 var DBErrors m.Gauge
+var Warn m.Gauge
 var AddNewSubscriptionDuration prometheus.Summary
 
 func Init(dbC db.DataBaseConfig) {
@@ -67,6 +68,14 @@ func Init(dbC db.DataBaseConfig) {
 	conf = dbC
 
 	DBErrors = m.NewGauge("", "", "db_errors", "DB errors overall")
+	Warn = m.NewGauge("", "", "warnings", "warnings overall")
+	go func() {
+		for range time.Tick(time.Minute) {
+			DBErrors.Update()
+			Warn.Update()
+		}
+	}()
+
 	AddNewSubscriptionDuration = m.NewSummary("subscription_add_to_db_duration_seconds", "new subscription add duration")
 }
 
@@ -436,6 +445,48 @@ func AddNewSubscriptionToDB(r *Record) error {
 	}
 	if r.PeriodicDays == "" {
 		r.PeriodicDays = "[]"
+	}
+	if r.CampaignId == 0 {
+		log.WithFields(log.Fields{
+			"tid": r.Tid,
+		}).Warn("no campaign id")
+		Warn.Inc()
+	}
+	if r.ServiceId == 0 {
+		log.WithFields(log.Fields{
+			"tid": r.Tid,
+		}).Warn("no service id")
+		Warn.Inc()
+	}
+	if r.DelayHours == 0 {
+		log.WithFields(log.Fields{
+			"tid": r.Tid,
+		}).Warn("no delay hours")
+		Warn.Inc()
+	}
+	if r.KeepDays == 0 {
+		log.WithFields(log.Fields{
+			"tid": r.Tid,
+		}).Warn("no keep days")
+		Warn.Inc()
+	}
+	if r.PaidHours == 0 {
+		log.WithFields(log.Fields{
+			"tid": r.Tid,
+		}).Warn("no paid hours")
+		Warn.Inc()
+	}
+	if r.OperatorCode == 0 {
+		log.WithFields(log.Fields{
+			"tid": r.Tid,
+		}).Warn("no operator code")
+		Warn.Inc()
+	}
+	if r.CountryCode == 0 {
+		log.WithFields(log.Fields{
+			"tid": r.Tid,
+		}).Warn("no country code")
+		Warn.Inc()
 	}
 	begin := time.Now()
 	query := fmt.Sprintf("INSERT INTO %ssubscriptions ( "+

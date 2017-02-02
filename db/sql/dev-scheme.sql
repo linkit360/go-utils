@@ -679,7 +679,18 @@ CREATE TABLE xmp_transaction_types
 );
 
 CREATE TYPE transaction_result AS ENUM (
-  'failed', 'sms', 'paid', 'retry_failed', 'retry_paid', 'rejected', 'past');
+  'failed',
+  'sms',
+  'paid',
+  'retry_failed',
+  'retry_paid',
+  'rejected',
+  'expired_paid',
+  'expired_failed',
+  'injection_paid',
+  'injection_failed',
+);
+
 CREATE TABLE xmp_transactions
 (
   id SERIAL PRIMARY KEY NOT NULL,
