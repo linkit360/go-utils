@@ -857,27 +857,30 @@ CREATE TABLE tr.partners
   name VARCHAR(127) NOT NULL
 );
 
-CREATE TABLE tr.partners_targets
+CREATE TABLE tr.partners_destinations
 (
   id SERIAL PRIMARY KEY NOT NULL,
   id_partner int NOT NULL,
+  active bool not null default false,
   created_at TIMESTAMP DEFAULT now() NOT NULL,
-  amount INTEGER DEFAULT 0 NOT NULL,
-  target VARCHAR(2047) DEFAULT ''::character varying NOT NULL,
+  amount_limit INTEGER DEFAULT 0 NOT NULL,
+  destination VARCHAR(2047) DEFAULT ''::character varying NOT NULL,
   rate_limit INT NOT NULL DEFAULT 0,
   price_per_hit DOUBLE PRECISION NOT NULL DEFAULT 0,
+  operator_code INTEGER DEFAULT 0 NOT NULL,
+  country_code INTEGER DEFAULT 0 NOT NULL,
   score INT NOT NULL DEFAULT 0
 );
 
-CREATE TABLE tr.partners_hits
+CREATE TABLE tr.destinations_hits
 (
   id SERIAL PRIMARY KEY NOT NULL,
   id_partner int NOT NULL,
-  id_target int NOT NULL,
+  id_destination int NOT NULL,
   tid VARCHAR(127) NOT NULL,
   created_at TIMESTAMP DEFAULT now() NOT NULL,
   sent_at TIMESTAMP DEFAULT now() NOT NULL,
-  target VARCHAR(2048) DEFAULT ''::character varying NOT NULL,
+  destination VARCHAR(2048) DEFAULT ''::character varying NOT NULL,
   msisdn VARCHAR(32) DEFAULT ''::character varying NOT NULL,
   operator_code INTEGER DEFAULT 0 NOT NULL,
   country_code INTEGER DEFAULT 0 NOT NULL,
