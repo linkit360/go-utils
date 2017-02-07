@@ -6,8 +6,7 @@ import (
 )
 
 func AddHandler(r *gin.Engine) {
-	rg := r.Group("/metrics")
-	rg.GET("", gin.WrapH(prometheus.Handler()))
+	_ = r.Group("/metrics").GET("", gin.WrapH(prometheus.Handler()))
 }
 
 type Gauge struct {

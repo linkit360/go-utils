@@ -22,7 +22,9 @@ CREATE TABLE xmp_campaign_ratio_counter
   id_campaign INTEGER,
   counter INTEGER
 );
-CREATE INDEX index_for_xmp_campaign_ratio_counter_field_id_campaign ON xmp_campaign_ratio_counter (id_campaign);
+CREATE INDEX index_for_xmp_campaign_ratio_counter_field_id_campaign
+  ON xmp_campaign_ratio_counter (id_campaign);
+
 CREATE TABLE xmp_campaigns
 (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -35,7 +37,8 @@ CREATE TABLE xmp_campaigns
   page_msisdn VARCHAR(32),
   page_pin VARCHAR(32),
   page_thank_you VARCHAR(32),
-  page_error VARCHAR(32),
+  page_error VARCHAR(2047),
+  page_success VARCHAR(2047) not null default '',
   page_banner VARCHAR(32),
   description VARCHAR(250),
   blacklist INTEGER,
@@ -417,6 +420,7 @@ CREATE TABLE xmp_retries
 );
 create index xmp_retries_last_pay_attempt_at_idx on xmp_retries (last_pay_attempt_at);
 create index xmp_retries_status_idx on xmp_retries(status);
+create index xmp_retries_operator_code_idx on xmp_retries(operator_code);
 
 CREATE TABLE xmp_retries_expired
 (
@@ -610,6 +614,8 @@ create index xmp_subscriptions_result_idx
   on xmp_subscriptions(result);
 create index xmp_subscriptions_periodic_idx
   on xmp_subscriptions(periodic);
+create index xmp_subscriptions_tid_idx
+  on xmp_subscriptions(tid);
 
 CREATE TABLE xmp_subscription_type
 (
@@ -714,6 +720,8 @@ create index xmp_transactions_msisdn_idx
   on xmp_transactions(msisdn);
 create index xmp_transactions_result_idx
   on xmp_transactions(result);
+create index xmp_transactions_operator_token_idx
+  on xmp_transactions(operator_token);
 
 CREATE TABLE xmp_transactions_dr (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -746,7 +754,7 @@ CREATE TABLE xmp_uniq_url
   expired INTEGER
 );
 
-CREATE TYPE user_action AS ENUM ('access', 'pull_click', 'content_get', 'rejected', 'redirect');
+CREATE TYPE user_action AS ENUM ('access', 'pull_click', 'content_get', 'rejected', 'redirect', 'autoclick');
 CREATE TABLE xmp_user_actions (
   id serial PRIMARY KEY,
   tid  varchar(127) NOT NULL DEFAULT '',
@@ -762,6 +770,9 @@ create index xmp_user_actions_msisdn_idx
   on xmp_user_actions(msisdn);
 create index xmp_user_actions_action_idx
   on xmp_user_actions(action);
+create index xmp_user_actions_tid_idx
+  on xmp_user_actions(tid);
+
 
 CREATE TABLE xmp_user_activity_logs
 (

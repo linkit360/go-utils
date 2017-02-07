@@ -73,3 +73,28 @@ $BODY$
 LANGUAGE plpgsql VOLATILE;
 
 select tst_date_list_func()
+
+
+
+
+CREATE OR REPLACE FUNCTION stat_func(monthDate DATE) returns setof returntype as
+$BODY$
+DECLARE
+  declare
+  r returntype%rowtype;
+BEGIN
+    raise NOTICE 'date %s' , monthDate;
+    r.dt = monthDate ;
+    raise NOTICE 'total transactions.. ';
+    select count(*) FROM xmp_transactions where CAST(sent_at AS DATE) = monthDate into r.total_transactions;
+    raise NOTICE 'total paid transactions.. ';
+    select count(*) FROM xmp_transactions where CAST(sent_at AS DATE) = monthDate and result in ('paid', 'retry_paid') into r.total_paid_transactions;
+    raise NOTICE 'total unique msisdn transactions.. ';
+    select count(*) from ( SELECT DISTINCT msisdn
+                           FROM xmp_transactions
+                           WHERE CAST(sent_at AS DATE) = monthDate
+                         ) as t into r.unique_users_count;
+    RETURN r;
+END;
+$BODY$
+LANGUAGE plpgsql VOLATILE;
