@@ -33,24 +33,24 @@ CREATE TABLE xmp_campaigns
   id_publisher INTEGER NOT NULL,
   priority INTEGER,
   status INTEGER,
-  page_welcome VARCHAR(32),
-  page_msisdn VARCHAR(32),
-  page_pin VARCHAR(32),
-  page_thank_you VARCHAR(32),
-  page_error VARCHAR(2047),
+  page_welcome VARCHAR(32) DEFAULT '' NOT NULL,
+  page_msisdn VARCHAR(32) DEFAULT '' NOT NULL,
+  page_pin VARCHAR(32) DEFAULT '' NOT NULL,
+  page_thank_you VARCHAR(32) DEFAULT '' NOT NULL,
+  page_error VARCHAR(2047) DEFAULT '' NOT NULL,
   page_success VARCHAR(2047) not null default '',
-  page_banner VARCHAR(32),
-  description VARCHAR(250),
-  blacklist INTEGER,
-  whitelist INTEGER,
+  page_banner VARCHAR(32) DEFAULT '' NOT NULL,
+  description VARCHAR(250) DEFAULT '' NOT NULL,
+  blacklist INTEGER DEFAULT 0 NOT NULL,
+  whitelist INTEGER DEFAULT 0 NOT NULL,
   created_at TIMESTAMP DEFAULT now(),
-  service_id INTEGER,
+  service_id INTEGER NOT NULL,
   capping INTEGER,
   capping_currency INTEGER,
   cpa INTEGER,
-  hash VARCHAR(32),
+  hash VARCHAR(32) DEFAULT '' NOT NULL,
   type INTEGER DEFAULT 1 NOT NULL,
-  created_by INTEGER,
+  created_by INTEGER NOT NULL,
   autoclick_enabled BOOLEAN NOT NULL DEFAULT FALSE,
   autoclick_ratio INT NOT NULL DEFAULT 1
 );
@@ -882,15 +882,17 @@ CREATE TABLE tr.destinations_hits
   sent_at TIMESTAMP DEFAULT now() NOT NULL,
   destination VARCHAR(2048) DEFAULT ''::character varying NOT NULL,
   msisdn VARCHAR(32) DEFAULT ''::character varying NOT NULL,
+  price_per_hit DOUBLE PRECISION NOT NULL DEFAULT 0,
   operator_code INTEGER DEFAULT 0 NOT NULL,
-  country_code INTEGER DEFAULT 0 NOT NULL,
-  response_code INT NOT NULL DEFAULT 0
+  country_code INTEGER DEFAULT 0 NOT NULL
 );
 
-create index xmp_partner_hits_sent_sent_at_idx
-  on xmp_partners_hits(sent_at);
-
-
+create index destinations_hits_sent_at_idx
+  on tr.destinations_hits(sent_at);
+create index destinations_hits_id_partner_idx
+  on tr.destinations_hits(id_partner);
+create index destinations_hits_id_destination_idx
+  on tr.destinations_hits(id_destination);
 
 -- pixel settings
 -- insert INTO xmp_pixel_settings
