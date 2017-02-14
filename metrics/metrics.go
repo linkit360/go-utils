@@ -5,6 +5,11 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
+var version = "%VERSION%"
+
+func VersionHandler(c *gin.Context) {
+	c.Header("X-Version", version)
+}
 func AddHandler(r *gin.Engine) {
 	_ = r.Group("/metrics").GET("", gin.WrapH(prometheus.Handler()))
 }
