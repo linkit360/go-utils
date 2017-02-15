@@ -473,6 +473,7 @@ CREATE TABLE xmp_operator_transaction_log (
   tid  varchar(127) NOT NULL DEFAULT '',
   msisdn VARCHAR(32) NOT NULL,
   operator_code INTEGER NOT NULL,
+  operator_time timestamp not null default now(),
   country_code INTEGER NOT NULL,
   operator_token CHARACTER VARYING(511) NOT NULL,
   error varchar(511) NOT NULL DEFAULT '',

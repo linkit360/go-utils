@@ -356,7 +356,7 @@ type ActiveSubscription struct {
 	CampaignId int64
 }
 
-func LoadActiveSubscriptions(operatorCode int64, hours int) (records []ActiveSubscription, err error) {
+func LoadActiveSubscriptions(hours int) (records []ActiveSubscription, err error) {
 	begin := time.Now()
 	defer func() {
 		defer func() {
@@ -386,12 +386,11 @@ func LoadActiveSubscriptions(operatorCode int64, hours int) (records []ActiveSub
 		"FROM %ssubscriptions "+
 		"WHERE "+
 		hoursPassed+
-		"result IN ('', 'paid', 'failed') AND "+
-		"operator_code = $1",
+		"result IN ('', 'paid', 'failed') ",
 		conf.TablePrefix)
 
 	prev := []ActiveSubscription{}
-	rows, err := dbConn.Query(query, operatorCode)
+	rows, err := dbConn.Query(query)
 	if err != nil {
 		DBErrors.Inc()
 
@@ -557,14 +556,16 @@ func AddNewSubscriptionToDB(r *Record) error {
 }
 
 // bare periodic
-func GetPeriodics(batchLimit int) (records []Record, err error) {
+func GetPeriodics(batchLimit, repeaIntervalMinutes int, intervalType string, loc *time.Location) (records []Record, err error) {
 	begin := time.Now()
 	query := ""
 	defer func() {
 		defer func() {
 			fields := log.Fields{
-				"took":  time.Since(begin),
-				"query": query,
+				"took":         time.Since(begin),
+				"intervalType": intervalType,
+				"loc":          loc.String(),
+				"query":        query,
 			}
 			if err != nil {
 				fields["error"] = err.Error()
@@ -577,8 +578,22 @@ func GetPeriodics(batchLimit int) (records []Record, err error) {
 	}()
 
 	dayName := strings.ToLower(time.Now().Format("Mon"))
-	hourNow := time.Now().Format("15")
-	inSpecifiedHours := "( allowed_from <= " + hourNow + " AND  allowed_to >= " + hourNow + " ) "
+	var interval string
+	if intervalType == "hour" {
+		interval = time.Now().In(loc).Format("15")
+	} else if intervalType == "min" {
+		now := time.Now().In(loc)
+		interval = strconv.Itoa(60*now.Hour() + now.Minute())
+	} else {
+		err = fmt.Errorf("Unknown interval Type: %s", intervalType)
+		return
+	}
+	log.WithFields(log.Fields{
+		"interval": interval,
+		"day":      dayName,
+	}).Debug("time params")
+
+	inSpecifiedTime := "( allowed_from <= " + interval + " AND  allowed_to >= " + interval + " ) "
 
 	var periodics []Record
 
@@ -598,13 +613,22 @@ func GetPeriodics(batchLimit int) (records []Record, err error) {
 		"paid_hours "+
 		"FROM %ssubscriptions "+
 		"WHERE "+
-		" periodic = true AND "+
-		"( days ? '"+dayName+"' OR days ? 'any' ) AND "+ // today
-		inSpecifiedHours+"AND "+
-		"result NOT IN ('rejected', 'blacklisted', 'canceled', 'pending') AND "+ // not cancelled, not rejected, not blacklisted
-		"last_pay_attempt_at < (CURRENT_TIMESTAMP -  INTERVAL '18 hours' ) "+ // not processed today
+		"periodic = true AND "+inSpecifiedTime+"AND ("+
+		// paid not processed today
+		"  (  ( days ? '"+dayName+"' OR days ? 'any' ) AND "+
+		"     result = 'paid' AND "+
+		"     last_pay_attempt_at < (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) "+
+		"  ) "+
+		"  OR  "+
+		//not paid processed today (including '' and failed)
+		"  (  ( days ? '"+dayName+"' OR days ? 'any' ) AND "+
+		"     result NOT IN ('rejected', 'paid', 'postpaid', 'pending' ) AND "+
+		"     last_pay_attempt_at < (CURRENT_TIMESTAMP -  %d * INTERVAL '1 minute' ) "+
+		"  ) "+
+		" )"+ // close inspecified time range AND
 		"ORDER BY last_pay_attempt_at ASC LIMIT %s", // get the last touched
 		conf.TablePrefix,
+		repeaIntervalMinutes,
 		strconv.Itoa(batchLimit),
 	)
 
@@ -754,9 +778,9 @@ func GetSubscriptionByToken(token string) (p Record, err error) {
 			}
 			if err != nil {
 				fields["error"] = err.Error()
-				log.WithFields(fields).Error("load periodic cache failed")
+				log.WithFields(fields).Error("get subscription by token failed")
 			} else {
-				log.WithFields(fields).Debug("loaded periodic cache")
+				log.WithFields(fields).Debug("get subscription by token")
 			}
 		}()
 	}()
@@ -814,6 +838,65 @@ func GetSubscriptionByToken(token string) (p Record, err error) {
 
 		err = fmt.Errorf("GetPeriodic RowsError: %s", err.Error())
 		return Record{}, err
+	}
+	return p, nil
+}
+func GetSubscriptionByMsisdn(msisdn string) (p Record, err error) {
+	begin := time.Now()
+	defer func() {
+		defer func() {
+			fields := log.Fields{
+				"took":   time.Since(begin),
+				"msisdn": msisdn,
+			}
+			if err != nil {
+				fields["error"] = err.Error()
+				log.WithFields(fields).Error("get subscription by msisdn failed")
+			} else {
+				log.WithFields(fields).Debug("get subscription by msisdn")
+			}
+		}()
+	}()
+
+	query := fmt.Sprintf("SELECT "+
+		"id, "+
+		"sent_at, "+
+		"tid , "+
+		"operator_token, "+
+		"price, "+
+		"id_service, "+
+		"id_campaign, "+
+		"country_code, "+
+		"operator_code, "+
+		"msisdn, "+
+		"keep_days, "+
+		"delay_hours, "+
+		"paid_hours "+
+		"FROM %ssubscriptions "+
+		"WHERE msisdn = $1 LIMIT 1",
+		conf.TablePrefix,
+	)
+
+	if err = dbConn.QueryRow(query, msisdn).Scan(
+		&p.SubscriptionId,
+		&p.SentAt,
+		&p.Tid,
+		&p.OperatorToken,
+		&p.Price,
+		&p.ServiceId,
+		&p.CampaignId,
+		&p.OperatorCode,
+		&p.CountryCode,
+		&p.Msisdn,
+		&p.KeepDays,
+		&p.DelayHours,
+		&p.PaidHours,
+	); err != nil {
+		if err == sql.ErrNoRows {
+			return
+		}
+		DBErrors.Inc()
+		return Record{}, fmt.Errorf("Rows.Next: %s", err.Error())
 	}
 	return p, nil
 }
