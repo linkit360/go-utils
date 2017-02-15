@@ -556,15 +556,15 @@ func AddNewSubscriptionToDB(r *Record) error {
 	return nil
 }
 
-func GetPeriodics(operatorCode int64, batchLimit int) (records []Record, err error) {
+// bare periodic
+func GetPeriodics(batchLimit int) (records []Record, err error) {
 	begin := time.Now()
 	query := ""
 	defer func() {
 		defer func() {
 			fields := log.Fields{
-				"took":         time.Since(begin),
-				"query":        query,
-				"operatorCode": operatorCode,
+				"took":  time.Since(begin),
+				"query": query,
 			}
 			if err != nil {
 				fields["error"] = err.Error()
@@ -598,7 +598,7 @@ func GetPeriodics(operatorCode int64, batchLimit int) (records []Record, err err
 		"paid_hours "+
 		"FROM %ssubscriptions "+
 		"WHERE "+
-		"operator_code = $1 AND periodic = true AND "+
+		" periodic = true AND "+
 		"( days ? '"+dayName+"' OR days ? 'any' ) AND "+ // today
 		inSpecifiedHours+"AND "+
 		"result NOT IN ('rejected', 'blacklisted', 'canceled', 'pending') AND "+ // not cancelled, not rejected, not blacklisted
@@ -608,7 +608,7 @@ func GetPeriodics(operatorCode int64, batchLimit int) (records []Record, err err
 		strconv.Itoa(batchLimit),
 	)
 
-	rows, err := dbConn.Query(query, operatorCode)
+	rows, err := dbConn.Query(query)
 	if err != nil {
 		DBErrors.Inc()
 
@@ -649,14 +649,14 @@ func GetPeriodics(operatorCode int64, batchLimit int) (records []Record, err err
 	return periodics, nil
 }
 
-func GetNotPaidPeriodics(operatorCode int64, delay_minutes, batchLimit int) (records []Record, err error) {
+// retries for periodic?
+func GetNotPaidPeriodics(delay_minutes, batchLimit int) (records []Record, err error) {
 	begin := time.Now()
 	query := ""
 	defer func() {
 		defer func() {
 			fields := log.Fields{
-				"took":         time.Since(begin),
-				"operatorCode": operatorCode,
+				"took": time.Since(begin),
 			}
 			if err != nil {
 				fields["error"] = err.Error()
@@ -697,14 +697,14 @@ func GetNotPaidPeriodics(operatorCode int64, delay_minutes, batchLimit int) (rec
 		"paid_hours "+
 		"FROM %ssubscriptions "+
 		"WHERE "+
-		matchedToday+" AND operator_code = $1 AND periodic = true AND "+
+		matchedToday+" AND periodic = true AND "+
 		"("+earlierMatchedToday+" OR "+notPaidAtAllMatchedTime+")"+
 		"ORDER BY last_pay_attempt_at ASC LIMIT %s",
 		conf.TablePrefix,
 		strconv.Itoa(batchLimit),
 	)
 
-	rows, err := dbConn.Query(query, operatorCode)
+	rows, err := dbConn.Query(query)
 	if err != nil {
 		DBErrors.Inc()
 
