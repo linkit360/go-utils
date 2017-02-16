@@ -398,11 +398,13 @@ CREATE TABLE xmp_publishers_attributes
   cpa_ratio DOUBLE PRECISION,
   status INTEGER
 );
-CREATE TYPE retry_status AS ENUM ('', 'pending', 'script');
+
+CREATE TABLE xmp_retry_statuses (name VARCHAR(127) NOT NULL PRIMARY KEY);
+INSERT INTO xmp_retry_statuses VALUES (''),('pending'),('script');
 CREATE TABLE xmp_retries
 (
   id SERIAL PRIMARY KEY NOT NULL,
-  status retry_status NOT NULL DEFAULT  '',
+  status varchar(127) NOT NULL DEFAULT '',
   tid varchar(127) NOT NULL DEFAULT '',
   created_at TIMESTAMP DEFAULT now() NOT NULL,
   updated_at TIMESTAMP DEFAULT now() NOT NULL,
@@ -416,7 +418,8 @@ CREATE TABLE xmp_retries
   country_code INTEGER NOT NULL,
   id_service INTEGER NOT NULL,
   id_subscription INTEGER NOT NULL,
-  id_campaign INTEGER NOT NULL
+  id_campaign INTEGER NOT NULL,
+  CONSTRAINT xmp_retries_status_fk FOREIGN KEY (status) REFERENCES xmp_retry_statuses (name)
 );
 create index xmp_retries_last_pay_attempt_at_idx on xmp_retries (last_pay_attempt_at);
 create index xmp_retries_status_idx on xmp_retries(status);
@@ -446,8 +449,10 @@ create index xmp_retries_expired_last_pay_attempt_at_idx on xmp_retries_expired 
 create index xmp_retries_expired_created_at_idx on xmp_retries_expired(created_at);
 
 
-CREATE TYPE job_status AS ENUM ('ready', 'in progress', 'canceled', 'done', 'error');
-CREATE TYPE job_type AS ENUM ('injection', 'expired');
+CREATE TABLE xmp_job_statuses ( name VARCHAR(127) NOT NULL PRIMARY KEY );
+INSERT INTO xmp_job_statuses VALUES ('ready'),('in progress'),('canceled'), ('done'), ('error');
+CREATE TABLE xmp_job_types ( name VARCHAR(127) NOT NULL PRIMARY KEY );
+INSERT INTO xmp_job_types VALUES ('injection'),('expired');
 CREATE TABLE xmp_jobs
 (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -455,17 +460,19 @@ CREATE TABLE xmp_jobs
   created_at TIMESTAMP DEFAULT now() NOT NULL,
   run_at TIMESTAMP DEFAULT now() NOT NULL,
   finished_at TIMESTAMP DEFAULT '1970-01-01 00:00:00'::timestamp without time zone NOT NULL,
-  type job_type NOT NULL,
-  status job_status NOT NULL DEFAULT 'ready',
+  type varchar(127) NOT NULL,
+  status varchar(127) NOT NULL DEFAULT 'ready',
   file_name varchar(127) NOT NULL DEFAULT '',
   log_path  varchar(1023) NOT NULL DEFAULT '',
   params JSONB DEFAULT '{}'::jsonb NOT NULL,
-  skip INTEGER NOT NULL DEFAULT 0
+  skip INTEGER NOT NULL DEFAULT 0,
+  CONSTRAINT xmp_jobs_status_fk FOREIGN KEY (status) REFERENCES xmp_job_statuses (name),
+  CONSTRAINT xmp_jobs_type_fk FOREIGN KEY (type) REFERENCES xmp_job_types (name)
 );
 create index xmp_jobs_created_at_idx on xmp_jobs(created_at);
 
-CREATE TYPE operator_transaction_log_type AS ENUM ('mo', 'mt', 'callback', 'consent', 'charge');
-
+CREATE TABLE xmp_operator_transaction_log_types ( name VARCHAR(127) NOT NULL PRIMARY KEY );
+INSERT INTO xmp_operator_transaction_log_types VALUES ('mo'),('mt'),('callback'), ('consent'), ('charge');
 CREATE TABLE xmp_operator_transaction_log (
   id serial PRIMARY KEY,
   created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
@@ -486,8 +493,10 @@ CREATE TABLE xmp_operator_transaction_log (
   response_decision varchar(511) NOT NULL DEFAULT '',
   response_code INT NOT NULL DEFAULT 0,
   notice varchar(2047) NOT NULL DEFAULT '',
-  type operator_transaction_log_type not null
+  type varchar(127) not null,
+  CONSTRAINT xmp_operator_transaction_log_type_fk FOREIGN KEY (type) REFERENCES xmp_operator_transaction_log_types (name)
 );
+
 create index xmp_operator_transaction_log_sent_at_idx
   on xmp_operator_transaction_log(sent_at);
 create index xmp_operator_transaction_log_type_idx
@@ -576,9 +585,8 @@ CREATE TABLE xmp_services
   send_content_text_template VARCHAR(255) NOT NULL DEFAULT '%v'
 );
 
-CREATE TYPE subscription_status AS ENUM (
-  '', 'failed', 'paid', 'blacklisted', 'postpaid', 'rejected', 'past', 'canceled', 'pending');
-
+CREATE TABLE xmp_subscriptions_statuses ( name VARCHAR(127) NOT NULL PRIMARY KEY );
+INSERT INTO xmp_subscriptions_statuses VALUES (''), ('failed'), ('paid'), ('blacklisted'), ('postpaid'), ('rejected'), ('canceled'), ('pending');
 CREATE TABLE xmp_subscriptions
 (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -594,7 +602,8 @@ CREATE TABLE xmp_subscriptions
   id_campaign INTEGER DEFAULT 0 NOT NULL,
   attempts_count INTEGER DEFAULT 0 NOT NULL,
   price INTEGER NOT NULL,
-  result SUBSCRIPTION_STATUS DEFAULT ''::subscription_status NOT NULL,
+  result varchar(127) NOT NULL DEFAULT '',
+  CONSTRAINT xmp_subscriptions_result_fk FOREIGN KEY (result) REFERENCES xmp_subscriptions_statuses (name),
   keep_days INTEGER DEFAULT 10 NOT NULL,
   last_pay_attempt_at TIMESTAMP DEFAULT now() NOT NULL,
   delay_hours INTEGER NOT NULL,
@@ -680,25 +689,19 @@ CREATE INDEX index_xmp_subscriptions_active_on_created_at ON xmp_subscriptions_a
 CREATE INDEX index_xmp_subscriptions_created_at ON xmp_subscriptions_active (created_at);
 CREATE INDEX index_xmp_subscriptions_active_operator_code ON xmp_subscriptions_active (operator_code);
 CREATE INDEX index_xmp_subscriptions_operator_code ON xmp_subscriptions_active (operator_code);
-CREATE TABLE xmp_transaction_types
-(
-  id SERIAL PRIMARY KEY NOT NULL,
-  name VARCHAR(64)
-);
 
-CREATE TYPE transaction_result AS ENUM (
-  'failed',
-  'sms',
-  'paid',
-  'retry_failed',
-  'retry_paid',
-  'rejected',
-  'expired_paid',
-  'expired_failed',
-  'injection_paid',
-  'injection_failed',
-);
-
+CREATE TABLE xmp_transactions_results ( name VARCHAR(127) NOT NULL PRIMARY KEY );
+INSERT INTO xmp_transactions_results VALUES
+  ('failed'),
+  ('sms'),
+  ('paid'),
+  ('retry_failed'),
+  ('retry_paid'),
+  ('rejected'),
+  ('expired_paid'),
+  ('expired_failed'),
+  ('injection_paid'),
+  ('injection_failed');
 CREATE TABLE xmp_transactions
 (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -714,7 +717,8 @@ CREATE TABLE xmp_transactions
   id_content INTEGER NOT NULL DEFAULT 0,
   operator_token VARCHAR(511) NOT NULL,
   price INTEGER NOT NULL,
-  result TRANSACTION_RESULT NOT NULL
+  result varchar(127) NOT NULL,
+  CONSTRAINT xmp_transactions_result_fk FOREIGN KEY (result) REFERENCES xmp_transactions_results (name)
 );
 create index xmp_transactions_sent_at_idx
   on xmp_transactions(sent_at);
@@ -756,13 +760,15 @@ CREATE TABLE xmp_uniq_url
   expired INTEGER
 );
 
-CREATE TYPE user_action AS ENUM ('access', 'pull_click', 'content_get', 'rejected', 'redirect', 'autoclick');
+CREATE TABLE xmp_user_actions_actions ( name VARCHAR(127) NOT NULL PRIMARY KEY );
+INSERT INTO xmp_user_actions_actions VALUES ('access'), ('pull_click'), ('content_get'), ('rejected'), ('redirect'), ('autoclick');
 CREATE TABLE xmp_user_actions (
   id serial PRIMARY KEY,
   tid  varchar(127) NOT NULL DEFAULT '',
   id_campaign INTEGER DEFAULT 0 NOT NULL,
   msisdn    varchar(32) NOT NULL DEFAULT '',
-  action user_action NOT NULL,
+  action varchar(127) NOT NULL,
+  CONSTRAINT xmp_user_actions_action_fk FOREIGN KEY (action) REFERENCES xmp_user_actions_actions (name),
   error varchar(511) NOT NULL DEFAULT '',
   sent_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
