@@ -851,7 +851,7 @@ CREATE TABLE xmp_users_transactions
 
 
 --
-
+create schema tr;
 CREATE TABLE tr.partners
 (
   id SERIAL PRIMARY KEY NOT NULL,
