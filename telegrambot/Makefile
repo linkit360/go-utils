@@ -1,5 +1,11 @@
 .PHONY: deploy
 
+
+VERSION=$(shell git describe --always --long --dirty)
+
+version:
+	 @echo Version IS $(VERSION)
+
 rm:
 	rm ~/linkit/telegrambot-linux-amd64; rm -v bin/telegrambot-linux-amd64;
 
