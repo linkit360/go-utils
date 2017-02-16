@@ -968,6 +968,52 @@ func GetRetryByMsisdn(msisdn, status string) (r Record, err error) {
 	return
 }
 
+func GetBufferPixelByCampaignId(campaignId int64) (r Record, err error) {
+	begin := time.Now()
+	defer func() {
+		defer func() {
+			fields := log.Fields{
+				"campaign_id": campaignId,
+				"took":        time.Since(begin),
+			}
+			if err != nil {
+				fields["error"] = err.Error()
+				log.WithFields(fields).Error("load buffer pixel failed")
+			} else {
+				fields["tid"] = r.Tid
+				log.WithFields(fields).Debug("loaded buffer pixel")
+			}
+		}()
+	}()
+
+	query := fmt.Sprintf("SELECT "+
+		"sent_at, "+
+		"id_campaign, "+
+		"tid, "+
+		"pixel "+
+		"FROM %spixel_buffer "+
+		"WHERE "+
+		" id_campaign = $1 "+
+		" ORDER BY id "+
+		" LIMIT 1", // get the oldest retry
+		conf.TablePrefix,
+	)
+
+	if err := dbConn.QueryRow(query, campaignId).Scan(
+		&r.SentAt,
+		&r.CampaignId,
+		&r.Tid,
+		&r.Pixel,
+	); err != nil {
+		if err != sql.ErrNoRows {
+			DBErrors.Inc()
+		}
+		return Record{}, err // do not change type of error, please, it's being checked further
+	}
+
+	return
+}
+
 func GetRepeatSentConsent(operatorCode int64, delayMinutes, batchLimit int) (records []Record, err error) {
 	begin := time.Now()
 	query := ""
@@ -1056,4 +1102,80 @@ func GetRepeatSentConsent(operatorCode int64, delayMinutes, batchLimit int) (rec
 		return []Record{}, err
 	}
 	return periodics, nil
+}
+
+func GetNotSentPixels(hours, limit int) (records []Record, err error) {
+	defer func() {
+		defer func() {
+			fields := log.Fields{
+				"hours": hours,
+				"limit": limit,
+			}
+			if err != nil {
+				fields["error"] = err.Error()
+				log.WithFields(fields).Error("load not sent pixels failed")
+			} else {
+				fields["count"] = len(records)
+				log.WithFields(fields).Debug("load not sent pixels")
+			}
+		}()
+	}()
+
+	begin := time.Now()
+	defer func() {
+		log.WithFields(log.Fields{
+			"took": time.Since(begin),
+		}).Debug("get pixels")
+	}()
+	query := fmt.Sprintf("SELECT "+
+		"tid, "+
+		"msisdn, "+
+		"id_campaign, "+
+		"id, "+
+		"operator_code, "+
+		"country_code, "+
+		"pixel, "+
+		"publisher "+
+		" FROM %ssubscriptions "+
+		" WHERE pixel != '' "+
+		" AND pixel_sent = false "+
+		"AND result NOT IN ('', 'postpaid', 'blacklisted', 'rejected', 'canceled')",
+		conf.TablePrefix)
+
+	if hours > 0 {
+		query = query +
+			fmt.Sprintf(" AND (CURRENT_TIMESTAMP - %d * INTERVAL '1 hour' ) > sent_at ", hours)
+	}
+	query = query + fmt.Sprintf(" ORDER BY id ASC LIMIT %d", limit)
+
+	rows, err := dbConn.Query(query)
+	if err != nil {
+		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		record := Record{}
+
+		if err = rows.Scan(
+			&record.Tid,
+			&record.Msisdn,
+			&record.CampaignId,
+			&record.SubscriptionId,
+			&record.OperatorCode,
+			&record.CountryCode,
+			&record.Pixel,
+			&record.Publisher,
+		); err != nil {
+			err = fmt.Errorf("rows.Scan: %s", err.Error())
+			return
+		}
+		records = append(records, record)
+	}
+	if rows.Err() != nil {
+		err = fmt.Errorf("row.Err: %s", err.Error())
+		return
+	}
+	return
 }

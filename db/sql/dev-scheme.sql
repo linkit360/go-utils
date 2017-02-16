@@ -646,6 +646,17 @@ CREATE TABLE xmp_subscriptions_active
   operator_code INTEGER
 );
 
+CREATE TABLE public.xmp_pixel_buffer (
+  id SERIAL PRIMARY KEY,
+  created_at TIMESTAMP NOT NULL DEFAULT now(),
+  sent_at TIMESTAMP NOT NULL DEFAULT now(),
+  id_campaign INT NOT NULL,
+  id_service INT NOT NULL,
+  msisdn CHARACTER VARYING(32) NOT NULL DEFAULT '',
+  tid CHARACTER VARYING(127) NOT NULL DEFAULT '',
+  pixel VARCHAR(511) NOT NULL DEFAULT ''
+);
+
 CREATE TABLE public.xmp_pixel_settings (
   id SERIAL PRIMARY KEY ,
   id_campaign INT NOT NULL,
