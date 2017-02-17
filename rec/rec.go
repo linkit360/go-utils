@@ -978,7 +978,11 @@ func GetBufferPixelByCampaignId(campaignId int64) (r Record, err error) {
 			}
 			if err != nil {
 				fields["error"] = err.Error()
-				log.WithFields(fields).Error("load buffer pixel failed")
+				if err == sql.ErrNoRows {
+					log.WithFields(fields).Warn("load buffer pixel failed")
+				} else {
+					log.WithFields(fields).Error("load buffer pixel failed")
+				}
 			} else {
 				fields["tid"] = r.Tid
 				log.WithFields(fields).Debug("loaded buffer pixel")
