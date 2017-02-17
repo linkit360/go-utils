@@ -158,6 +158,7 @@ type AMQPMessage struct {
 	QueueName string
 	Priority  uint8
 	Body      []byte
+	EventName string
 }
 
 func (n *Notifier) publisher() {
@@ -244,10 +245,15 @@ func (n *Notifier) publisher() {
 				log.WithField("error", err.Error()).Error("rbmq notifier publish failed")
 				break
 			}
-			log.WithFields(log.Fields{
+			f := log.Fields{
 				"q":   q.Name,
 				"len": len(n.pendingCh),
-			}).Debug("rbmq: publish")
+			}
+			if msg.EventName != "" {
+				f["e"] = msg.EventName
+
+			}
+			log.WithFields(f).Debug("rbmq: publish")
 		}
 	}
 
