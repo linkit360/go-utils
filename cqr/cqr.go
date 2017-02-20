@@ -123,12 +123,15 @@ func CQRReloadFunc(cqrConfigs []CQRConfig, c *gin.Context) func(*gin.Context) {
 					err := cqrConfig.Data.Reload()
 					if err != nil {
 						r.Success = false
+						r.Err = err
 						r.Status = http.StatusInternalServerError
 						log.WithFields(log.Fields{
 							"table": table,
 							"error": err.Error(),
 							"took":  time.Since(begin),
 						}).Error("reload failed")
+						render(r, c)
+						return
 					} else {
 						r.Success = true
 						log.WithFields(log.Fields{
@@ -169,8 +172,10 @@ func CQRReloadFunc(cqrConfigs []CQRConfig, c *gin.Context) func(*gin.Context) {
 				"table":     table,
 				"avialable": strings.Join(tableNames, ", "),
 			}).Error("table not found")
+			r.Err = fmt.Errorf("Table %s not found", table)
 		}
 		render(r, c)
+		return
 	}
 	return fn
 }
