@@ -1,7 +1,7 @@
 package main
 
 import (
-	bot "github.com/vostrok/mon/telegrambot/src"
+	bot "github.com/vostrok/utils/telegrambot/src"
 )
 
 func main() {
