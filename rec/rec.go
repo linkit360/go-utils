@@ -26,7 +26,7 @@ type Record struct {
 	OperatorCode             int64     `json:"operator_code,omitempty"`
 	CountryCode              int64     `json:"country_code,omitempty"`
 	ServiceId                int64     `json:"service_id,omitempty"`
-	SubscriptionId           int64     `json:"subscription_is,omitempty"`
+	SubscriptionId           int64     `json:"subscription_id,omitempty"`
 	CampaignId               int64     `json:"campaign_id,omitempty"`
 	RetryId                  int64     `json:"retry_id,omitempty"`
 	SentAt                   time.Time `json:"sent_at,omitempty"`
