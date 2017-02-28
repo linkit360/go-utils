@@ -411,7 +411,7 @@
             "current": true,
             "hideEmpty": true,
             "hideZero": true,
-            "max": false,
+            "max": true,
             "min": false,
             "show": true,
             "total": false,
@@ -600,7 +600,7 @@
           "points": false,
           "renderer": "flot",
           "seriesOverrides": [],
-          "span": 12,
+          "span": 6,
           "stack": false,
           "steppedLine": false,
           "targets": [
@@ -610,7 +610,7 @@
               "legendFormat": "mo dropped",
               "metric": "mt_manager_qrtech_mo_dropped",
               "refId": "A",
-              "step": 20
+              "step": 30
             },
             {
               "expr": "mt_manager_qrtech_add_to_db_success",
@@ -618,7 +618,7 @@
               "legendFormat": "add new mo",
               "metric": "mt_manager_qrtech_add_to_db_success",
               "refId": "B",
-              "step": 20
+              "step": 30
             },
             {
               "expr": "mt_manager_qrtech_add_to_db_errors",
@@ -626,7 +626,7 @@
               "legendFormat": "mo erorrs",
               "metric": "mt_manager_qrtech_add_to_db_errors",
               "refId": "C",
-              "step": 20
+              "step": 30
             },
             {
               "expr": "warnings{group=\"qrtech\"}",
@@ -634,12 +634,114 @@
               "legendFormat": "warnings",
               "metric": "warnings",
               "refId": "D",
-              "step": 20
+              "step": 30
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "New MO",
+          "title": "New MO (mt manager)",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+            "add new mo": "#7EB26D",
+            "dn successs": "#7EB26D",
+            "mo dropped": "#BF1B00",
+            "mo erorrs": "#BF1B00",
+            "unsubscribe": "#6ED0E0"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 10,
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": true,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": true,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "mt_manager_qrtech_dn_dropped",
+              "intervalFactor": 2,
+              "legendFormat": "dn dropped",
+              "metric": "mt_manager_qrtech_dn_dropped",
+              "refId": "A",
+              "step": 30
+            },
+            {
+              "expr": "mt_manager_qrtech_dn_errors",
+              "intervalFactor": 2,
+              "legendFormat": "dn errors",
+              "metric": "mt_manager_qrtech_dn_errors",
+              "refId": "B",
+              "step": 30
+            },
+            {
+              "expr": "mt_manager_qrtech_dn_success",
+              "intervalFactor": 2,
+              "legendFormat": "dn successs",
+              "metric": "mt_manager_qrtech_dn_success",
+              "refId": "C",
+              "step": 30
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "DN (mt manager)",
           "tooltip": {
             "msResolution": false,
             "shared": true,
@@ -937,7 +1039,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Delivery Notifications",
+          "title": "API Delivery Notifications",
           "tooltip": {
             "msResolution": false,
             "shared": true,
@@ -1013,7 +1115,7 @@
           "points": false,
           "renderer": "flot",
           "seriesOverrides": [],
-          "span": 12,
+          "span": 6,
           "stack": false,
           "steppedLine": false,
           "targets": [
@@ -1023,7 +1125,7 @@
               "legendFormat": "errors",
               "metric": "qlistener_operator_add_to_db_errors",
               "refId": "A",
-              "step": 20
+              "step": 30
             },
             {
               "expr": "qlistener_operator_add_to_db_success{group=\"qrtech\"}",
@@ -1031,12 +1133,518 @@
               "legendFormat": "success",
               "metric": "qlistener_operator_add_to_db_success",
               "refId": "B",
-              "step": 20
+              "step": 30
             }
           ],
           "timeFrom": null,
           "timeShift": null,
           "title": "Operator Transaction Log",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+            "errors": "#BF1B00",
+            "success": "#7EB26D"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 11,
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": true,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": true,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "qlistener_content_sent_add_to_db_errors{group=\"qrtech\"}",
+              "intervalFactor": 2,
+              "legendFormat": "errors",
+              "metric": "qlistener_content_sent_add_to_db_errors",
+              "refId": "A",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_content_sent_add_to_db_success{group=\"qrtech\"}",
+              "intervalFactor": 2,
+              "legendFormat": "success",
+              "metric": "qlistener_content_sent_add_to_db_success",
+              "refId": "B",
+              "step": 30
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Content Sent",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+            "errors": "#BF1B00",
+            "success": "#7EB26D"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 12,
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": true,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": true,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "qlistener_pixel_add_to_db_errors{group=\"qrtech\"}",
+              "intervalFactor": 2,
+              "legendFormat": "errors",
+              "metric": "qlistener_pixel_add_to_db_errors",
+              "refId": "A",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_pixel_add_to_db_success{group=\"qrtech\"}",
+              "intervalFactor": 2,
+              "legendFormat": "success",
+              "metric": "qlistener_pixel_add_to_db_success",
+              "refId": "B",
+              "step": 30
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Pixel",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+            "dropped": "#E24D42",
+            "errors": "#BF1B00",
+            "success": "#7EB26D"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 13,
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": true,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": true,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "qlistener_mt_manager_add_to_db_errors{group=\"qrtech\"}",
+              "intervalFactor": 2,
+              "legendFormat": "errors",
+              "metric": "qlistener_mt_manager_add_to_db_errors",
+              "refId": "A",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_mt_manager_add_to_db_success{group=\"qrtech\"}",
+              "intervalFactor": 2,
+              "legendFormat": "success",
+              "metric": "qlistener_mt_manager_add_to_db_success",
+              "refId": "B",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_mt_manager_dropped{group=\"qrtech\"}",
+              "intervalFactor": 2,
+              "legendFormat": "dropped",
+              "metric": "qlistener_mt_manager_dropped",
+              "refId": "C",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_mt_manager_empty{group=\"qrtech\"}",
+              "intervalFactor": 2,
+              "legendFormat": "empty",
+              "metric": "qlistener_mt_manager_empty",
+              "refId": "D",
+              "step": 30
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "MT Manager",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+            "dropped": "#E24D42",
+            "errors": "#BF1B00",
+            "success": "#7EB26D"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 14,
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": true,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": true,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "qlistener_user_actions_add_to_db_errors{group=\"qrtech\"}",
+              "intervalFactor": 2,
+              "legendFormat": "errors",
+              "metric": "qlistener_user_actions_add_to_db_errors",
+              "refId": "A",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_user_actions_add_to_db_success{group=\"qrtech\"}",
+              "intervalFactor": 2,
+              "legendFormat": "success",
+              "metric": "qlistener_user_actions_add_to_db_success",
+              "refId": "B",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_user_actions_dropped{group=\"qrtech\"}",
+              "intervalFactor": 2,
+              "legendFormat": "dropped",
+              "metric": "qlistener_user_actions_dropped",
+              "refId": "C",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_user_actions_empty{group=\"qrtech\"}",
+              "intervalFactor": 2,
+              "legendFormat": "empty",
+              "metric": "qlistener_user_actions_empty",
+              "refId": "D",
+              "step": 30
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "User Actions",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+            "dropped": "#E24D42",
+            "errors": "#BF1B00",
+            "success": "#7EB26D"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 15,
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": true,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": true,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "qlistener_access_campaign_add_to_db_errors{group=\"qrtech\"}",
+              "intervalFactor": 2,
+              "legendFormat": "errors",
+              "metric": "qlistener_access_campaign_add_to_db_errors",
+              "refId": "A",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_access_campaign_add_to_db_success{group=\"qrtech\"}",
+              "intervalFactor": 2,
+              "legendFormat": "success",
+              "metric": "qlistener_access_campaign_add_to_db_success",
+              "refId": "B",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_access_campaign_dropped{group=\"qrtech\"}",
+              "intervalFactor": 2,
+              "legendFormat": "dropped",
+              "metric": "qlistener_access_campaign_dropped",
+              "refId": "C",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_access_campaign_empty{group=\"qrtech\"}",
+              "intervalFactor": 2,
+              "legendFormat": "empty",
+              "metric": "qlistener_access_campaign_empty",
+              "refId": "D",
+              "step": 30
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Access Campaign",
           "tooltip": {
             "msResolution": false,
             "shared": true,
@@ -1107,7 +1715,7 @@
   },
   "refresh": "1m",
   "schemaVersion": 12,
-  "version": 10,
+  "version": 19,
   "links": [],
   "gnetId": null
 }

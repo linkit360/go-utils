@@ -592,6 +592,8 @@
         },
         {
           "aliasColors": {
+            "dropped": "#890F02",
+            "empty": "#890F02",
             "errors": "#BF1B00",
             "success": "#7EB26D"
           },
@@ -611,8 +613,8 @@
           "legend": {
             "avg": false,
             "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
+            "hideEmpty": false,
+            "hideZero": false,
             "max": true,
             "min": false,
             "show": true,
@@ -649,10 +651,20 @@
               "step": 30
             },
             {
-              "expr": "",
+              "expr": "qlistener_operator_dropped{group=\"th\"}",
               "intervalFactor": 2,
-              "metric": "",
-              "refId": "C"
+              "legendFormat": "dropped",
+              "metric": "qlistener_operator_dropped",
+              "refId": "C",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_operator_empty{group=\"th\"}",
+              "intervalFactor": 2,
+              "legendFormat": "empty",
+              "metric": "qlistener_operator_empty",
+              "refId": "D",
+              "step": 30
             }
           ],
           "timeFrom": null,
@@ -1014,7 +1026,7 @@
   },
   "refresh": "1m",
   "schemaVersion": 12,
-  "version": 40,
+  "version": 42,
   "links": [],
   "gnetId": null
 }

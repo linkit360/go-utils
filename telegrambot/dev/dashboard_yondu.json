@@ -2447,8 +2447,8 @@
             {
               "expr": "",
               "intervalFactor": 2,
-              "refId": "F",
-              "metric": "yondu"
+              "metric": "yondu",
+              "refId": "F"
             }
           ],
           "timeFrom": null,
@@ -2597,8 +2597,8 @@
             "errors": "#890F02",
             "our errors": "#EA6460",
             "page 404": "#BF1B00",
-            "yondu_wrong_tariff{group=\"ph\",instance=\"52.76.153.135:50306\",job=\"yondu-telco\",name=\"yondu\"}": "#E24D42",
-            "yondu_empty{group=\"ph\",instance=\"52.76.153.135:50306\",job=\"yondu-telco\",name=\"yondu\"}": "#890F02"
+            "yondu_empty{group=\"ph\",instance=\"52.76.153.135:50306\",job=\"yondu-telco\",name=\"yondu\"}": "#890F02",
+            "yondu_wrong_tariff{group=\"ph\",instance=\"52.76.153.135:50306\",job=\"yondu-telco\",name=\"yondu\"}": "#E24D42"
           },
           "bars": false,
           "datasource": null,
@@ -2678,18 +2678,18 @@
             {
               "expr": "yondu_wrong_tariff",
               "intervalFactor": 2,
-              "refId": "F",
+              "legendFormat": "wrong tariff ",
               "metric": "yondu_wrong_tariff",
-              "step": 30,
-              "legendFormat": "wrong tariff "
+              "refId": "F",
+              "step": 30
             },
             {
               "expr": "yondu_empty",
               "intervalFactor": 2,
-              "refId": "G",
+              "legendFormat": "empty",
               "metric": "yondu_empty",
-              "step": 30,
-              "legendFormat": "empty"
+              "refId": "G",
+              "step": 30
             }
           ],
           "timeFrom": null,
@@ -3037,6 +3037,119 @@
           "aliasColors": {
             "add to db success": "#7EB26D",
             "db errors": "#890F02",
+            "empty msgs": "#BF1B00",
+            "mumbai_qlistener_content_sent_create_errors{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#890F02",
+            "mumbai_qlistener_content_sent_dropped{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#F2C96D",
+            "mumbai_qlistener_content_sent_subscription_create_count{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#629E51",
+            "mumbai_qlistener_content_sent_subscription_create_errors{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#BF1B00"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 52,
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": true,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": true,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "qlistener_mt_manager_add_to_db_success{group=\"ph\"}",
+              "hide": false,
+              "intervalFactor": 2,
+              "legendFormat": "add to db success",
+              "metric": "qlistener_mt_manager_add_to_db_success",
+              "refId": "A",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_mt_manager_add_to_db_errors{group=\"ph\"}",
+              "intervalFactor": 2,
+              "legendFormat": "db errors",
+              "metric": "qlistener_mt_manager_add_to_db_errors",
+              "refId": "B",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_mt_manager_dropped{group=\"ph\"}",
+              "intervalFactor": 2,
+              "legendFormat": "dropped msgs",
+              "metric": "qlistener_mt_manager_dropped",
+              "refId": "C",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_mt_manager_empty{group=\"ph\"}",
+              "intervalFactor": 2,
+              "legendFormat": "empty",
+              "metric": "qlistener_mt_manager_empty",
+              "refId": "D",
+              "step": 30
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "MT manager",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+            "add to db success": "#7EB26D",
+            "db errors": "#890F02",
             "mumbai_qlistener_user_actions_create_db_errors{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#BF1B00",
             "mumbai_qlistener_user_actions_dropped{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#64B0C8"
           },
@@ -3146,6 +3259,7 @@
           "aliasColors": {
             "add to db success": "#7EB26D",
             "db errors": "#890F02",
+            "dropped msgs": "#890F02",
             "empty msgs": "#BF1B00",
             "mumbai_qlistener_content_sent_create_errors{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#890F02",
             "mumbai_qlistener_content_sent_dropped{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#F2C96D",
@@ -3164,6 +3278,119 @@
             "threshold2Color": "rgba(234, 112, 112, 0.22)"
           },
           "id": 10,
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": true,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": true,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "qlistener_unique_urls_add_to_db_success{group=\"ph\"}",
+              "hide": false,
+              "intervalFactor": 2,
+              "legendFormat": "add to db success",
+              "metric": "qlistener_unique_urls_add_to_db_success",
+              "refId": "A",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_unique_urls_add_to_db_errors{group=\"ph\"}",
+              "intervalFactor": 2,
+              "legendFormat": "db errors",
+              "metric": "qlistener_unique_urls_add_to_db_errors",
+              "refId": "B",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_unique_urls_dropped{group=\"ph\"}",
+              "intervalFactor": 2,
+              "legendFormat": "dropped msgs",
+              "metric": "qlistener_unique_urls_dropped",
+              "refId": "C",
+              "step": 30
+            },
+            {
+              "expr": "qlistener_unique_urls_empty{group=\"ph\"}",
+              "intervalFactor": 2,
+              "legendFormat": "empty msgs",
+              "metric": "qlistener_unique_urls_empty",
+              "refId": "D",
+              "step": 30
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Unique Urls",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {
+            "add to db success": "#7EB26D",
+            "db errors": "#890F02",
+            "empty msgs": "#BF1B00",
+            "mumbai_qlistener_content_sent_create_errors{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#890F02",
+            "mumbai_qlistener_content_sent_dropped{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#F2C96D",
+            "mumbai_qlistener_content_sent_subscription_create_count{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#629E51",
+            "mumbai_qlistener_content_sent_subscription_create_errors{group=\"mumbai\",instance=\"52.66.23.201:50304\",job=\"qlistener\"}": "#BF1B00"
+          },
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 53,
           "isNew": true,
           "legend": {
             "avg": false,
@@ -3568,7 +3795,7 @@
   },
   "refresh": "1m",
   "schemaVersion": 12,
-  "version": 21,
+  "version": 24,
   "links": [],
   "gnetId": null
 }
