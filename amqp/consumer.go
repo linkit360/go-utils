@@ -11,11 +11,39 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	amqp_driver "github.com/streadway/amqp"
 
+	"github.com/vostrok/utils/config"
 	"github.com/vostrok/utils/metrics"
 )
 
 func init() {
 	log.SetLevel(log.DebugLevel)
+}
+
+func InitConsumer(
+	consumerConf ConsumerConfig,
+	queueConf config.ConsumeQueueConfig,
+	readChan <-chan amqp_driver.Delivery,
+	fn func(<-chan amqp_driver.Delivery),
+) *Consumer {
+	if !queueConf.Enabled {
+		log.Infof("rbmq consumer disabled: %s ", queueConf.Name)
+		return nil
+	}
+
+	consumer := NewConsumer(consumerConf, queueConf.Name, queueConf.PrefetchCount)
+	if err := consumer.Connect(); err != nil {
+		log.Fatal("rbmq connect: ", err.Error())
+	}
+
+	InitQueue(
+		consumer,
+		readChan,
+		fn,
+		queueConf.ThreadsCount,
+		queueConf.Name,
+		queueConf.Name,
+	)
+	return consumer
 }
 
 func InitQueue(

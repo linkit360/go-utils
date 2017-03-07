@@ -6,12 +6,8 @@ package amqp
 // metrics avialable, do not forget to add handler for /var/debug
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"os"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -59,9 +55,6 @@ func NewNotifier(c NotifierConfig) *Notifier {
 		m:              initNotifierMetrics(),
 		publishCh:      make(chan AMQPMessage, c.ChanCapacity),
 		pendingCh:      make(chan AMQPMessage, c.ChanCapacity),
-	}
-	if notifier.conf.BufferPath == "" {
-		log.Fatal("No buffer path (pending_buffer_path)")
 	}
 
 	go notifier.publisher()
@@ -281,63 +274,4 @@ func initNotifierMetrics() NotifierMetrics {
 		ReadingBuffer:   m.PrometheusGauge("rbmq", "notifier", "buffer_reading_gauge_size", "publisher reading buffer size"),
 	}
 	return metrics
-}
-
-func (n *Notifier) RestoreState() {
-	return
-	log.WithField("pid", os.Getpid()).Debug("rbmq notifier restore state")
-
-	fh, err := os.Open(n.conf.BufferPath)
-	if err != nil {
-		log.WithField("error", err.Error()).Info("cannot open pending buffer file")
-		return
-	}
-	bufferBytes := bytes.NewBuffer(nil)
-	_, err = io.Copy(bufferBytes, fh)
-	if err != nil {
-		log.WithField("error", err.Error()).Error("rbmq notifier cannot copy from buffer file")
-		return
-	}
-	if err := fh.Close(); err != nil {
-		log.WithField("error", err.Error()).Error("rbmq notifier cannot close buffer fh")
-		return
-	}
-	var buf []AMQPMessage
-	if err := json.Unmarshal(bufferBytes.Bytes(), buf); err != nil {
-		log.WithField("error", err.Error()).Error("rbmq notifier cannot unmarshal")
-		return
-	}
-	log.WithField("count", len(buf)).Debug("rbmq notifier restore state")
-	for _, msg := range buf {
-		n.Publish(msg)
-	}
-}
-
-func (n *Notifier) SaveState() {
-	return
-	n.stop = true
-	log.WithField("pid", os.Getegid()).Info("rbmq notifier save state")
-
-	buf := []AMQPMessage{}
-	for msg := range n.publishCh {
-		buf = append(buf, msg)
-	}
-	for msg := range n.pendingCh {
-		buf = append(buf, msg)
-	}
-	out, err := json.Marshal(buf)
-	if err != nil {
-		log.WithField("pending", fmt.Sprintf("%#v", buf)).
-			Error("rbmq notifier cannot marshal pending buffer")
-	} else {
-		fh, err := os.OpenFile(n.conf.BufferPath, os.O_CREATE|os.O_RDWR, 0744)
-		if err != nil {
-			log.WithField("pending", fmt.Sprintf("%#v", buf)).
-				Error("rbmq notifier opern file for pending buffer")
-		} else {
-			fh.Write(out)
-			fh.Close()
-		}
-	}
-	n.FinishCh <- true
 }
