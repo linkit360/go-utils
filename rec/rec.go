@@ -992,6 +992,7 @@ func GetBufferPixelByCampaignId(campaignId int64) (r Record, err error) {
 
 	query := fmt.Sprintf("SELECT "+
 		"sent_at, "+
+		"id_service, "+
 		"id_campaign, "+
 		"tid, "+
 		"pixel "+
@@ -1005,6 +1006,7 @@ func GetBufferPixelByCampaignId(campaignId int64) (r Record, err error) {
 
 	if err := dbConn.QueryRow(query, campaignId).Scan(
 		&r.SentAt,
+		&r.ServiceId,
 		&r.CampaignId,
 		&r.Tid,
 		&r.Pixel,
