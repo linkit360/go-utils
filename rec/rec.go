@@ -11,6 +11,8 @@ import (
 	"github.com/nu7hatch/gouuid"
 	"github.com/prometheus/client_golang/prometheus"
 
+	reporter_client "github.com/vostrok/reporter/rpcclient"
+	reporter_collector "github.com/vostrok/reporter/server/src/collector"
 	"github.com/vostrok/utils/db"
 	m "github.com/vostrok/utils/metrics"
 )
@@ -552,6 +554,12 @@ func AddNewSubscriptionToDB(r *Record) error {
 		"id":   r.SubscriptionId,
 		"took": time.Since(begin).Seconds(),
 	}).Info("added new subscription")
+
+	reporter_client.IncMO(reporter_collector.Collect{
+		CampaignId:   r.CampaignId,
+		OperatorCode: r.OperatorCode,
+		Msisdn:       r.Msisdn,
+	})
 	return nil
 }
 
