@@ -11,8 +11,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	amqp_driver "github.com/streadway/amqp"
 
-	"github.com/vostrok/utils/config"
-	"github.com/vostrok/utils/metrics"
+	"github.com/linkit360/go-utils/config"
+	"github.com/linkit360/go-utils/metrics"
 )
 
 func init() {

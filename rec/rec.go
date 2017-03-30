@@ -11,10 +11,10 @@ import (
 	"github.com/nu7hatch/gouuid"
 	"github.com/prometheus/client_golang/prometheus"
 
-	reporter_client "github.com/vostrok/reporter/rpcclient"
-	reporter_collector "github.com/vostrok/reporter/server/src/collector"
-	"github.com/vostrok/utils/db"
-	m "github.com/vostrok/utils/metrics"
+	reporter_client "github.com/linkit360/go-reporter/rpcclient"
+	reporter_collector "github.com/linkit360/go-reporter/server/src/collector"
+	"github.com/linkit360/go-utils/db"
+	m "github.com/linkit360/go-utils/metrics"
 )
 
 // please, do not add any json named field in old field,
