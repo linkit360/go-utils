@@ -849,6 +849,7 @@ func GetSubscriptionByToken(token string) (p Record, err error) {
 	}
 	return p, nil
 }
+
 func GetSubscriptionByMsisdn(msisdn string) (p Record, err error) {
 	begin := time.Now()
 	defer func() {

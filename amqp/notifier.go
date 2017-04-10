@@ -138,7 +138,6 @@ func (n *Notifier) reConnect() {
 			break
 		}
 	}
-
 	n.m.Connected.Set(1)
 	n.m.ReconnectCount.Set(0)
 }
