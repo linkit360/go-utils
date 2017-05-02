@@ -114,6 +114,7 @@ type Consumer struct {
 
 func NewConsumer(conf ConsumerConfig, queueName string, prefetchCount int) *Consumer {
 	log.SetLevel(log.DebugLevel)
+
 	url := fmt.Sprintf("amqp://%s:%s@%s:%s",
 		conf.Conn.User,
 		conf.Conn.Pass,

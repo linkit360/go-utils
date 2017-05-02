@@ -35,7 +35,7 @@ type Record struct {
 	CreatedAt                time.Time `json:"created_at,omitempty"`
 	LastPayAttemptAt         time.Time `json:"last_pay_attempt_at,omitempty"`
 	AttemptsCount            int       `json:"attempts_count,omitempty"`
-	KeepDays                 int       `json:"keep_days,omitempty"`
+	RetryDays                int       `json:"retry_days,omitempty"`
 	DelayHours               int       `json:"delay_hours,omitempty"`
 	PaidHours                int       `json:"paid_hours,omitempty"`
 	OperatorName             string    `json:"operator_name,omitempty"`
@@ -47,7 +47,6 @@ type Record struct {
 	Pixel                    string    `json:"pixel,omitempty"`
 	Publisher                string    `json:"publisher,omitempty"`
 	SMSText                  string    `json:"sms_text,omitempty"`
-	SMSSend                  bool      `json:"sms_send,omitempty"`
 	Periodic                 bool      `json:"periodic,omitempty"`
 	PeriodicDays             string    `json:"days,omitempty"`
 	PeriodicAllowedFromHours int       `json:"allowed_from,omitempty"`
@@ -90,6 +89,7 @@ func GenerateTID() string {
 	log.WithField("tid", tid).Debug("generated tid")
 	return tid
 }
+
 func GetRetryTransactions(operatorCode int64, batchLimit int, paidOnceHours int) ([]Record, error) {
 	begin := time.Now()
 	var retries []Record
@@ -131,7 +131,7 @@ func GetRetryTransactions(operatorCode int64, batchLimit int, paidOnceHours int)
 		"created_at, "+
 		"last_pay_attempt_at, "+
 		"attempts_count, "+
-		"keep_days, "+
+		"retry_days, "+
 		"delay_hours, "+
 		"price, "+
 		"operator_code, "+
@@ -167,7 +167,7 @@ func GetRetryTransactions(operatorCode int64, batchLimit int, paidOnceHours int)
 			&record.CreatedAt,
 			&record.LastPayAttemptAt,
 			&record.AttemptsCount,
-			&record.KeepDays,
+			&record.RetryDays,
 			&record.DelayHours,
 			&record.Price,
 			&record.OperatorCode,
@@ -289,7 +289,7 @@ func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (rec
 		"created_at, "+
 		"last_pay_attempt_at, "+
 		"attempts_count, "+
-		"keep_days, "+
+		"retry_days, "+
 		"delay_hours, "+
 		"msisdn, "+
 		"price, "+
@@ -323,7 +323,7 @@ func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (rec
 			&record.CreatedAt,
 			&record.LastPayAttemptAt,
 			&record.AttemptsCount,
-			&record.KeepDays,
+			&record.RetryDays,
 			&record.DelayHours,
 			&record.Msisdn,
 			&record.Price,
@@ -356,9 +356,10 @@ type ActiveSubscription struct {
 	Msisdn     string
 	ServiceId  int64
 	CampaignId int64
+	RetryDays  int
 }
 
-func LoadActiveSubscriptions(hours int) (records []ActiveSubscription, err error) {
+func LoadActiveSubscriptions() (records []ActiveSubscription, err error) {
 	begin := time.Now()
 	defer func() {
 		defer func() {
@@ -375,21 +376,20 @@ func LoadActiveSubscriptions(hours int) (records []ActiveSubscription, err error
 		}()
 	}()
 
-	hoursPassed := ""
-	if hours > 0 {
-		hoursPassed = fmt.Sprintf("(CURRENT_TIMESTAMP - %d * INTERVAL '1 hour' ) < created_at AND ", hours)
-	}
 	query := fmt.Sprintf("SELECT "+
 		"id, "+
 		"msisdn, "+
 		"id_service, "+
 		"id_campaign, "+
+		"retry_days, "+
 		"created_at "+
-		"FROM %ssubscriptions "+
-		"WHERE "+
-		hoursPassed+
+		"FROM %ssubscriptions sb, %sservices s "+
+		"WHERE sb.id_service = s.services.id AND "+
+		" t.created_at > CURRENT_TIMESTAMP - s.retry_days * INTERVAL '1 day'"+
 		"result IN ('', 'paid', 'failed') ",
-		conf.TablePrefix)
+		conf.TablePrefix,
+		conf.TablePrefix,
+	)
 
 	prev := []ActiveSubscription{}
 	rows, err := dbConn.Query(query)
@@ -425,6 +425,83 @@ func LoadActiveSubscriptions(hours int) (records []ActiveSubscription, err error
 		return prev, err
 	}
 	return prev, nil
+}
+
+type HistoryCache struct {
+	Msisdn         string
+	ServiceId      int64
+	SubscriptionId int64
+	RetryDays      int
+	SentAt         time.Time
+}
+
+func GetCountOfFailedChargesFor(msisdn string, serviceId int64, lastDays int) (count int, err error) {
+	begin := time.Now()
+	defer func() {
+		defer func() {
+			fields := log.Fields{
+				"took": time.Since(begin),
+			}
+			if err != nil {
+				fields["error"] = err.Error()
+				log.WithFields(fields).Error("load count of failed charges failed")
+			} else {
+				fields["count"] = count
+				log.WithFields(fields).Debug("load count of failed charges ")
+			}
+		}()
+	}()
+
+	// charge try is once in a day
+	query := fmt.Sprintf("SELECT count(*) FROM %stransactions"+
+		"WHERE msisdn = $1 AND id_service = $2 AND result = 'failed' AND "+
+		"sent_at > CURRENT_TIMESTAMP - %d * INTERVAL '1 day'",
+		lastDays,
+		conf.TablePrefix,
+	)
+
+	if err = dbConn.QueryRow(query, msisdn, serviceId).Scan(&count); err != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		return
+	}
+
+	return
+}
+
+func GetCountOfDownloadedContent(subscriptionId int64) (count int, err error) {
+	begin := time.Now()
+	defer func() {
+		defer func() {
+			fields := log.Fields{
+				"took": time.Since(begin),
+			}
+			if err != nil {
+				fields["error"] = err.Error()
+				log.WithFields(fields).Error("load count of downloaded content failed")
+			} else {
+				fields["count"] = count
+				log.WithFields(fields).Debug("load count of downloaded content ")
+			}
+		}()
+	}()
+
+	// charge try is once in a day
+	query := fmt.Sprintf("SELECT count(*) FROM %scontent_sent WHERE id_subscription = $1",
+		conf.TablePrefix,
+	)
+
+	if err = dbConn.QueryRow(query, subscriptionId).Scan(&count); err != nil {
+		if err == sql.ErrNoRows {
+			return 0, nil
+		}
+		DBErrors.Inc()
+		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		return
+	}
+
+	return
 }
 
 func AddNewSubscriptionToDB(r *Record) error {
@@ -465,7 +542,7 @@ func AddNewSubscriptionToDB(r *Record) error {
 		}).Warn("no delay hours")
 		Warn.Inc()
 	}
-	if r.KeepDays == 0 {
+	if r.RetryDays == 0 {
 		log.WithFields(log.Fields{
 			"tid": r.Tid,
 		}).Warn("no keep days")
@@ -504,7 +581,7 @@ func AddNewSubscriptionToDB(r *Record) error {
 		"operator_code, "+
 		"paid_hours, "+
 		"delay_hours, "+
-		"keep_days, "+
+		"retry_days, "+
 		"price, "+
 		"periodic, "+
 		"days,"+
@@ -530,7 +607,7 @@ func AddNewSubscriptionToDB(r *Record) error {
 		r.OperatorCode,
 		r.PaidHours,
 		r.DelayHours,
-		r.KeepDays,
+		r.RetryDays,
 		r.Price,
 		r.Periodic,
 		r.PeriodicDays,
@@ -659,10 +736,10 @@ func GetPeriodics(batchLimit, repeaIntervalMinutes int, intervalType string, loc
 			&p.Price,
 			&p.ServiceId,
 			&p.CampaignId,
-			&p.OperatorCode,
 			&p.CountryCode,
+			&p.OperatorCode,
 			&p.Msisdn,
-			&p.KeepDays,
+			&p.RetryDays,
 			&p.DelayHours,
 			&p.PaidHours,
 		); err != nil {
@@ -682,56 +759,59 @@ func GetPeriodics(batchLimit, repeaIntervalMinutes int, intervalType string, loc
 }
 
 // retries for periodic?
-func GetNotPaidPeriodics(delay_minutes, batchLimit int) (records []Record, err error) {
+func GetLiveTodayPeriodics(batchLimit int) (records []Record, err error) {
 	begin := time.Now()
 	query := ""
 	defer func() {
 		defer func() {
 			fields := log.Fields{
-				"took": time.Since(begin),
+				"took":  time.Since(begin),
+				"query": query,
 			}
 			if err != nil {
 				fields["error"] = err.Error()
-				log.WithFields(fields).Error("load not paid periodic failed")
+				log.WithFields(fields).Error("load periodic failed")
 			} else {
-				//fields["query"] = query
 				fields["count"] = len(records)
-				log.WithFields(fields).Debug("load not paid periodic")
+				log.WithFields(fields).Debug("load periodic")
 			}
 		}()
 	}()
 
-	dayName := strings.ToLower(time.Now().Format("Mon"))
+	todayDayName := strings.ToLower(time.Now().Format("Mon"))
 
 	var periodics []Record
-	matchedToday := "( days ? '" + dayName + "' OR days ? 'any' ) "
-
-	earlierMatchedToday := "( last_pay_attempt_at + INTERVAL '24 hours' < NOW() AND " +
-		"result NOT IN ('rejected', 'blacklisted', 'canceled', 'pending') )"
-
-	notPaidAtAllMatchedTime := "( last_pay_attempt_at + INTERVAL '24 hours' > NOW() AND " +
-		"result NOT IN ('rejected', 'blacklisted', 'canceled', 'pending', 'paid') " +
-		fmt.Sprintf("AND last_pay_attempt_at + %d * INTERVAL '1 minute' < NOW() )", delay_minutes)
-
 	query = fmt.Sprintf("SELECT "+
 		"id, "+
 		"sent_at, "+
 		"tid , "+
-		"operator_token, "+
 		"price, "+
 		"id_service, "+
 		"id_campaign, "+
 		"country_code, "+
 		"operator_code, "+
-		"msisdn, "+
-		"keep_days, "+
-		"delay_hours, "+
-		"paid_hours "+
+		"msisdn "+
 		"FROM %ssubscriptions "+
 		"WHERE "+
-		matchedToday+" AND periodic = true AND "+
-		"("+earlierMatchedToday+" OR "+notPaidAtAllMatchedTime+")"+
-		"ORDER BY last_pay_attempt_at ASC LIMIT %s",
+		// live and not processed today
+		"( "+
+		"    ( days ? '"+todayDayName+"' OR days ? 'any' ) AND "+
+		"     result NOT IN ('canceled', 'postpaid', 'blacklisted', 'rejected') AND "+
+		"     last_pay_attempt_at < (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) "+
+		") AND "+
+		// havent sent content yet (it deletes if opened)
+		" id NOT IN ("+
+		"	SELECT DISTINCT id_subscription FROM %content_unique_urls "+
+		"	WHERE sent_at > (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) "+
+		"   )"+
+		"AND "+
+		// havent opened content yet
+		" id NOT IN ("+
+		"	SELECT DISTINCT id_subscription FROM %content_sent "+
+		"	WHERE sent_at > (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) "+
+		"   )"+
+		"ORDER BY last_pay_attempt_at ASC LIMIT %s", // get the last touched
+		conf.TablePrefix,
 		conf.TablePrefix,
 		strconv.Itoa(batchLimit),
 	)
@@ -751,16 +831,12 @@ func GetNotPaidPeriodics(delay_minutes, batchLimit int) (records []Record, err e
 			&p.SubscriptionId,
 			&p.SentAt,
 			&p.Tid,
-			&p.OperatorToken,
 			&p.Price,
 			&p.ServiceId,
 			&p.CampaignId,
-			&p.OperatorCode,
 			&p.CountryCode,
+			&p.OperatorCode,
 			&p.Msisdn,
-			&p.KeepDays,
-			&p.DelayHours,
-			&p.PaidHours,
 		); err != nil {
 			DBErrors.Inc()
 			return []Record{}, fmt.Errorf("Rows.Next: %s", err.Error())
@@ -776,6 +852,7 @@ func GetNotPaidPeriodics(delay_minutes, batchLimit int) (records []Record, err e
 	}
 	return periodics, nil
 }
+
 func GetSubscriptionByToken(token string) (p Record, err error) {
 	begin := time.Now()
 	defer func() {
@@ -804,7 +881,7 @@ func GetSubscriptionByToken(token string) (p Record, err error) {
 		"country_code, "+
 		"operator_code, "+
 		"msisdn, "+
-		"keep_days, "+
+		"retry_days, "+
 		"delay_hours, "+
 		"paid_hours "+
 		"FROM %ssubscriptions "+
@@ -833,7 +910,7 @@ func GetSubscriptionByToken(token string) (p Record, err error) {
 			&p.CountryCode,
 			&p.OperatorCode,
 			&p.Msisdn,
-			&p.KeepDays,
+			&p.RetryDays,
 			&p.DelayHours,
 			&p.PaidHours,
 		); err != nil {
@@ -878,7 +955,7 @@ func GetSubscriptionByMsisdn(msisdn string) (p Record, err error) {
 		"country_code, "+
 		"operator_code, "+
 		"msisdn, "+
-		"keep_days, "+
+		"retry_days, "+
 		"delay_hours, "+
 		"paid_hours "+
 		"FROM %ssubscriptions "+
@@ -897,7 +974,7 @@ func GetSubscriptionByMsisdn(msisdn string) (p Record, err error) {
 		&p.OperatorCode,
 		&p.CountryCode,
 		&p.Msisdn,
-		&p.KeepDays,
+		&p.RetryDays,
 		&p.DelayHours,
 		&p.PaidHours,
 	); err != nil {
@@ -936,7 +1013,7 @@ func GetRetryByMsisdn(msisdn, status string) (r Record, err error) {
 		"created_at, "+
 		"last_pay_attempt_at, "+
 		"attempts_count, "+
-		"keep_days, "+
+		"retry_days, "+
 		"delay_hours, "+
 		"price, "+
 		"operator_code, "+
@@ -959,7 +1036,7 @@ func GetRetryByMsisdn(msisdn, status string) (r Record, err error) {
 		&r.CreatedAt,
 		&r.LastPayAttemptAt,
 		&r.AttemptsCount,
-		&r.KeepDays,
+		&r.RetryDays,
 		&r.DelayHours,
 		&r.Price,
 		&r.OperatorCode,
@@ -1063,7 +1140,7 @@ func GetRepeatSentConsent(operatorCode int64, delayMinutes, batchLimit int) (rec
 		"country_code, "+
 		"operator_code, "+
 		"msisdn, "+
-		"keep_days, "+
+		"retry_days, "+
 		"delay_hours, "+
 		"paid_hours "+
 		"FROM %ssubscriptions "+
@@ -1100,7 +1177,7 @@ func GetRepeatSentConsent(operatorCode int64, delayMinutes, batchLimit int) (rec
 			&p.OperatorCode,
 			&p.CountryCode,
 			&p.Msisdn,
-			&p.KeepDays,
+			&p.RetryDays,
 			&p.DelayHours,
 			&p.PaidHours,
 		); err != nil {

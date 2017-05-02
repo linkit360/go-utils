@@ -106,9 +106,7 @@ func (n *Notifier) connect() error {
 	}
 
 	go func() {
-		// Waits here for the channel to be closed
 		log.Info("rbmq notifier closing: ", <-n.conn.NotifyClose(make(chan *amqp_driver.Error)))
-		// Let Handle know it's not time to reconnect
 		n.done <- errors.New("Channel Closed")
 	}()
 
