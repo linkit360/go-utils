@@ -63,9 +63,11 @@ func InitQueue(
 	}
 	go consumer.Handle(deliveryChan, fn, threads, queue, routingKey)
 	log.WithFields(log.Fields{
-		"queue": queue,
-		"fn":    runtime.FuncForPC(reflect.ValueOf(fn).Pointer()).Name(),
-	}).Info("consume init done")
+		"fn":         runtime.FuncForPC(reflect.ValueOf(fn).Pointer()).Name(),
+		"queue":      queue,
+		"threads":    threads,
+		"routingKey": routingKey,
+	}).Info("consumer init done")
 }
 
 type ConsumerMetrics struct {
@@ -133,8 +135,6 @@ func NewConsumer(conf ConsumerConfig, queueName string, prefetchCount int) *Cons
 		bindingKey:         conf.BindingKey,
 		reconnectDelay:     conf.ReconnectDelay,
 	}
-	log.WithField("consumer", conf).Info("consumer init")
-
 	go func() {
 		for range time.Tick(time.Minute) {
 			queueSize, err := c.GetQueueSize(queueName)
@@ -223,49 +223,27 @@ func (c *Consumer) Handle(
 
 // Connect to RabbitMQ server
 func (c *Consumer) Connect() error {
-
 	var err error
-
-	log.WithField("url", c.url).Debug("dialing")
 	c.conn, err = amqp_driver.Dial(c.url)
 	if err != nil {
 		return fmt.Errorf("amqp_driver.Dial: %s", err)
 	}
-
 	go func() {
 		// Waits here for the channel to be closed
 		log.Info("rbmq consumer closing: ", <-c.conn.NotifyClose(make(chan *amqp_driver.Error)))
 		// Let Handle know it's not time to reconnect
 		c.done <- errors.New("Channel Closed")
 	}()
-
-	log.Info("rbmq consumer: got connection, getting channel...")
 	c.channel, err = c.conn.Channel()
 	if err != nil {
 		return fmt.Errorf("Channel: %s", err)
 	}
-	log.Info("rbmq consumer: got channel")
-	//log.Info("rbmq consumer: declaring exchange (%q)", c.exchange)
-	//if err = c.channel.ExchangeDeclare(
-	//	c.exchange,     // name of the exchange
-	//	c.exchangeType, // type
-	//	true,           // durable
-	//	false,          // delete when complete
-	//	false,          // internal
-	//	false,          // noWait
-	//	nil,            // arguments
-	//); err != nil {
-	//	return fmt.Errorf("rbmq consumer: exchange declare: %s", err)
-	//}
-
 	c.m.Connected.Set(1)
 	return nil
 }
 
 // AnnounceQueue sets the queue that will be listened to for this connection
 func (c *Consumer) AnnounceQueue(queueName, bindingKey string) (<-chan amqp_driver.Delivery, error) {
-	log.WithFields(log.Fields{"queue": queueName, "bindKey": bindingKey}).Debug("rbmq consumer: queue anounce")
-
 	queue, err := c.channel.QueueDeclare(
 		queueName, // name of the queue
 		false,     // durable
@@ -282,11 +260,6 @@ func (c *Consumer) AnnounceQueue(queueName, bindingKey string) (<-chan amqp_driv
 		}).Error("rbmq consumer: queue declare")
 		return nil, fmt.Errorf("Queue Declare: %s", err)
 	}
-	log.WithFields(log.Fields{
-		"queue":         queueName,
-		"bindKey":       bindingKey,
-		"prefetchCount": c.queuePrefetchCount,
-	}).Debug("rbmq consumer: set prefetch count")
 
 	// Qos determines the amount of messages that the queue will pass to you before
 	// it waits for you to ack them. This will slow down queue consumption but
@@ -320,12 +293,6 @@ func (c *Consumer) AnnounceQueue(queueName, bindingKey string) (<-chan amqp_driv
 	//); err != nil {
 	//	return nil, fmt.Errorf("Queue Bind: %s", err)
 	//}
-
-	log.WithFields(log.Fields{
-		"queue":         queueName,
-		"bindKey":       bindingKey,
-		"prefetchCount": c.queuePrefetchCount,
-	}).Info("rbmq consumer: starting consume")
 
 	deliveries, err := c.channel.Consume(
 		queue.Name, // name

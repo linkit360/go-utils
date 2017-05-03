@@ -81,12 +81,12 @@ func Init(dbC db.DataBaseConfig) {
 	AddNewSubscriptionDuration = m.NewSummary("subscription_add_to_db_duration_seconds", "new subscription add duration")
 }
 
-func GenerateTID() string {
+func GenerateTID(msisdn ...string) string {
 	u4, err := uuid.NewV4()
 	if err != nil {
 		log.WithField("error", err.Error()).Error("generate uniq id")
 	}
-	tid := fmt.Sprintf("%d-%s", time.Now().Unix(), u4)
+	tid := fmt.Sprintf("%s-%d-%s", msisdn, time.Now().Unix(), u4)
 	log.WithField("tid", tid).Debug("generated tid")
 	return tid
 }
@@ -384,11 +384,10 @@ func LoadActiveSubscriptions() (records []ActiveSubscription, err error) {
 		"id_campaign, "+
 		"retry_days, "+
 		"created_at "+
-		"FROM %ssubscriptions sb, %sservices s "+
-		"WHERE sb.id_service = s.services.id AND "+
-		" t.created_at > CURRENT_TIMESTAMP - s.retry_days * INTERVAL '1 day'"+
+		"FROM %ssubscriptions "+
+		"WHERE "+
+		" created_at > CURRENT_TIMESTAMP - retry_days * INTERVAL '1 day' AND "+
 		"result IN ('', 'paid', 'failed') ",
-		conf.TablePrefix,
 		conf.TablePrefix,
 	)
 
@@ -409,6 +408,7 @@ func LoadActiveSubscriptions() (records []ActiveSubscription, err error) {
 			&p.Msisdn,
 			&p.ServiceId,
 			&p.CampaignId,
+			&p.RetryDays,
 			&p.CreatedAt,
 		); err != nil {
 			DBErrors.Inc()
@@ -454,11 +454,11 @@ func GetCountOfFailedChargesFor(msisdn string, serviceId int64, lastDays int) (c
 	}()
 
 	// charge try is once in a day
-	query := fmt.Sprintf("SELECT count(*) FROM %stransactions"+
+	query := fmt.Sprintf("SELECT count(*) FROM %stransactions "+
 		"WHERE msisdn = $1 AND id_service = $2 AND result = 'failed' AND "+
 		"sent_at > CURRENT_TIMESTAMP - %d * INTERVAL '1 day'",
-		lastDays,
 		conf.TablePrefix,
+		lastDays,
 	)
 
 	if err = dbConn.QueryRow(query, msisdn, serviceId).Scan(&count); err != nil {
@@ -590,7 +590,7 @@ func AddNewSubscriptionToDB(r *Record) error {
 		"allowed_from,"+
 		"allowed_to"+
 		") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,"+
-		" $11, $12, $13, $14, $15, $16, $17, $18, $19) "+
+		" $11, $12, $13, $14, $15, $16, $17, $18, $19, $20) "+
 		"RETURNING id",
 		conf.TablePrefix,
 	)
@@ -630,9 +630,11 @@ func AddNewSubscriptionToDB(r *Record) error {
 	}
 	AddNewSubscriptionDuration.Observe(time.Since(begin).Seconds())
 	log.WithFields(log.Fields{
-		"tid":  r.Tid,
-		"id":   r.SubscriptionId,
-		"took": time.Since(begin).Seconds(),
+		"tid":         r.Tid,
+		"id":          r.SubscriptionId,
+		"service_id":  r.ServiceId,
+		"camoaign_id": r.CampaignId,
+		"took":        time.Since(begin).Seconds(),
 	}).Info("added new subscription")
 
 	reporter_client.IncMO(reporter_collector.Collect{

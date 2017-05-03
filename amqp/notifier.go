@@ -98,8 +98,6 @@ getQueueSize:
 
 func (n *Notifier) connect() error {
 	var err error
-
-	log.WithField("url", n.url).Debug("rbmq notifier dialing...")
 	n.conn, err = amqp_driver.Dial(n.url)
 	if err != nil {
 		return fmt.Errorf("amqp_driver.Dial: %s", err)
@@ -110,13 +108,12 @@ func (n *Notifier) connect() error {
 		n.done <- errors.New("Channel Closed")
 	}()
 
-	log.WithField("url", n.url).Info("rbmq notifier: got connection")
 	n.channel, err = n.conn.Channel()
 	if err != nil {
 		return fmt.Errorf("Channel: %s", err)
 	}
 	n.m.Connected.Set(1)
-	log.Debug("rbmq notifier got channel")
+	log.Info("rbmq notifier: connected")
 	return nil
 }
 
@@ -241,7 +238,6 @@ func (n *Notifier) publisher() {
 			}
 			if msg.EventName != "" {
 				f["e"] = msg.EventName
-
 			}
 			log.WithFields(f).Debug("rbmq: publish")
 		}
