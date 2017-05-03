@@ -51,6 +51,7 @@ type Record struct {
 	PeriodicDays             string    `json:"days,omitempty"`
 	PeriodicAllowedFromHours int       `json:"allowed_from,omitempty"`
 	PeriodicAllowedToHours   int       `json:"allowed_to,omitempty"`
+	Channel                  string    `json:"channel,omitempty"`
 }
 
 func (r Record) TransactionOnly() bool {
@@ -573,6 +574,7 @@ func AddNewSubscriptionToDB(r *Record) error {
 		"id_campaign, "+
 		"id_service, "+
 		"msisdn, "+
+		"channel, "+
 		"publisher, "+
 		"pixel, "+
 		"tid, "+
@@ -599,6 +601,7 @@ func AddNewSubscriptionToDB(r *Record) error {
 		r.CampaignId,
 		r.ServiceId,
 		r.Msisdn,
+		r.Channel,
 		r.Publisher,
 		r.Pixel,
 		r.Tid,
@@ -640,8 +643,8 @@ func AddNewSubscriptionToDB(r *Record) error {
 	return nil
 }
 
-// bare periodic
-func GetPeriodics(batchLimit, repeaIntervalMinutes int, intervalType string, loc *time.Location) (records []Record, err error) {
+// bare periodic for spectfic allowed time
+func GetPeriodicsSpecificTime(batchLimit, repeaIntervalMinutes int, intervalType string, loc *time.Location) (records []Record, err error) {
 	begin := time.Now()
 	query := ""
 	defer func() {
@@ -758,8 +761,8 @@ func GetPeriodics(batchLimit, repeaIntervalMinutes int, intervalType string, loc
 	return periodics, nil
 }
 
-// retries for periodic?
-func GetLiveTodayPeriodics(batchLimit int) (records []Record, err error) {
+// get periodic where once a day transaction is made
+func GetPeriodicsOnceADay(batchLimit int) (records []Record, err error) {
 	begin := time.Now()
 	query := ""
 	defer func() {
@@ -780,7 +783,92 @@ func GetLiveTodayPeriodics(batchLimit int) (records []Record, err error) {
 
 	todayDayName := strings.ToLower(time.Now().Format("Mon"))
 
-	var periodics []Record
+	query = fmt.Sprintf("SELECT "+
+		"id, "+
+		"sent_at, "+
+		"tid , "+
+		"operator_token, "+
+		"price, "+
+		"id_service, "+
+		"id_campaign, "+
+		"country_code, "+
+		"operator_code, "+
+		"msisdn, "+
+		"channel "+
+		"FROM %ssubscriptions "+
+		"WHERE "+
+		// paid and not paid - not processed today
+		"   ( days ? '"+todayDayName+"' OR days ? 'any' ) AND "+
+		"  result NOT IN ('rejected', 'canceled', 'postpaid', 'pending' ) AND "+
+		"  last_pay_attempt_at < (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) "+
+		"ORDER BY last_pay_attempt_at ASC LIMIT %s", // get the last touched
+		conf.TablePrefix,
+		strconv.Itoa(batchLimit),
+	)
+
+	rows, err := dbConn.Query(query)
+	if err != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		p := Record{}
+		if err = rows.Scan(
+			&p.SubscriptionId,
+			&p.SentAt,
+			&p.Tid,
+			&p.OperatorToken,
+			&p.Price,
+			&p.ServiceId,
+			&p.CampaignId,
+			&p.CountryCode,
+			&p.OperatorCode,
+			&p.Msisdn,
+			&p.Channel,
+		); err != nil {
+			DBErrors.Inc()
+
+			err = fmt.Errorf("Rows.Next: %s", err.Error())
+			return
+		}
+
+		records = append(records, p)
+	}
+	if rows.Err() != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("GetPeriodic RowsError: %s", err.Error())
+		return []Record{}, err
+	}
+	return
+}
+
+// get some periodics to send some content
+func GetLiveTodayPeriodicsForContent(batchLimit int) (records []Record, err error) {
+	begin := time.Now()
+	query := ""
+	defer func() {
+		defer func() {
+			fields := log.Fields{
+				"took":  time.Since(begin),
+				"query": query,
+			}
+			if err != nil {
+				fields["error"] = err.Error()
+				log.WithFields(fields).Error("load periodic failed")
+			} else {
+				fields["count"] = len(records)
+				log.WithFields(fields).Debug("load periodic")
+			}
+		}()
+	}()
+
+	todayDayName := strings.ToLower(time.Now().Format("Mon"))
+
 	query = fmt.Sprintf("SELECT "+
 		"id, "+
 		"sent_at, "+
@@ -790,7 +878,8 @@ func GetLiveTodayPeriodics(batchLimit int) (records []Record, err error) {
 		"id_campaign, "+
 		"country_code, "+
 		"operator_code, "+
-		"msisdn "+
+		"msisdn, "+
+		"channel "+
 		"FROM %ssubscriptions "+
 		"WHERE "+
 		// live and not processed today
@@ -816,12 +905,13 @@ func GetLiveTodayPeriodics(batchLimit int) (records []Record, err error) {
 		strconv.Itoa(batchLimit),
 	)
 
-	rows, err := dbConn.Query(query)
+	var rows *sql.Rows
+	rows, err = dbConn.Query(query)
 	if err != nil {
 		DBErrors.Inc()
 
 		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
-		return []Record{}, err
+		return
 	}
 	defer rows.Close()
 
@@ -837,20 +927,21 @@ func GetLiveTodayPeriodics(batchLimit int) (records []Record, err error) {
 			&p.CountryCode,
 			&p.OperatorCode,
 			&p.Msisdn,
+			&p.Channel,
 		); err != nil {
 			DBErrors.Inc()
 			return []Record{}, fmt.Errorf("Rows.Next: %s", err.Error())
 		}
 
-		periodics = append(periodics, p)
+		records = append(records, p)
 	}
 	if rows.Err() != nil {
 		DBErrors.Inc()
 
 		err = fmt.Errorf("GetPeriodic RowsError: %s", err.Error())
-		return []Record{}, err
+		return
 	}
-	return periodics, nil
+	return
 }
 
 func GetSubscriptionByToken(token string) (p Record, err error) {
@@ -889,17 +980,18 @@ func GetSubscriptionByToken(token string) (p Record, err error) {
 		conf.TablePrefix,
 	)
 
-	rows, err := dbConn.Query(query, token)
+	var rows *sql.Rows
+	rows, err = dbConn.Query(query, token)
 	if err != nil {
 		DBErrors.Inc()
 
 		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
-		return Record{}, err
+		return
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(
+		if err = rows.Scan(
 			&p.SubscriptionId,
 			&p.SentAt,
 			&p.Tid,
@@ -915,14 +1007,14 @@ func GetSubscriptionByToken(token string) (p Record, err error) {
 			&p.PaidHours,
 		); err != nil {
 			DBErrors.Inc()
-			return Record{}, fmt.Errorf("Rows.Next: %s", err.Error())
+			err = fmt.Errorf("Rows.Next: %s", err.Error())
+			return
 		}
 	}
 	if rows.Err() != nil {
 		DBErrors.Inc()
-
 		err = fmt.Errorf("GetPeriodic RowsError: %s", err.Error())
-		return Record{}, err
+		return
 	}
 	return p, nil
 }
@@ -981,8 +1073,11 @@ func GetSubscriptionByMsisdn(msisdn string) (p Record, err error) {
 		if err == sql.ErrNoRows {
 			return
 		}
+
 		DBErrors.Inc()
-		return Record{}, fmt.Errorf("Rows.Next: %s", err.Error())
+
+		err = fmt.Errorf("Rows.Next: %s", err.Error())
+		return
 	}
 	return p, nil
 }
@@ -1029,7 +1124,7 @@ func GetRetryByMsisdn(msisdn, status string) (r Record, err error) {
 		conf.TablePrefix,
 	)
 
-	if err := dbConn.QueryRow(query, msisdn, status).Scan(
+	if err = dbConn.QueryRow(query, msisdn, status).Scan(
 		&r.Msisdn,
 		&r.RetryId,
 		&r.Tid,
@@ -1045,10 +1140,11 @@ func GetRetryByMsisdn(msisdn, status string) (r Record, err error) {
 		&r.SubscriptionId,
 		&r.CampaignId,
 	); err != nil {
+		// do not change type of error, please, it's being checked further
 		if err != sql.ErrNoRows {
 			DBErrors.Inc()
 		}
-		return Record{}, err // do not change type of error, please, it's being checked further
+		return
 	}
 
 	return
@@ -1090,110 +1186,21 @@ func GetBufferPixelByCampaignId(campaignId int64) (r Record, err error) {
 		conf.TablePrefix,
 	)
 
-	if err := dbConn.QueryRow(query, campaignId).Scan(
+	if err = dbConn.QueryRow(query, campaignId).Scan(
 		&r.SentAt,
 		&r.ServiceId,
 		&r.CampaignId,
 		&r.Tid,
 		&r.Pixel,
 	); err != nil {
+		// do not change type of error, please, it's being checked further
 		if err != sql.ErrNoRows {
 			DBErrors.Inc()
 		}
-		return Record{}, err // do not change type of error, please, it's being checked further
+		return
 	}
 
 	return
-}
-
-func GetRepeatSentConsent(operatorCode int64, delayMinutes, batchLimit int) (records []Record, err error) {
-	begin := time.Now()
-	query := ""
-	defer func() {
-		defer func() {
-			fields := log.Fields{
-				"took":         time.Since(begin),
-				"query":        query,
-				"operatorCode": operatorCode,
-			}
-			if err != nil {
-				fields["error"] = err.Error()
-				log.WithFields(fields).Error("load sent consent repeat failed")
-			} else {
-				fields["count"] = len(records)
-				log.WithFields(fields).Debug("load sent consent repeat")
-			}
-		}()
-	}()
-
-	dayName := strings.ToLower(time.Now().Format("Mon"))
-
-	var periodics []Record
-	query = fmt.Sprintf("SELECT "+
-		"id, "+
-		"sent_at, "+
-		"tid , "+
-		"operator_token, "+
-		"price, "+
-		"id_service, "+
-		"id_campaign, "+
-		"country_code, "+
-		"operator_code, "+
-		"msisdn, "+
-		"retry_days, "+
-		"delay_hours, "+
-		"paid_hours "+
-		"FROM %ssubscriptions "+
-		"WHERE "+
-		"operator_code = $1 AND periodic = true AND "+
-		"( days ? '"+dayName+"' OR days ? 'any' ) AND "+
-		"result = 'consent' AND attempts_count = 0 AND "+
-		"updated_at < (CURRENT_TIMESTAMP -  %d * INTERVAL '1 minutes' ) "+
-		"ORDER BY last_pay_attempt_at ASC LIMIT %s",
-		conf.TablePrefix,
-		delayMinutes,
-		strconv.Itoa(batchLimit),
-	)
-
-	rows, err := dbConn.Query(query, operatorCode)
-	if err != nil {
-		DBErrors.Inc()
-
-		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
-		return []Record{}, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		p := Record{}
-		if err := rows.Scan(
-			&p.SubscriptionId,
-			&p.SentAt,
-			&p.Tid,
-			&p.OperatorToken,
-			&p.Price,
-			&p.ServiceId,
-			&p.CampaignId,
-			&p.OperatorCode,
-			&p.CountryCode,
-			&p.Msisdn,
-			&p.RetryDays,
-			&p.DelayHours,
-			&p.PaidHours,
-		); err != nil {
-			DBErrors.Inc()
-			return []Record{}, fmt.Errorf("rows.Scan: %s", err.Error())
-		}
-
-		periodics = append(periodics, p)
-	}
-	if rows.Err() != nil {
-		DBErrors.Inc()
-
-		err = fmt.Errorf("rows.Err: %s", err.Error())
-		return []Record{}, err
-	}
-	return periodics, nil
 }
 
 func GetNotSentPixels(hours, limit int) (records []Record, err error) {
