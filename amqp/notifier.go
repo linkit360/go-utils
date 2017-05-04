@@ -36,11 +36,11 @@ type ConnectionConfig struct {
 	Host string `yaml:"host" default:"localhost"`
 	Port string `yaml:"port" default:"5672"`
 }
+
 type NotifierConfig struct {
 	Conn           ConnectionConfig `yaml:"conn"`
 	ReconnectDelay int              `default:"10" yaml:"reconnect_delay"`
 	ChanCapacity   int64            `default:"1000000" yaml:"chan_capacity"`
-	BufferPath     string           `yaml:"pending_buffer_path"`
 }
 
 func NewNotifier(c NotifierConfig) *Notifier {

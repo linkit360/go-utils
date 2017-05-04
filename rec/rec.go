@@ -659,7 +659,7 @@ func GetPeriodicsSpecificTime(batchLimit, repeaIntervalMinutes int, intervalType
 			}
 			if err != nil {
 				fields["error"] = err.Error()
-				log.WithFields(fields).Error("load periodic failed")
+				log.WithFields(fields).Error("load periodic specific time failed")
 			} else {
 				fields["count"] = len(records)
 				log.WithFields(fields).Debug("load periodic")
@@ -690,7 +690,7 @@ func GetPeriodicsSpecificTime(batchLimit, repeaIntervalMinutes int, intervalType
 	query = fmt.Sprintf("SELECT "+
 		"id, "+
 		"sent_at, "+
-		"tid , "+
+		"tid, "+
 		"operator_token, "+
 		"price, "+
 		"id_service, "+
@@ -700,7 +700,7 @@ func GetPeriodicsSpecificTime(batchLimit, repeaIntervalMinutes int, intervalType
 		"msisdn, "+
 		"keep_days, "+
 		"delay_hours, "+
-		"paid_hours "+
+		"paid_hours, "+
 		"FROM %ssubscriptions "+
 		"WHERE "+
 		"periodic = true AND "+inSpecifiedTime+"AND ("+
@@ -716,10 +716,10 @@ func GetPeriodicsSpecificTime(batchLimit, repeaIntervalMinutes int, intervalType
 		"     last_pay_attempt_at < (CURRENT_TIMESTAMP -  %d * INTERVAL '1 minute' ) "+
 		"  ) "+
 		" )"+ // close inspecified time range AND
-		"ORDER BY last_pay_attempt_at ASC LIMIT %s", // get the last touched
+		"ORDER BY last_pay_attempt_at ASC LIMIT %d", // get the last touched
 		conf.TablePrefix,
 		repeaIntervalMinutes,
-		strconv.Itoa(batchLimit),
+		batchLimit,
 	)
 
 	rows, err := dbConn.Query(query)
@@ -775,7 +775,7 @@ func GetPeriodicsOnceADay(batchLimit int) (records []Record, err error) {
 			}
 			if err != nil {
 				fields["error"] = err.Error()
-				log.WithFields(fields).Error("load periodic failed")
+				log.WithFields(fields).Error("load periodic once a day failed")
 			} else {
 				fields["count"] = len(records)
 				log.WithFields(fields).Debug("load periodic")
@@ -803,9 +803,9 @@ func GetPeriodicsOnceADay(batchLimit int) (records []Record, err error) {
 		"   ( days ? '"+todayDayName+"' OR days ? 'any' ) AND "+
 		"  result NOT IN ('rejected', 'canceled', 'postpaid', 'pending' ) AND "+
 		"  last_pay_attempt_at < (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) "+
-		"ORDER BY last_pay_attempt_at ASC LIMIT %s", // get the last touched
+		"ORDER BY last_pay_attempt_at ASC LIMIT %d", // get the last touched
 		conf.TablePrefix,
-		strconv.Itoa(batchLimit),
+		batchLimit,
 	)
 
 	rows, err := dbConn.Query(query)
@@ -861,7 +861,8 @@ func GetLiveTodayPeriodicsForContent(batchLimit int) (records []Record, err erro
 			}
 			if err != nil {
 				fields["error"] = err.Error()
-				log.WithFields(fields).Error("load periodic failed")
+				fields["limit"] = batchLimit
+				log.WithFields(fields).Error("load periodic for content failed")
 			} else {
 				fields["count"] = len(records)
 				log.WithFields(fields).Debug("load periodic")
@@ -892,19 +893,20 @@ func GetLiveTodayPeriodicsForContent(batchLimit int) (records []Record, err erro
 		") AND "+
 		// havent sent content yet (it deletes if opened)
 		" id NOT IN ("+
-		"	SELECT DISTINCT id_subscription FROM %content_unique_urls "+
+		"	SELECT DISTINCT id_subscription FROM %scontent_unique_urls "+
 		"	WHERE sent_at > (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) "+
 		"   )"+
 		"AND "+
 		// havent opened content yet
 		" id NOT IN ("+
-		"	SELECT DISTINCT id_subscription FROM %content_sent "+
+		"	SELECT DISTINCT id_subscription FROM %scontent_sent "+
 		"	WHERE sent_at > (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) "+
 		"   )"+
-		"ORDER BY last_pay_attempt_at ASC LIMIT %s", // get the last touched
+		"ORDER BY last_pay_attempt_at ASC LIMIT %d", // get the last touchedz
 		conf.TablePrefix,
 		conf.TablePrefix,
-		strconv.Itoa(batchLimit),
+		conf.TablePrefix,
+		batchLimit,
 	)
 
 	var rows *sql.Rows
