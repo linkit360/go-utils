@@ -81,12 +81,16 @@ func Init(dbC db.DataBaseConfig) {
 	AddNewSubscriptionDuration = m.NewSummary("subscription_add_to_db_duration_seconds", "new subscription add duration")
 }
 
-func GenerateTID(msisdn ...string) string {
+func GenerateTID(msisdn_optional ...string) string {
 	u4, err := uuid.NewV4()
 	if err != nil {
 		log.WithField("error", err.Error()).Error("generate uniq id")
 	}
-	tid := fmt.Sprintf("%s-%d-%s", msisdn, time.Now().Unix(), u4)
+	msisdn := ""
+	if len(msisdn_optional) > 0 {
+		msisdn = msisdn_optional[0] + "-"
+	}
+	tid := fmt.Sprintf(msisdn+"%d-%s", time.Now().Unix(), u4)
 	log.WithField("tid", tid).Debug("generated tid")
 	return tid
 }
