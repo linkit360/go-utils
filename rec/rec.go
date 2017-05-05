@@ -356,12 +356,13 @@ func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (rec
 }
 
 type ActiveSubscription struct {
-	Id         int64
-	CreatedAt  time.Time
-	Msisdn     string
-	ServiceId  int64
-	CampaignId int64
-	RetryDays  int
+	Id            int64
+	CreatedAt     time.Time
+	Msisdn        string
+	ServiceId     int64
+	CampaignId    int64
+	RetryDays     int
+	AttemptsCount int
 }
 
 func LoadActiveSubscriptions() (records []ActiveSubscription, err error) {
@@ -387,6 +388,7 @@ func LoadActiveSubscriptions() (records []ActiveSubscription, err error) {
 		"id_service, "+
 		"id_campaign, "+
 		"retry_days, "+
+		"attempts_count,"+
 		"created_at "+
 		"FROM %ssubscriptions "+
 		"WHERE "+
@@ -413,6 +415,7 @@ func LoadActiveSubscriptions() (records []ActiveSubscription, err error) {
 			&p.ServiceId,
 			&p.CampaignId,
 			&p.RetryDays,
+			&p.AttemptsCount,
 			&p.CreatedAt,
 		); err != nil {
 			DBErrors.Inc()
@@ -1056,6 +1059,7 @@ func GetSubscriptionByMsisdn(msisdn string) (p Record, err error) {
 		"operator_code, "+
 		"msisdn, "+
 		"retry_days, "+
+		"attempts_count, "+
 		"delay_hours, "+
 		"paid_hours "+
 		"FROM %ssubscriptions "+
@@ -1075,6 +1079,7 @@ func GetSubscriptionByMsisdn(msisdn string) (p Record, err error) {
 		&p.CountryCode,
 		&p.Msisdn,
 		&p.RetryDays,
+		&p.AttemptsCount,
 		&p.DelayHours,
 		&p.PaidHours,
 	); err != nil {
