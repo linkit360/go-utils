@@ -67,7 +67,7 @@ func NewNotifier(c NotifierConfig) *Notifier {
 
 func (n *Notifier) Publish(msg AMQPMessage) {
 	if msg.QueueName == "" {
-		log.Error("empty queue name")
+		log.WithField("event", msg.EventName).Fatal("empty queue name")
 	}
 	n.publishCh <- msg
 }
