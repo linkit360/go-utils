@@ -11,8 +11,6 @@ import (
 	"github.com/nu7hatch/gouuid"
 	"github.com/prometheus/client_golang/prometheus"
 
-	reporter_client "github.com/linkit360/go-reporter/rpcclient"
-	reporter_collector "github.com/linkit360/go-reporter/server/src/collector"
 	"github.com/linkit360/go-utils/db"
 	m "github.com/linkit360/go-utils/metrics"
 )
@@ -203,9 +201,9 @@ func SetSubscriptionStatus(status string, id int64) (err error) {
 	begin := time.Now()
 	defer func() {
 		fields := log.Fields{
-			"status": status,
-			"id":     id,
-			"took":   time.Since(begin),
+			"status":          status,
+			"subscription_id": id,
+			"took":            time.Since(begin),
 		}
 		if err != nil {
 			fields["error"] = err.Error()
@@ -443,32 +441,35 @@ type HistoryCache struct {
 	SentAt         time.Time
 }
 
-func GetCountOfFailedChargesFor(msisdn string, serviceId int64, lastDays int) (count int, err error) {
+func GetCountOfFailedChargesFor(msisdn, tid string, subscriptionId int64, lastDays int) (count int, err error) {
 	begin := time.Now()
 	defer func() {
 		defer func() {
 			fields := log.Fields{
-				"took": time.Since(begin),
+				"subscription_id": subscriptionId,
+				"msisdn":          msisdn,
+				"tid":             tid,
+				"took":            time.Since(begin),
 			}
 			if err != nil {
 				fields["error"] = err.Error()
 				log.WithFields(fields).Error("load count of failed charges failed")
 			} else {
 				fields["count"] = count
-				log.WithFields(fields).Debug("load count of failed charges ")
+				log.WithFields(fields).Debug("load count of failed charges")
 			}
 		}()
 	}()
 
 	// charge try is once in a day
 	query := fmt.Sprintf("SELECT count(*) FROM %stransactions "+
-		"WHERE msisdn = $1 AND id_service = $2 AND result = 'failed' AND "+
+		"WHERE msisdn = $1 AND id_subscription = $2 AND result = 'failed' AND "+
 		"sent_at > CURRENT_TIMESTAMP - %d * INTERVAL '1 day'",
 		conf.TablePrefix,
 		lastDays,
 	)
 
-	if err = dbConn.QueryRow(query, msisdn, serviceId).Scan(&count); err != nil {
+	if err = dbConn.QueryRow(query, msisdn, subscriptionId).Scan(&count); err != nil {
 		DBErrors.Inc()
 
 		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
@@ -490,7 +491,7 @@ func GetCountOfDownloadedContent(subscriptionId int64) (count int, err error) {
 				log.WithFields(fields).Error("load count of downloaded content failed")
 			} else {
 				fields["count"] = count
-				log.WithFields(fields).Debug("load count of downloaded content ")
+				log.WithFields(fields).Debug("load count of downloaded content")
 			}
 		}()
 	}()
@@ -643,12 +644,6 @@ func AddNewSubscriptionToDB(r *Record) error {
 		"camoaign_id": r.CampaignId,
 		"took":        time.Since(begin).Seconds(),
 	}).Info("added new subscription")
-
-	reporter_client.IncMO(reporter_collector.Collect{
-		CampaignId:   r.CampaignId,
-		OperatorCode: r.OperatorCode,
-		Msisdn:       r.Msisdn,
-	})
 	return nil
 }
 
