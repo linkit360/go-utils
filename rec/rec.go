@@ -215,8 +215,7 @@ func SetSubscriptionStatus(status string, id int64) (err error) {
 
 	query := fmt.Sprintf("UPDATE %ssubscriptions SET "+
 		"result = $1, "+
-		"updated_at = $2, "+
-		"attempts_count = attempts_count + 1 "+ // for retry sent consent
+		"updated_at = $2 "+
 		"WHERE id = $3",
 		conf.TablePrefix,
 	)
@@ -798,6 +797,7 @@ func GetPeriodicsOnceADay(batchLimit int) (records []Record, err error) {
 		"country_code, "+
 		"operator_code, "+
 		"msisdn, "+
+		"attempts_count, "+
 		"channel "+
 		"FROM %ssubscriptions "+
 		"WHERE "+
@@ -832,6 +832,7 @@ func GetPeriodicsOnceADay(batchLimit int) (records []Record, err error) {
 			&p.CountryCode,
 			&p.OperatorCode,
 			&p.Msisdn,
+			&p.AttemptsCount,
 			&p.Channel,
 		); err != nil {
 			DBErrors.Inc()
