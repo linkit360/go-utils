@@ -50,6 +50,7 @@ type Record struct {
 	PeriodicAllowedFromHours int       `json:"allowed_from,omitempty"`
 	PeriodicAllowedToHours   int       `json:"allowed_to,omitempty"`
 	Channel                  string    `json:"channel,omitempty"`
+	OutFlowReason            string    `json:"outflow_reason"`
 }
 
 func (r Record) TransactionOnly() bool {
@@ -1190,7 +1191,7 @@ func GetBufferPixelByCampaignId(campaignId int64) (r Record, err error) {
 		"FROM %spixel_buffer "+
 		"WHERE "+
 		" id_campaign = $1 "+
-		" ORDER BY id "+
+		" ORDER BY id DESC"+
 		" LIMIT 1", // get the oldest retry
 		conf.TablePrefix,
 	)
