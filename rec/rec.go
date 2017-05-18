@@ -25,23 +25,22 @@ type Record struct {
 	SubscriptionStatus       string    `json:"subscription_status,omitempty"`
 	OperatorCode             int64     `json:"operator_code,omitempty"`
 	CountryCode              int64     `json:"country_code,omitempty"`
-	ServiceId                int64     `json:"service_id,omitempty"`
+	ServiceCode              string    `json:"service_code,omitempty"`
+	CampaignCode             string    `json:"campaign_code,omitempty"`
 	SubscriptionId           int64     `json:"subscription_id,omitempty"`
-	CampaignId               int64     `json:"campaign_id,omitempty"`
 	RetryId                  int64     `json:"retry_id,omitempty"`
 	SentAt                   time.Time `json:"sent_at,omitempty"`
 	CreatedAt                time.Time `json:"created_at,omitempty"`
 	LastPayAttemptAt         time.Time `json:"last_pay_attempt_at,omitempty"`
 	AttemptsCount            int       `json:"attempts_count,omitempty"`
-	RetryDays                int       `json:"retry_days,omitempty"`
-	DelayHours               int       `json:"delay_hours,omitempty"`
-	PaidHours                int       `json:"paid_hours,omitempty"`
 	OperatorName             string    `json:"operator_name,omitempty"`
 	OperatorToken            string    `json:"operator_token,omitempty"`
 	OperatorErr              string    `json:"opertor_err,omitempty"`
-	Notice                   string    `json:"notice,omitempty"`
 	Paid                     bool      `json:"paid,omitempty"`
 	Price                    int       `json:"price,omitempty"`
+	RetryDays                int       `json:"retry_days,omitempty"`
+	DelayHours               int       `json:"delay_hours,omitempty"`
+	PaidHours                int       `json:"paid_hours,omitempty"`
 	Pixel                    string    `json:"pixel,omitempty"`
 	Publisher                string    `json:"publisher,omitempty"`
 	SMSText                  string    `json:"sms_text,omitempty"`
@@ -176,9 +175,9 @@ func GetRetryTransactions(operatorCode int64, batchLimit int, paidOnceHours int)
 			&record.Price,
 			&record.OperatorCode,
 			&record.CountryCode,
-			&record.ServiceId,
+			&record.ServiceCode,
 			&record.SubscriptionId,
-			&record.CampaignId,
+			&record.CampaignCode,
 		); err != nil {
 			DBErrors.Inc()
 			return []Record{}, fmt.Errorf("Rows.Next: %s", err.Error())
@@ -194,6 +193,7 @@ func GetRetryTransactions(operatorCode int64, batchLimit int, paidOnceHours int)
 	}
 	return retries, nil
 }
+
 func SetSubscriptionStatus(status string, id int64) (err error) {
 	if id == 0 {
 		log.WithFields(log.Fields{"error": "no subscription id"}).Error("set periodic status")
@@ -332,9 +332,9 @@ func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (rec
 			&record.Price,
 			&record.OperatorCode,
 			&record.CountryCode,
-			&record.ServiceId,
+			&record.ServiceCode,
 			&record.SubscriptionId,
-			&record.CampaignId,
+			&record.CampaignCode,
 		); err != nil {
 			DBErrors.Inc()
 
@@ -357,8 +357,8 @@ type ActiveSubscription struct {
 	Id            int64
 	CreatedAt     time.Time
 	Msisdn        string
-	ServiceId     int64
-	CampaignId    int64
+	ServiceCode   string
+	CampaignCode  string
 	RetryDays     int
 	AttemptsCount int
 }
@@ -410,8 +410,8 @@ func LoadActiveSubscriptions() (records []ActiveSubscription, err error) {
 		if err := rows.Scan(
 			&p.Id,
 			&p.Msisdn,
-			&p.ServiceId,
-			&p.CampaignId,
+			&p.ServiceCode,
+			&p.CampaignCode,
 			&p.RetryDays,
 			&p.AttemptsCount,
 			&p.CreatedAt,
@@ -533,16 +533,16 @@ func AddNewSubscriptionToDB(r *Record) error {
 	if r.PeriodicDays == "" {
 		r.PeriodicDays = "[]"
 	}
-	if r.CampaignId == 0 {
+	if r.CampaignCode == "" {
 		log.WithFields(log.Fields{
 			"tid": r.Tid,
-		}).Warn("no campaign id")
+		}).Warn("no campaign code")
 		Warn.Inc()
 	}
-	if r.ServiceId == 0 {
+	if r.ServiceCode == "" {
 		log.WithFields(log.Fields{
 			"tid": r.Tid,
-		}).Warn("no service id")
+		}).Warn("no service code")
 		Warn.Inc()
 	}
 	if r.DelayHours == 0 {
@@ -606,8 +606,8 @@ func AddNewSubscriptionToDB(r *Record) error {
 	if err := dbConn.QueryRow(query,
 		r.SentAt,
 		"",
-		r.CampaignId,
-		r.ServiceId,
+		r.CampaignCode,
+		r.ServiceCode,
 		r.Msisdn,
 		r.Channel,
 		r.Publisher,
@@ -640,8 +640,8 @@ func AddNewSubscriptionToDB(r *Record) error {
 	log.WithFields(log.Fields{
 		"tid":         r.Tid,
 		"id":          r.SubscriptionId,
-		"service_id":  r.ServiceId,
-		"camoaign_id": r.CampaignId,
+		"service_id":  r.ServiceCode,
+		"camoaign_id": r.CampaignCode,
 		"took":        time.Since(begin).Seconds(),
 	}).Info("added new subscription")
 	return nil
@@ -741,8 +741,8 @@ func GetPeriodicsSpecificTime(batchLimit, repeaIntervalMinutes int, intervalType
 			&p.Tid,
 			&p.OperatorToken,
 			&p.Price,
-			&p.ServiceId,
-			&p.CampaignId,
+			&p.ServiceCode,
+			&p.CampaignCode,
 			&p.CountryCode,
 			&p.OperatorCode,
 			&p.Msisdn,
@@ -828,8 +828,8 @@ func GetPeriodicsOnceADay(batchLimit int) (records []Record, err error) {
 			&p.Tid,
 			&p.OperatorToken,
 			&p.Price,
-			&p.ServiceId,
-			&p.CampaignId,
+			&p.ServiceCode,
+			&p.CampaignCode,
 			&p.CountryCode,
 			&p.OperatorCode,
 			&p.Msisdn,
@@ -930,8 +930,8 @@ func GetLiveTodayPeriodicsForContent(batchLimit int) (records []Record, err erro
 			&p.SentAt,
 			&p.Tid,
 			&p.Price,
-			&p.ServiceId,
-			&p.CampaignId,
+			&p.ServiceCode,
+			&p.CampaignCode,
 			&p.CountryCode,
 			&p.OperatorCode,
 			&p.Msisdn,
@@ -1005,8 +1005,8 @@ func GetSubscriptionByToken(token string) (p Record, err error) {
 			&p.Tid,
 			&p.OperatorToken,
 			&p.Price,
-			&p.ServiceId,
-			&p.CampaignId,
+			&p.ServiceCode,
+			&p.CampaignCode,
 			&p.CountryCode,
 			&p.OperatorCode,
 			&p.Msisdn,
@@ -1070,8 +1070,8 @@ func GetSubscriptionByMsisdn(msisdn string) (p Record, err error) {
 		&p.Tid,
 		&p.OperatorToken,
 		&p.Price,
-		&p.ServiceId,
-		&p.CampaignId,
+		&p.ServiceCode,
+		&p.CampaignCode,
 		&p.OperatorCode,
 		&p.CountryCode,
 		&p.Msisdn,
@@ -1146,9 +1146,9 @@ func GetRetryByMsisdn(msisdn, status string) (r Record, err error) {
 		&r.Price,
 		&r.OperatorCode,
 		&r.CountryCode,
-		&r.ServiceId,
+		&r.ServiceCode,
 		&r.SubscriptionId,
-		&r.CampaignId,
+		&r.CampaignCode,
 	); err != nil {
 		// do not change type of error, please, it's being checked further
 		if err != sql.ErrNoRows {
@@ -1160,13 +1160,13 @@ func GetRetryByMsisdn(msisdn, status string) (r Record, err error) {
 	return
 }
 
-func GetBufferPixelByCampaignId(campaignId int64) (r Record, err error) {
+func GetBufferPixelByCampaignCode(campaigCode string) (r Record, err error) {
 	begin := time.Now()
 	defer func() {
 		defer func() {
 			fields := log.Fields{
-				"campaign_id": campaignId,
-				"took":        time.Since(begin),
+				"campaign_code": campaigCode,
+				"took":          time.Since(begin),
 			}
 			if err != nil {
 				fields["error"] = err.Error()
@@ -1196,10 +1196,10 @@ func GetBufferPixelByCampaignId(campaignId int64) (r Record, err error) {
 		conf.TablePrefix,
 	)
 
-	if err = dbConn.QueryRow(query, campaignId).Scan(
+	if err = dbConn.QueryRow(query, campaigCode).Scan(
 		&r.SentAt,
-		&r.ServiceId,
-		&r.CampaignId,
+		&r.ServiceCode,
+		&r.CampaignCode,
 		&r.Tid,
 		&r.Pixel,
 	); err != nil {
@@ -1270,7 +1270,7 @@ func GetNotSentPixels(hours, limit int) (records []Record, err error) {
 		if err = rows.Scan(
 			&record.Tid,
 			&record.Msisdn,
-			&record.CampaignId,
+			&record.CampaignCode,
 			&record.SubscriptionId,
 			&record.OperatorCode,
 			&record.CountryCode,
