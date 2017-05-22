@@ -5,7 +5,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-var VersionName = "1.7.16"
+var VersionName = "1.8.0"
 
 func AddHandler(r *gin.Engine) {
 	_ = r.Group("/metrics").GET("", Version, gin.WrapH(prometheus.Handler()))
