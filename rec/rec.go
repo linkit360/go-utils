@@ -435,7 +435,7 @@ func LoadActiveSubscriptions() (records []ActiveSubscription, err error) {
 
 type HistoryCache struct {
 	Msisdn         string
-	ServiceId      int64
+	ServiceCode    string
 	SubscriptionId int64
 	RetryDays      int
 	SentAt         time.Time
@@ -534,12 +534,14 @@ func AddNewSubscriptionToDB(r *Record) error {
 		r.PeriodicDays = "[]"
 	}
 	if r.CampaignCode == "" {
+		r.CampaignCode = "0"
 		log.WithFields(log.Fields{
 			"tid": r.Tid,
 		}).Warn("no campaign code")
 		Warn.Inc()
 	}
 	if r.ServiceCode == "" {
+		r.ServiceCode = "0"
 		log.WithFields(log.Fields{
 			"tid": r.Tid,
 		}).Warn("no service code")
