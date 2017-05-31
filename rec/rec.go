@@ -89,7 +89,6 @@ func GenerateTID(msisdn_optional ...string) string {
 		msisdn = msisdn_optional[0] + "-"
 	}
 	tid := fmt.Sprintf(msisdn+"%d-%s", time.Now().Unix(), u4)
-	log.WithField("tid", tid).Debug("generated tid")
 	return tid
 }
 

@@ -20,14 +20,14 @@ func AddCQRHandler(allReload func(c *gin.Context), r *gin.Engine) {
 	rg.GET("", allReload)
 }
 
-type InMemIf interface {
+type ReloadInterface interface {
 	Reload() error
 }
 
 type CQRConfig struct {
 	Enabled bool
 	Tables  []string
-	Data    InMemIf
+	Data    ReloadInterface
 	WebHook string
 }
 
