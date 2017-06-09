@@ -550,19 +550,16 @@ func AddNewSubscriptionToDB(r *Record) error {
 		log.WithFields(log.Fields{
 			"tid": r.Tid,
 		}).Warn("no delay hours")
-		Warn.Inc()
 	}
 	if r.RetryDays == 0 {
 		log.WithFields(log.Fields{
 			"tid": r.Tid,
 		}).Warn("no keep days")
-		Warn.Inc()
 	}
 	if r.PaidHours == 0 {
 		log.WithFields(log.Fields{
 			"tid": r.Tid,
 		}).Warn("no paid hours")
-		Warn.Inc()
 	}
 	if r.OperatorCode == 0 {
 		log.WithFields(log.Fields{
