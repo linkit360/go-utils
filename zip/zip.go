@@ -12,17 +12,17 @@ import (
 )
 
 // unzip(bytes, size, "/tmp/xxx/")
-func Unzip(zipBytes []byte, contentLength int64, target string) error {
+func Unzip(zipBytes []byte, contentLength int64, target string) (fileList []string, err error) {
 
-	if err := os.MkdirAll(target, 0755); err != nil {
+	if err = os.MkdirAll(target, 0755); err != nil {
 		err = fmt.Errorf("file: %s, os.MkdirAll: %s", target, err.Error())
-		return err
+		return
 	}
 
 	reader, err := zip.NewReader(bytes.NewReader(zipBytes), contentLength)
 	if err != nil {
 		err = fmt.Errorf("zip.NewReader: %s", err.Error())
-		return err
+		return
 	}
 
 	for _, file := range reader.File {
@@ -38,9 +38,9 @@ func Unzip(zipBytes []byte, contentLength int64, target string) error {
 		}
 
 		if file.FileInfo().IsDir() || flagNeedCreateDir {
-			if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+			if err = os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 				err = fmt.Errorf("File: %s, unzip path: %s, os.MkdirAll: %s", file.Name, path, err.Error())
-				return err
+				return
 			}
 			log.WithFields(log.Fields{
 				"dir":      filepath.Dir(path),
@@ -48,28 +48,31 @@ func Unzip(zipBytes []byte, contentLength int64, target string) error {
 			}).Debug("create dir")
 		}
 
-		fileReader, err := file.Open()
+		var fileReader io.ReadCloser
+		fileReader, err = file.Open()
 		if err != nil {
 			err = fmt.Errorf("name: %s, file.Open: %s", file.Name, err.Error())
-			return err
+			return
 		}
 		defer fileReader.Close()
 		//log.WithFields(log.Fields{}).Debug("file opened")
 
-		targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
+		var targetFile *os.File
+		targetFile, err = os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
 		if err != nil {
 			err = fmt.Errorf("name: %s, file.OpenFile: %s", file.Name, err.Error())
-			return err
+			return
 		}
 		defer targetFile.Close()
 
 		//log.WithFields(log.Fields{}).Debug("prepare to copy")
-		if _, err := io.Copy(targetFile, fileReader); err != nil {
+		if _, err = io.Copy(targetFile, fileReader); err != nil {
 			err = fmt.Errorf("name: %s, io.Copy: %s", file.Name, err.Error())
-			return err
+			return
 		}
 		//log.WithFields(log.Fields{}).Debug("copied")
+		fileList = append(fileList, path)
 	}
 
-	return nil
+	return
 }
