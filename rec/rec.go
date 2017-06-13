@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/nu7hatch/gouuid"
 	"github.com/prometheus/client_golang/prometheus"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/linkit360/go-utils/db"
 	m "github.com/linkit360/go-utils/metrics"

@@ -6,8 +6,8 @@ import (
 	_ "github.com/lib/pq"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/jinzhu/configor"
+	log "github.com/sirupsen/logrus"
 )
 
 type DataBaseConfig struct {

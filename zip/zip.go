@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 // unzip(bytes, size, "/tmp/xxx/")
