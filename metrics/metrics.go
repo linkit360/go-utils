@@ -5,7 +5,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-var VersionName = "1.8.3"
+var VersionName = "1.8.4"
 
 func AddHandler(r *gin.Engine) {
 	_ = r.Group("/metrics").GET("", Version, gin.WrapH(prometheus.Handler()))
@@ -23,6 +23,7 @@ type Gauge struct {
 func (g *Gauge) Inc() {
 	g.counter++
 }
+
 func (g *Gauge) Update() {
 	g.gauge.Set(float64(g.counter))
 	g.counter = 0

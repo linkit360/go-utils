@@ -3,6 +3,7 @@ package aws
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"time"
@@ -23,15 +24,17 @@ type S3 interface {
 }
 
 type s3downloader struct {
+	s3   *s3.S3
 	s3dl *s3manager.Downloader
 	conf Config
 }
 
 type Config struct {
-	Region          string        `yaml:"region"`
-	Id              string        `yaml:"access_key_id"`
-	Secret          string        `yaml:"secret_access_key"`
-	DownloadTimeout time.Duration `yaml:"download_timeout" default:"2m"` // 2 minutes
+	Region              string        `yaml:"region"`
+	Id                  string        `yaml:"access_key_id"`
+	Secret              string        `yaml:"secret_access_key"`
+	DownloadTimeout     time.Duration `yaml:"download_timeout"`                 // 2 minutes
+	DownloadConcurrency int           `yaml:"download_concurrency" default:"1"` // 2 minutes
 }
 
 func New(s3Conf Config) S3 {
@@ -47,8 +50,17 @@ func New(s3Conf Config) S3 {
 	}
 
 	s3dl := &s3downloader{
-		s3dl: s3manager.NewDownloader(sess),
+		s3: s3.New(sess),
+		s3dl: s3manager.NewDownloader(sess, func(d *s3manager.Downloader) {
+			//d.PartSize = 2 * 1024 * 1024 // 2MB per part
+			d.PartSize = 1024 * 1024 // 1MB per part
+			d.Concurrency = s3Conf.DownloadConcurrency
+		}),
+		conf: s3Conf,
 	}
+	log.WithFields(log.Fields{
+		"concurrrency": s3dl.s3dl.Concurrency,
+	}).Info("aws init ok")
 	return s3dl
 }
 
@@ -63,7 +75,7 @@ func (s *s3downloader) ShouldDownload(path string, reloadIfExists bool) (bool, e
 	if err != nil {
 		log.WithFields(log.Fields{
 			"error": err.Error(),
-		}).Error("campaign stat is nok, try to cleanup")
+		}).Error("stat is nok, try to cleanup")
 
 		if err = os.RemoveAll(path); err != nil {
 			err = fmt.Errorf("os.RemoveAll: %s", err.Error())
@@ -121,9 +133,14 @@ func (s *s3downloader) Download(bucket, key string) (content []byte, contentLeng
 	// Ensure the context is canceled to prevent leaking.
 	// See context package for more information, https://golang.org/pkg/context/
 	defer cancelFn()
-	buff := &aws.WriteAtBuffer{}
 
-	contentLength, err = s.s3dl.DownloadWithContext(ctx, buff, &s3.GetObjectInput{
+	//buff := &aws.WriteAtBuffer{}
+	//contentLength, err = s.s3dl.DownloadWithContext(ctx, buff, &s3.GetObjectInput{
+	//	Bucket: aws.String(bucket),
+	//	Key:    aws.String(key),
+	//})
+	//
+	result, err := s.s3.GetObjectWithContext(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
 	})
@@ -153,7 +170,25 @@ func (s *s3downloader) Download(bucket, key string) (content []byte, contentLeng
 		}
 		return
 	}
-	content = buff.Bytes()
 
-	return
+	defer result.Body.Close()
+	//content = buff.Bytes()
+	contentLength = *result.ContentLength
+
+	content, err = ioutil.ReadAll(result.Body)
+	if err != nil {
+		err = fmt.Errorf("result.Body.Read: %s", err.Error())
+		log.WithFields(log.Fields{
+			"key":   key,
+			"error": err.Error(),
+		}).Error("failed to download object")
+		return
+	}
+
+	log.WithFields(log.Fields{
+		"content_len": len(content),
+		"len":         contentLength,
+		"timeout":     s.conf.DownloadTimeout,
+	}).Info("download done")
+	return content, contentLength, nil
 }

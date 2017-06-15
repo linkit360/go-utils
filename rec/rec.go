@@ -636,11 +636,11 @@ func AddNewSubscriptionToDB(r *Record) error {
 	}
 	AddNewSubscriptionDuration.Observe(time.Since(begin).Seconds())
 	log.WithFields(log.Fields{
-		"tid":         r.Tid,
-		"id":          r.SubscriptionId,
-		"service_id":  r.ServiceCode,
-		"camoaign_id": r.CampaignCode,
-		"took":        time.Since(begin).Seconds(),
+		"tid":           r.Tid,
+		"id":            r.SubscriptionId,
+		"service_id":    r.ServiceCode,
+		"camoaign_code": r.CampaignCode,
+		"took":          time.Since(begin).Seconds(),
 	}).Info("added new subscription")
 	return nil
 }
@@ -1034,7 +1034,11 @@ func GetSubscriptionByMsisdn(msisdn string) (p Record, err error) {
 				"msisdn": msisdn,
 			}
 			if err != nil {
-				fields["error"] = err.Error()
+				if err == sql.ErrNoRows {
+					fields["reason"] = err.Error()
+				} else {
+					fields["error"] = err.Error()
+				}
 				log.WithFields(fields).Error("get subscription by msisdn failed")
 			} else {
 				log.WithFields(fields).Debug("get subscription by msisdn")
