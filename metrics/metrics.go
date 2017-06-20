@@ -9,6 +9,7 @@ var VersionName = "1.8.4"
 
 func AddHandler(r *gin.Engine) {
 	_ = r.Group("/metrics").GET("", Version, gin.WrapH(prometheus.Handler()))
+	_ = r.Group("/metrics").HEAD("", Version) // for bot online
 }
 
 func Version(c *gin.Context) {
@@ -28,6 +29,7 @@ func (g *Gauge) Update() {
 	g.gauge.Set(float64(g.counter))
 	g.counter = 0
 }
+
 func NewGauge(namespace, subsystem, name, help string) Gauge {
 	g := Gauge{}
 	g.gauge = PrometheusGauge(namespace, subsystem, name, help)

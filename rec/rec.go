@@ -801,7 +801,7 @@ func GetPeriodicsOnceADay(batchLimit int) (records []Record, err error) {
 		"FROM %ssubscriptions "+
 		"WHERE "+
 		// paid and not paid - not processed today
-		"   ( days ? '"+todayDayName+"' OR days ? 'any' ) AND "+
+		"   ( days ? '"+todayDayName+"' OR days ? 'any' ) AND periodic = true AND "+
 		"  result NOT IN ('rejected', 'canceled', 'postpaid', 'pending' ) AND "+
 		"  last_pay_attempt_at < (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) "+
 		"ORDER BY last_pay_attempt_at ASC LIMIT %d", // get the last touched
@@ -1169,16 +1169,16 @@ func GetBufferPixelByCampaignCode(campaigCode string) (r Record, err error) {
 			fields := log.Fields{
 				"campaign_code": campaigCode,
 				"took":          time.Since(begin),
+				"tid":           r.Tid,
 			}
 			if err != nil {
 				fields["error"] = err.Error()
 				if err == sql.ErrNoRows {
-					log.WithFields(fields).Warn("load buffer pixel failed")
+					log.WithFields(fields).Warn("no rows")
 				} else {
 					log.WithFields(fields).Error("load buffer pixel failed")
 				}
 			} else {
-				fields["tid"] = r.Tid
 				log.WithFields(fields).Debug("loaded buffer pixel")
 			}
 		}()

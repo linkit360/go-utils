@@ -14,7 +14,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -25,16 +24,14 @@ type S3 interface {
 
 type s3downloader struct {
 	s3   *s3.S3
-	s3dl *s3manager.Downloader
 	conf Config
 }
 
 type Config struct {
-	Region              string        `yaml:"region"`
-	Id                  string        `yaml:"access_key_id"`
-	Secret              string        `yaml:"secret_access_key"`
-	DownloadTimeout     time.Duration `yaml:"download_timeout"`                 // 2 minutes
-	DownloadConcurrency int           `yaml:"download_concurrency" default:"1"` // 2 minutes
+	Region          string        `yaml:"region"`
+	Id              string        `yaml:"access_key_id"`
+	Secret          string        `yaml:"secret_access_key"`
+	DownloadTimeout time.Duration `yaml:"download_timeout"` // 2 minutes
 }
 
 func New(s3Conf Config) S3 {
@@ -50,17 +47,10 @@ func New(s3Conf Config) S3 {
 	}
 
 	s3dl := &s3downloader{
-		s3: s3.New(sess),
-		s3dl: s3manager.NewDownloader(sess, func(d *s3manager.Downloader) {
-			//d.PartSize = 2 * 1024 * 1024 // 2MB per part
-			d.PartSize = 1024 * 1024 // 1MB per part
-			d.Concurrency = s3Conf.DownloadConcurrency
-		}),
+		s3:   s3.New(sess),
 		conf: s3Conf,
 	}
-	log.WithFields(log.Fields{
-		"concurrrency": s3dl.s3dl.Concurrency,
-	}).Info("aws init ok")
+	log.WithFields(log.Fields{}).Info("aws init ok")
 	return s3dl
 }
 
@@ -134,12 +124,6 @@ func (s *s3downloader) Download(bucket, key string) (content []byte, contentLeng
 	// See context package for more information, https://golang.org/pkg/context/
 	defer cancelFn()
 
-	//buff := &aws.WriteAtBuffer{}
-	//contentLength, err = s.s3dl.DownloadWithContext(ctx, buff, &s3.GetObjectInput{
-	//	Bucket: aws.String(bucket),
-	//	Key:    aws.String(key),
-	//})
-	//
 	result, err := s.s3.GetObjectWithContext(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
@@ -172,7 +156,6 @@ func (s *s3downloader) Download(bucket, key string) (content []byte, contentLeng
 	}
 
 	defer result.Body.Close()
-	//content = buff.Bytes()
 	contentLength = *result.ContentLength
 
 	content, err = ioutil.ReadAll(result.Body)
