@@ -41,6 +41,7 @@ type Record struct {
 	RetryDays                int       `json:"retry_days,omitempty"`
 	DelayHours               int       `json:"delay_hours,omitempty"`
 	PaidHours                int       `json:"paid_hours,omitempty"`
+	TrialDays                int       `json:"trial_days,omitempty"`
 	Pixel                    string    `json:"pixel,omitempty"`
 	Publisher                string    `json:"publisher,omitempty"`
 	SMSText                  string    `json:"sms_text,omitempty"`
@@ -590,13 +591,14 @@ func AddNewSubscriptionToDB(r *Record) error {
 		"paid_hours, "+
 		"delay_hours, "+
 		"retry_days, "+
+		"trial_days, "+
 		"price, "+
 		"periodic, "+
 		"days,"+
 		"allowed_from,"+
 		"allowed_to"+
 		") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,"+
-		" $11, $12, $13, $14, $15, $16, $17, $18, $19, $20) "+
+		" $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21) "+
 		"RETURNING id",
 		conf.TablePrefix,
 	)
@@ -617,6 +619,7 @@ func AddNewSubscriptionToDB(r *Record) error {
 		r.PaidHours,
 		r.DelayHours,
 		r.RetryDays,
+		r.TrialDays,
 		r.Price,
 		r.Periodic,
 		r.PeriodicDays,
@@ -800,10 +803,11 @@ func GetPeriodicsOnceADay(batchLimit int) (records []Record, err error) {
 		"channel "+
 		"FROM %ssubscriptions "+
 		"WHERE "+
-		// paid and not paid - not processed today
+		// paid and not paid - not processed in the choosen day
 		"   ( days ? '"+todayDayName+"' OR days ? 'any' ) AND periodic = true AND "+
 		"  result NOT IN ('rejected', 'canceled', 'postpaid', 'pending' ) AND "+
-		"  last_pay_attempt_at < (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) "+
+		"  last_pay_attempt_at < (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) AND "+
+		"  sent_at > (CURRENT_TIMESTAMP - trail_days * INTERVAL '24 hours' ) "+
 		"ORDER BY last_pay_attempt_at ASC LIMIT %d", // get the last touched
 		conf.TablePrefix,
 		batchLimit,
@@ -816,6 +820,7 @@ func GetPeriodicsOnceADay(batchLimit int) (records []Record, err error) {
 		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
 		return
 	}
+
 	defer rows.Close()
 
 	for rows.Next() {
