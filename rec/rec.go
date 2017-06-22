@@ -766,7 +766,8 @@ func GetPeriodicsSpecificTime(batchLimit, repeaIntervalMinutes int, intervalType
 	return periodics, nil
 }
 
-// get periodic where once a day transaction is made
+// get periodic for today to be paid
+// with trial expired
 func GetPeriodicsOnceADay(batchLimit int) (records []Record, err error) {
 	begin := time.Now()
 	query := ""
@@ -803,11 +804,19 @@ func GetPeriodicsOnceADay(batchLimit int) (records []Record, err error) {
 		"channel "+
 		"FROM %ssubscriptions "+
 		"WHERE "+
-		// paid and not paid - not processed in the choosen day
-		"   ( days ? '"+todayDayName+"' OR days ? 'any' ) AND periodic = true AND "+
-		"  result NOT IN ('rejected', 'canceled', 'postpaid', 'pending' ) AND "+
-		"  last_pay_attempt_at < (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) AND "+
-		"  sent_at > (CURRENT_TIMESTAMP - trail_days * INTERVAL '24 hours' ) "+
+		"periodic = true AND "+ // mandatory condition - periodic
+		" sent_at + trial_days * INTERVAL '24 hours' < NOW() AND "+ // mandatory condition - trial expired
+		"("+
+		// condition for weekly subscription, once a week in time of subscription
+		" ( result NOT IN ('rejected', 'canceled', 'postpaid', 'pending', 'blacklisted' ) AND "+ // new, paid or failed
+		"   days ? 'weekly' AND "+
+		"   EXTRACT(DOW FROM NOW()) = EXTRACT(DOW FROM sent_at) ) "+ //  once a week
+		" OR "+
+		// condition for dayly subscriptions or for subscriptions once a week in certan day
+		" ( result NOT IN ('rejected', 'canceled', 'postpaid', 'pending', 'blacklisted' ) AND "+ // new, paid or failed.
+		" ( days ? '"+todayDayName+"' OR days ? 'any' ) AND  "+ // paid and not paid - not processed in the choosen day
+		" last_pay_attempt_at < (CURRENT_TIMESTAMP -  INTERVAL '24 hours' ) ) "+ //  once a day
+		")"+
 		"ORDER BY last_pay_attempt_at ASC LIMIT %d", // get the last touched
 		conf.TablePrefix,
 		batchLimit,
@@ -854,6 +863,95 @@ func GetPeriodicsOnceADay(batchLimit int) (records []Record, err error) {
 		return []Record{}, err
 	}
 	return
+}
+
+// all periodic not paid, not cancelled
+// with trial expired
+func GetNotPaidPeriodics(batchLimit int) (records []Record, err error) {
+	begin := time.Now()
+	query := ""
+	defer func() {
+		defer func() {
+			fields := log.Fields{
+				"took": time.Since(begin),
+			}
+			if err != nil {
+				fields["query"] = query
+				fields["error"] = err.Error()
+				log.WithFields(fields).Error("load not paid periodic failed")
+			} else {
+				fields["count"] = len(records)
+				log.WithFields(fields).Debug("load not paid periodic")
+			}
+		}()
+	}()
+
+	var periodics []Record
+
+	query = fmt.Sprintf("SELECT "+
+		"id, "+
+		"sent_at, "+
+		"tid , "+
+		"operator_token, "+
+		"price, "+
+		"id_service, "+
+		"id_campaign, "+
+		"country_code, "+
+		"operator_code, "+
+		"msisdn, "+
+		"retry_days, "+
+		"delay_hours, "+
+		"paid_hours "+
+		"FROM %ssubscriptions "+
+		"WHERE "+
+		"periodic = true AND "+
+		" result NOT IN ('rejected', 'blacklisted', 'canceled', 'pending', 'paid') AND "+
+		" sent_at + trial_days * INTERVAL '24 hours' < NOW() AND "+
+		" last_pay_attempt_at + delay_hours * INTERVAL '1 hour' < NOW() )"+
+		"ORDER BY last_pay_attempt_at ASC LIMIT %s",
+		conf.TablePrefix,
+		strconv.Itoa(batchLimit),
+	)
+
+	rows, err := dbConn.Query(query)
+	if err != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("db.Query: %s, query: %s", err.Error(), query)
+		return []Record{}, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		p := Record{}
+		if err := rows.Scan(
+			&p.SubscriptionId,
+			&p.SentAt,
+			&p.Tid,
+			&p.OperatorToken,
+			&p.Price,
+			&p.ServiceCode,
+			&p.CampaignCode,
+			&p.OperatorCode,
+			&p.CountryCode,
+			&p.Msisdn,
+			&p.RetryDays,
+			&p.DelayHours,
+			&p.PaidHours,
+		); err != nil {
+			DBErrors.Inc()
+			return []Record{}, fmt.Errorf("Rows.Next: %s", err.Error())
+		}
+
+		periodics = append(periodics, p)
+	}
+	if rows.Err() != nil {
+		DBErrors.Inc()
+
+		err = fmt.Errorf("GetPeriodic RowsError: %s", err.Error())
+		return []Record{}, err
+	}
+	return periodics, nil
 }
 
 // get some periodics to send some content
