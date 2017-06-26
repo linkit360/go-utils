@@ -12,7 +12,7 @@ type AccessCampaignNotify struct {
 	OperatorCode int64     `json:"operator_code,omitempty"`
 	CountryCode  int64     `json:"country_code,omitempty"`
 	ServiceCode  string    `json:"service_code,omitempty"`
-	CampaignCode string    `json:"campaign_code,omitempty"`
+	CampaignId   string    `json:"campaign_id,omitempty"`
 	ContentCode  string    `json:"content_code,omitempty"`
 	Supported    bool      `json:"supported,omitempty"`
 	UserAgent    string    `json:"user_agent,omitempty"`
@@ -33,8 +33,8 @@ type ContentSentProperties struct {
 	ContentPath    string    `json:"content_path,omitempty"`
 	ContentName    string    `json:"content_name,omitempty"`
 	CapmaignHash   string    `json:"capmaign_hash,omitempty"`
-	CampaignCode   string    `json:"code_campaign,omitempty"`
-	ServiceCode    string    `json:"code_service,omitempty"`
+	CampaignId     string    `json:"campaign_id,omitempty"`
+	ServiceCode    string    `json:"service_code,omitempty"`
 	SubscriptionId int64     `json:"subscription_id,omitempty"`
 	CountryCode    int64     `json:"country_code,omitempty"`
 	OperatorCode   int64     `json:"operator_code,omitempty"`
@@ -43,7 +43,7 @@ type ContentSentProperties struct {
 }
 
 func (t ContentSentProperties) Key() string {
-	return t.Msisdn + "-" + t.CampaignCode
+	return t.Msisdn + "-" + t.CampaignId
 }
 
 type EventNotifyContentSent struct {

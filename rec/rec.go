@@ -26,7 +26,7 @@ type Record struct {
 	OperatorCode             int64     `json:"operator_code,omitempty"`
 	CountryCode              int64     `json:"country_code,omitempty"`
 	ServiceCode              string    `json:"service_code,omitempty"`
-	CampaignCode             string    `json:"campaign_code,omitempty"`
+	CampaignId               string    `json:"campaign_id,omitempty"`
 	SubscriptionId           int64     `json:"subscription_id,omitempty"`
 	RetryId                  int64     `json:"retry_id,omitempty"`
 	SentAt                   time.Time `json:"sent_at,omitempty"`
@@ -51,6 +51,18 @@ type Record struct {
 	PeriodicAllowedToHours   int       `json:"allowed_to,omitempty"`
 	Channel                  string    `json:"channel,omitempty"`
 	OutFlowReason            string    `json:"outflow_reason"`
+}
+
+func (r *Record) GetTid() string {
+	if r.Tid != "" {
+		return r.Tid
+	}
+	u4, err := uuid.NewV4()
+	if err != nil {
+		log.WithField("error", err.Error()).Error("generate uniq id")
+	}
+	r.Tid = fmt.Sprintf("%s=%s=%s=%s-%s", r.Msisdn, r.ServiceCode, r.CampaignId, time.Now().Unix(), u4)
+	return r.Tid
 }
 
 func (r Record) TransactionOnly() bool {
@@ -80,16 +92,14 @@ func Init(dbC db.DataBaseConfig) {
 	AddNewSubscriptionDuration = m.NewSummary("subscription_add_to_db_duration_seconds", "new subscription add duration")
 }
 
-func GenerateTID(msisdn_optional ...string) string {
+// msisdn - service code - campaign id
+func GenerateTID(optional ...string) string {
 	u4, err := uuid.NewV4()
 	if err != nil {
 		log.WithField("error", err.Error()).Error("generate uniq id")
 	}
-	msisdn := ""
-	if len(msisdn_optional) > 0 {
-		msisdn = msisdn_optional[0] + "-"
-	}
-	tid := fmt.Sprintf(msisdn+"%d-%s", time.Now().Unix(), u4)
+	opt := strings.Join(optional, "=")
+	tid := fmt.Sprintf(opt+"=%d=%s", time.Now().Unix(), u4)
 	return tid
 }
 
@@ -177,7 +187,7 @@ func GetRetryTransactions(operatorCode int64, batchLimit int, paidOnceHours int)
 			&record.CountryCode,
 			&record.ServiceCode,
 			&record.SubscriptionId,
-			&record.CampaignCode,
+			&record.CampaignId,
 		); err != nil {
 			DBErrors.Inc()
 			return []Record{}, fmt.Errorf("Rows.Next: %s", err.Error())
@@ -334,7 +344,7 @@ func LoadScriptRetries(hoursPassed int, operatorCode int64, batchLimit int) (rec
 			&record.CountryCode,
 			&record.ServiceCode,
 			&record.SubscriptionId,
-			&record.CampaignCode,
+			&record.CampaignId,
 		); err != nil {
 			DBErrors.Inc()
 
@@ -533,8 +543,8 @@ func AddNewSubscriptionToDB(r *Record) error {
 	if r.PeriodicDays == "" {
 		r.PeriodicDays = "[]"
 	}
-	if r.CampaignCode == "" {
-		r.CampaignCode = "0"
+	if r.CampaignId == "" {
+		r.CampaignId = "0"
 		log.WithFields(log.Fields{
 			"tid": r.Tid,
 		}).Warn("no campaign code")
@@ -606,7 +616,7 @@ func AddNewSubscriptionToDB(r *Record) error {
 	if err := dbConn.QueryRow(query,
 		r.SentAt,
 		"",
-		r.CampaignCode,
+		r.CampaignId,
 		r.ServiceCode,
 		r.Msisdn,
 		r.Channel,
@@ -642,7 +652,7 @@ func AddNewSubscriptionToDB(r *Record) error {
 		"tid":           r.Tid,
 		"id":            r.SubscriptionId,
 		"service_id":    r.ServiceCode,
-		"camoaign_code": r.CampaignCode,
+		"camoaign_code": r.CampaignId,
 		"took":          time.Since(begin).Seconds(),
 	}).Info("added new subscription")
 	return nil
@@ -743,7 +753,7 @@ func GetPeriodicsSpecificTime(batchLimit, repeaIntervalMinutes int, intervalType
 			&p.OperatorToken,
 			&p.Price,
 			&p.ServiceCode,
-			&p.CampaignCode,
+			&p.CampaignId,
 			&p.CountryCode,
 			&p.OperatorCode,
 			&p.Msisdn,
@@ -841,7 +851,7 @@ func GetPeriodicsOnceADay(batchLimit int) (records []Record, err error) {
 			&p.OperatorToken,
 			&p.Price,
 			&p.ServiceCode,
-			&p.CampaignCode,
+			&p.CampaignId,
 			&p.CountryCode,
 			&p.OperatorCode,
 			&p.Msisdn,
@@ -907,7 +917,7 @@ func GetNotPaidPeriodics(batchLimit int) (records []Record, err error) {
 		"periodic = true AND "+
 		" result NOT IN ('rejected', 'blacklisted', 'canceled', 'pending', 'paid') AND "+
 		" sent_at + trial_days * INTERVAL '24 hours' < NOW() AND "+
-		" last_pay_attempt_at + delay_hours * INTERVAL '1 hour' < NOW() )"+
+		" last_pay_attempt_at + delay_hours * INTERVAL '1 hour' < NOW() "+
 		"ORDER BY last_pay_attempt_at ASC LIMIT %s",
 		conf.TablePrefix,
 		strconv.Itoa(batchLimit),
@@ -931,7 +941,7 @@ func GetNotPaidPeriodics(batchLimit int) (records []Record, err error) {
 			&p.OperatorToken,
 			&p.Price,
 			&p.ServiceCode,
-			&p.CampaignCode,
+			&p.CampaignId,
 			&p.OperatorCode,
 			&p.CountryCode,
 			&p.Msisdn,
@@ -1032,7 +1042,7 @@ func GetLiveTodayPeriodicsForContent(batchLimit int) (records []Record, err erro
 			&p.Tid,
 			&p.Price,
 			&p.ServiceCode,
-			&p.CampaignCode,
+			&p.CampaignId,
 			&p.CountryCode,
 			&p.OperatorCode,
 			&p.Msisdn,
@@ -1107,7 +1117,7 @@ func GetSubscriptionByToken(token string) (p Record, err error) {
 			&p.OperatorToken,
 			&p.Price,
 			&p.ServiceCode,
-			&p.CampaignCode,
+			&p.CampaignId,
 			&p.CountryCode,
 			&p.OperatorCode,
 			&p.Msisdn,
@@ -1176,7 +1186,7 @@ func GetSubscriptionByMsisdn(msisdn string) (p Record, err error) {
 		&p.OperatorToken,
 		&p.Price,
 		&p.ServiceCode,
-		&p.CampaignCode,
+		&p.CampaignId,
 		&p.OperatorCode,
 		&p.CountryCode,
 		&p.Msisdn,
@@ -1253,7 +1263,7 @@ func GetRetryByMsisdn(msisdn, status string) (r Record, err error) {
 		&r.CountryCode,
 		&r.ServiceCode,
 		&r.SubscriptionId,
-		&r.CampaignCode,
+		&r.CampaignId,
 	); err != nil {
 		// do not change type of error, please, it's being checked further
 		if err != sql.ErrNoRows {
@@ -1304,7 +1314,7 @@ func GetBufferPixelByCampaignCode(campaigCode string) (r Record, err error) {
 	if err = dbConn.QueryRow(query, campaigCode).Scan(
 		&r.SentAt,
 		&r.ServiceCode,
-		&r.CampaignCode,
+		&r.CampaignId,
 		&r.Tid,
 		&r.Pixel,
 	); err != nil {
@@ -1375,7 +1385,7 @@ func GetNotSentPixels(hours, limit int) (records []Record, err error) {
 		if err = rows.Scan(
 			&record.Tid,
 			&record.Msisdn,
-			&record.CampaignCode,
+			&record.CampaignId,
 			&record.SubscriptionId,
 			&record.OperatorCode,
 			&record.CountryCode,
