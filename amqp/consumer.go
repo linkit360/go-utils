@@ -217,6 +217,12 @@ func (c *Consumer) Handle(
 			} else {
 				log.Info("rbmq consumer: reconnected")
 			}
+		} else {
+			if err := c.conn.Close(); err != nil {
+				log.WithField("error", err.Error()).Error("rbmq consumer closing connection")
+			} else {
+				log.Error("rbmq consumer connection closed")
+			}
 		}
 	}
 }

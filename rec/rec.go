@@ -815,6 +815,7 @@ func GetPeriodicsOnceADay(batchLimit int) (records []Record, err error) {
 		"FROM %ssubscriptions "+
 		"WHERE "+
 		"periodic = true AND "+ // mandatory condition - periodic
+		"enabled = true AND "+
 		" sent_at + trial_days * INTERVAL '24 hours' < NOW() AND "+ // mandatory condition - trial expired
 		"("+
 		// condition for weekly subscription, once a week in time of subscription
@@ -915,6 +916,7 @@ func GetNotPaidPeriodics(batchLimit int) (records []Record, err error) {
 		"FROM %ssubscriptions "+
 		"WHERE "+
 		"periodic = true AND "+
+		"enabled = true AND "+
 		" result NOT IN ('rejected', 'blacklisted', 'canceled', 'pending', 'paid') AND "+
 		" sent_at + trial_days * INTERVAL '24 hours' < NOW() AND "+
 		" last_pay_attempt_at + delay_hours * INTERVAL '1 hour' < NOW() "+
@@ -980,7 +982,7 @@ func GetLiveTodayPeriodicsForContent(batchLimit int) (records []Record, err erro
 				log.WithFields(fields).Error("load periodic for content failed")
 			} else {
 				fields["count"] = len(records)
-				log.WithFields(fields).Debug("load periodic")
+				log.WithFields(fields).Debug("load periodic for content")
 			}
 		}()
 	}()
@@ -1000,6 +1002,7 @@ func GetLiveTodayPeriodicsForContent(batchLimit int) (records []Record, err erro
 		"channel "+
 		"FROM %ssubscriptions "+
 		"WHERE "+
+		"enabled = true AND "+
 		// live and not processed today
 		"( "+
 		"    ( days ? '"+todayDayName+"' OR days ? 'any' ) AND "+
