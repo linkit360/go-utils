@@ -716,7 +716,7 @@ func GetPeriodicsSpecificTime(batchLimit, repeaIntervalMinutes int, intervalType
 		"paid_hours, "+
 		"FROM %ssubscriptions "+
 		"WHERE "+
-		"periodic = true AND "+inSpecifiedTime+"AND ("+
+		"periodic = true AND enabled = true AND "+inSpecifiedTime+"AND ("+
 		// paid not processed today
 		"  (  ( days ? '"+dayName+"' OR days ? 'any' ) AND "+
 		"     result = 'paid' AND "+

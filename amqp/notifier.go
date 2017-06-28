@@ -40,7 +40,7 @@ type ConnectionConfig struct {
 type NotifierConfig struct {
 	Conn           ConnectionConfig `yaml:"conn"`
 	ReconnectDelay int              `default:"10" yaml:"reconnect_delay"`
-	ChanCapacity   int64            `default:"1000000" yaml:"chan_capacity"`
+	ChanCapacity   int64            `default:"1000" yaml:"chan_capacity"`
 }
 
 func NewNotifier(c NotifierConfig) *Notifier {
