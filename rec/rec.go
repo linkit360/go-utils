@@ -649,11 +649,11 @@ func AddNewSubscriptionToDB(r *Record) error {
 	}
 	AddNewSubscriptionDuration.Observe(time.Since(begin).Seconds())
 	log.WithFields(log.Fields{
-		"tid":           r.Tid,
-		"id":            r.SubscriptionId,
-		"service_id":    r.ServiceCode,
-		"camoaign_code": r.CampaignId,
-		"took":          time.Since(begin).Seconds(),
+		"tid":         r.Tid,
+		"id":          r.SubscriptionId,
+		"service_id":  r.ServiceCode,
+		"campaign_id": r.CampaignId,
+		"took":        time.Since(begin).Seconds(),
 	}).Info("added new subscription")
 	return nil
 }
